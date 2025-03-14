@@ -1,0 +1,23 @@
+{
+  "name": "psicopeapp",
+  "version": "1.0.0",
+  "description": "Aplicación para gestión de sesiones de psicopedagogía",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/egomez0690/PsicopeApp.git"
+  },
+  "author": "Ezequiel Gomez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/egomez0690/PsicopeApp/issues"
+  },
+  "homepage": "https://github.com/egomez0690/PsicopeApp#readme",
+  "devDependencies": {
+    "electron": "^35.0.1"
+  }
+}
