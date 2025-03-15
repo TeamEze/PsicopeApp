@@ -2,9 +2,10 @@
   "name": "psicopeapp",
   "version": "1.0.0",
   "description": "Aplicación para gestión de sesiones de psicopedagogía",
-  "main": "main.js",
+  "main": "./src/main.js",
+  "type": "module",
   "scripts": {
-    "start": "electron .",
+    "start": "electron --inspect=9229 ./src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +20,12 @@
   "homepage": "https://github.com/egomez0690/PsicopeApp#readme",
   "devDependencies": {
     "electron": "^35.0.1"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "mysql2": "^3.13.0",
+    "sequelize": "^6.37.6",
+    "vite": "^6.2.2",
+    "vue": "^3.5.13"
   }
 }
