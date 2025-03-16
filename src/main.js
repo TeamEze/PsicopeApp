@@ -17,8 +17,8 @@ app.whenReady().then(() => {
       preload: path.join(__dirname, 'preload.js')
     }
   });
-  
-  mainWindow.loadFile('./src/renderer/views/index.html');
+  mainWindow.setMenu(null);
+  mainWindow.loadFile('../src/renderer/views/index.html');
 
   mainWindow.webContents.openDevTools();
 
