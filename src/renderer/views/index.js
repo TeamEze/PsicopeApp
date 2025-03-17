@@ -5,7 +5,7 @@
     const tbody = document.createElement('tbody');
     centrosMedicos.forEach(centroMedico => {
         const tr = document.createElement('tr');
-        CrearTableData(centroMedico.dataValues.id, tr);
+        CrearTableData(centroMedico.dataValues.idCentroMedico, tr);
         CrearTableData(centroMedico.dataValues.nombre, tr);
         CrearTableData(centroMedico.dataValues.direccion, tr);
         CrearTableData(centroMedico.dataValues.telefono, tr);
