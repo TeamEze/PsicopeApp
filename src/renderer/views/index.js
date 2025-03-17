@@ -1,6 +1,10 @@
+ let listaColumnasGrillaCentrosMedicos = ["#","Nombre","Dirección", "Telefóno", "Contacto", "Email", "Duración Sesión" ];
+ 
  async function CargarCentrosMedicos() {
     const centrosMedicos = await window.electron.getCentrosMedicos();
+    //const CEntrosMedicos = [{idCentroMedico = 1, nombre= 232}, {""}]
     const tablaCentrosMedicos = document.getElementById('tblSesiones');
+    //AgregarHeadersGrilla(grilla, listaColumnas);
     AgregarHeadersGrillaCentrosMedicos(tablaCentrosMedicos);
     const tbody = document.createElement('tbody');
     centrosMedicos.forEach(centroMedico => {
@@ -55,17 +59,5 @@ function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos){
     grillaCentrosMedicos.appendChild(rowHeaders); 
 }
 
-function CrearTableHeader(nombreHeader, rowHeaders){
-    const th = document.createElement('th');
-    th.textContent = nombreHeader;
-    th.scope = "col"
-    rowHeaders.appendChild(th);
-}
-
-function CrearTableData(data, rowPadre){
-    const td = document.createElement('td');
-    td.textContent = data;
-    rowPadre.appendChild(td);
-}
 
 CargarCentrosMedicos();
