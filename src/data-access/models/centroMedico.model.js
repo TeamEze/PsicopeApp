@@ -1,9 +1,8 @@
-import { DataTypes, Model } from "sequelize";
-import Localidad from "./localidad.model.js"  // Importa el modelo padre
-import Estado from "./estado.model.js"
-import sequelize from "../database.js";
+const DataTypes = require('sequelize');
+const Localidad = require('./localidad.model.js');
+const Estado = require('./estado.model.js');
+const sequelize = require('../databaseConnection.js');
 
-// Definición del modelo "Usuario"
 const CentroMedico = sequelize.define('CentroMedico', {
     idCentroMedico: {
       type: DataTypes.INTEGER,
@@ -17,14 +16,6 @@ const CentroMedico = sequelize.define('CentroMedico', {
     direccion: {
       type: DataTypes.STRING(50),
       allowNull: false
-    },
-    idLocalidad: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Localidad, // Nombre de la tabla (o el modelo si se asocia después)
-        key: 'idLocalidad'
-      }
     },
     telefono: {
       type: DataTypes.STRING(10),
@@ -41,14 +32,6 @@ const CentroMedico = sequelize.define('CentroMedico', {
     duracionSesion: {
       type: DataTypes.INTEGER,
       allowNull: false
-    },
-    idEstado: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Estado, // Nombre de la tabla (o el modelo si se asocia después)
-        key: 'idEstado'
-      }
     }
   }, 
   {
@@ -59,6 +42,7 @@ const CentroMedico = sequelize.define('CentroMedico', {
     sequelize
   });
 
-await sequelize.sync();  // Crea la tabla si no existe
+  CentroMedico.belongsTo(Localidad, { foreignKey: 'idLocalidad', as: 'localidad'});
+  CentroMedico.belongsTo(Estado, {foreignKey: 'idEstado', as: 'estado'});
 
-export default CentroMedico;
+  module.exports = CentroMedico;

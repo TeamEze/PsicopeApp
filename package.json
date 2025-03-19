@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Aplicación para gestión de sesiones de psicopedagogía",
   "main": "./src/main.js",
-  "type": "module",
   "scripts": {
     "start": "electron ./src/main.js",
+    "createDB": "npx sequelize-cli db:create --config ./config/config.js",
+    "migrate": "npx sequelize-cli db:migrate --config ./config/config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,11 +20,13 @@
   },
   "homepage": "https://github.com/egomez0690/PsicopeApp#readme",
   "devDependencies": {
-    "electron": "^35.0.1"
+    "electron": "^35.0.1",
+    "sequelize-cli": "^6.6.2"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.7",
     "mysql2": "^3.13.0",
     "sequelize": "^6.37.6",
     "vite": "^6.2.2",

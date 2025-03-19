@@ -1,7 +1,7 @@
-import { DataTypes} from "sequelize";
-import sequelize from "../database.js";
+const DataTypes = require('sequelize');
+const sequelize = require('../databaseConnection.js');
 
-// Definición del modelo "Usuario"
+// Definición del modelo "Estado"
 const Estado = sequelize.define('Estado', {
     idEstado: {
       type: DataTypes.INTEGER,
@@ -17,9 +17,7 @@ const Estado = sequelize.define('Estado', {
     modelName: 'Estado',
     tableName: 'Estado',
     timestamps: false,
-    sequelize,
+    sequelize
   });
 
-await sequelize.sync();  // Crea la tabla si no existe
-
-export default Estado;
+  module.exports = Estado;

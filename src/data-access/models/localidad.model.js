@@ -1,5 +1,5 @@
-import { DataTypes} from "sequelize";
-import sequelize from "../database.js";
+const DataTypes = require('sequelize');
+const sequelize = require('../databaseConnection.js');
 
 // Definición del modelo "Usuario"
 const Localidad = sequelize.define('Localidad', {
@@ -20,6 +20,4 @@ const Localidad = sequelize.define('Localidad', {
     sequelize,
   });
 
-await sequelize.sync();  // Crea la tabla si no existe
-
-export default Localidad;
+  module.exports = Localidad;

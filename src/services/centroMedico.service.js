@@ -1,4 +1,4 @@
-import centroMedicoRepository from "../data-access/repository/centroMedico.repository.js";
+const centroMedicoRepository = require('../data-access/repository/centroMedico.repository.js') ;
 
 class CentroMedicoService {
   /*async addCentroMedico(name) {
@@ -24,4 +24,4 @@ class CentroMedicoService {
   }
 }
 
-export default new CentroMedicoService();
+module.exports = new CentroMedicoService();
