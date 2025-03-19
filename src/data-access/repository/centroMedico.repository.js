@@ -1,4 +1,4 @@
-import CentroMedico from '../models/centroMedico.model.js';
+const CentroMedico = require('../models/centroMedico.model.js');
 
 class CentroMedicoRepository {
   async getAllCentrosMedicos() {
@@ -14,4 +14,4 @@ class CentroMedicoRepository {
   }*/
 }
 
-export default new CentroMedicoRepository();
+module.exports = new CentroMedicoRepository();

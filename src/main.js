@@ -1,15 +1,13 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import centroMedicoService from './services/centroMedico.service.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const centroMedicoService = require('./services/centroMedico.service.js')
 
 let mainWindow;
 
-// Necesario para __dirname en ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+app.whenReady().then(async () => {
+  
+  //await initializeDatabase();  // Inicializa la BD al abrir la app
 
-app.whenReady().then(() => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -18,7 +16,7 @@ app.whenReady().then(() => {
     }
   });
   mainWindow.setMenu(null);
-  mainWindow.loadFile('../src/renderer/views/index.html');
+  mainWindow.loadFile(path.join(__dirname, '/renderer/views/index.html'));
 
   mainWindow.webContents.openDevTools();
 
