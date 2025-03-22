@@ -24,12 +24,9 @@
     "sequelize-cli": "^6.6.2"
   },
   "dependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.7",
     "mysql2": "^3.13.0",
-    "sequelize": "^6.37.6",
-    "vite": "^6.2.2",
-    "vue": "^3.5.13"
+    "sequelize": "^6.37.6"
   }
 }

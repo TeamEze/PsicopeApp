@@ -1,7 +1,7 @@
 # PsicopeApp
 
 Aplicación para gestionar sesiones de psicopedagogía con pacientes, familias y escuelas. Informe de importes por sesión, por día, diferencias por Medios de Pago,
-generación de facturas de AFIP, recordatorios..
+generación de facturas de AFIP, recordatorios, informes..
 
 ## Pasos para ejecutar la aplicación en desarrollo
 
