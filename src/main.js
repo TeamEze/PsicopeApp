@@ -23,4 +23,8 @@ app.whenReady().then(async () => {
 });
 
 // Comunicación IPC
-ipcMain.handle('getCentrosMedicos', async () => await centroMedicoService.getAllCentrosMedicos());
+ipcMain.handle('getCentrosMedicos', async () => {
+  const listaCentrosMedicos = await centroMedicoService.getAllCentrosMedicos();
+  const plainListaCentrosMedicos = listaCentrosMedicos.map(centroMedico => centroMedico.get({ plain: true }));
+  return plainListaCentrosMedicos;
+});

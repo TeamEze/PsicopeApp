@@ -1,4 +1,4 @@
- let listaColumnasGrillaCentrosMedicos = ["#","Nombre","Dirección", "Telefóno", "Contacto", "Email", "Duración Sesión" ];
+ let listaColumnasGrillaCentrosMedicos = ["#","Nombre","Dirección", "Localidad", "Telefóno", "Contacto", "Email", "Duración Sesión", "Estado" ];
  
  async function CargarCentrosMedicos() {
     const centrosMedicos = await window.electron.getCentrosMedicos();
@@ -9,13 +9,15 @@
     const tbody = document.createElement('tbody');
     centrosMedicos.forEach(centroMedico => {
         const tr = document.createElement('tr');
-        CrearTableData(centroMedico.dataValues.idCentroMedico, tr);
-        CrearTableData(centroMedico.dataValues.nombre, tr);
-        CrearTableData(centroMedico.dataValues.direccion, tr);
-        CrearTableData(centroMedico.dataValues.telefono, tr);
-        CrearTableData(centroMedico.dataValues.personaContacto, tr);
-        CrearTableData(centroMedico.dataValues.email, tr);
-        CrearTableData(centroMedico.dataValues.duracionSesion, tr);
+        CrearTableData(centroMedico.idCentroMedico, tr);
+        CrearTableData(centroMedico.nombre, tr);
+        CrearTableData(centroMedico.direccion, tr);
+        CrearTableData(centroMedico.localidad.descripcion, tr);
+        CrearTableData(centroMedico.telefono, tr);
+        CrearTableData(centroMedico.personaContacto, tr);
+        CrearTableData(centroMedico.email, tr);
+        CrearTableData(centroMedico.duracionSesion, tr);
+        CrearTableData(centroMedico.estado.descripcion, tr);
         tbody.appendChild(tr);
         
     });
@@ -51,10 +53,12 @@ function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos){
     CrearTableHeader("#", rowHeaders);
     CrearTableHeader("Nombre", rowHeaders);
     CrearTableHeader("Direccion", rowHeaders);
+    CrearTableHeader("Localidad", rowHeaders);
     CrearTableHeader("Teléfono", rowHeaders);
     CrearTableHeader("Contacto", rowHeaders);
     CrearTableHeader("Email", rowHeaders);
     CrearTableHeader("Duración Sesión", rowHeaders);
+    CrearTableHeader("Estado", rowHeaders);
     tHead.appendChild(rowHeaders);
     grillaCentrosMedicos.appendChild(rowHeaders); 
 }
