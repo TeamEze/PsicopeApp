@@ -56,7 +56,7 @@ function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos){
     CrearTableHeader("Email", rowHeaders);
     CrearTableHeader("Duración Sesión", rowHeaders);
     tHead.appendChild(rowHeaders);
-    grillaCentrosMedicos.appendChild(rowHeaders); 
+    grillaCentrosMedicos.appendChild(tHead); 
 }
 
 
