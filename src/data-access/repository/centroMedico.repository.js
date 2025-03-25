@@ -13,12 +13,17 @@ class CentroMedicoRepository {
   }
 
   async getCentroMedicoById(id) {
-    return await CentroMedico.findByPk(id);
+    return await CentroMedico.findByPk(id, {
+      include: [
+        {model: Localidad, as: 'localidad'},
+        {model: Estado, as: 'estado'}
+      ]
+    });
   }
 
-  /*static async createCentroMedico() {
-    return CentroMedico.create({ name, email });
-  }*/
+  async createCentroMedico(centroMedico) {
+    return await CentroMedico.create(centroMedico);
+  }
 }
 
 module.exports = new CentroMedicoRepository();

@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const centroMedicoService = require('./services/centroMedico.service.js')
+const CentroMedicoViewModel = require('./viewModels/centroMedico.viewModel.js');
 
 let mainWindow;
 
@@ -12,7 +12,9 @@ app.whenReady().then(async () => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true, // Mantener el aislamiento del contexto
+      nodeIntegration: false // Deshabilitar Node.js en el renderizador
     }
   });
   mainWindow.setMenu(null);
@@ -24,7 +26,9 @@ app.whenReady().then(async () => {
 
 // Comunicación IPC
 ipcMain.handle('getCentrosMedicos', async () => {
-  const listaCentrosMedicos = await centroMedicoService.getAllCentrosMedicos();
-  const plainListaCentrosMedicos = listaCentrosMedicos.map(centroMedico => centroMedico.get({ plain: true }));
-  return plainListaCentrosMedicos;
+  return await CentroMedicoViewModel.getCentrosMedicos();
+});
+
+ipcMain.handle('createCentroMedico', async (event, centroMedico) => {
+  return await CentroMedicoViewModel.createCentroMedico(centroMedico);
 });

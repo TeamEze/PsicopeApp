@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 // Exponer métodos seguros a la UI
-contextBridge.exposeInMainWorld('electron', {
-  getCentrosMedicos: () => ipcRenderer.invoke('getCentrosMedicos')
+contextBridge.exposeInMainWorld('viewModelAPI', {
+  getCentrosMedicos: () => ipcRenderer.invoke('getCentrosMedicos'),
+  createCentroMedico: (centroMedico) => ipcRenderer.invoke('createCentroMedico', centroMedico)
 });
