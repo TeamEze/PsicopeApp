@@ -19,5 +19,5 @@ const Localidad = sequelize.define('Localidad', {
     timestamps: false,
     sequelize,
   });
-
+  
   module.exports = Localidad;

@@ -1,23 +1,25 @@
-/* import { ref, onMounted } from 'vue';
+const centroMedicoService = require('../services/centroMedico.service');
+class CentroMedicoViewModel {
 
-export function useCentroMedicoViewModel() {
-  const centrosMedicos = ref([]);
+  static async getCentrosMedicos() {
+    try {
+        const listaCentrosMedicos = await centroMedicoService.getAllCentrosMedicos();
+        return listaCentrosMedicos;
+    } catch (error) {
+        console.error('Error al obtener los centros médicos:', error);
+        throw error;
+    }
+  }
 
-  const fetchCentrosMedicos = async () => {
-    centrosMedicos.value = await window.Electron.getCentrosMedicos();
-  };
-
-  onMounted(() => {
-    fetchCentrosMedicos();
-  });
-
-  return { centrosMedicos };
+  static async createCentroMedico(centroMedico) {
+    try {
+        const newCentroMedico = await centroMedicoService.createCentroMedico(centroMedico);
+        return newCentroMedico;
+    } catch (error) {
+        console.error('Error al crear el centro médico:', error);
+        throw error;
+    }
+  }
 }
- */
-const { ipcRenderer } = require('electron');
 
-async function getCentrosMedicos() {
-  return await ipcRenderer.invoke('getCentrosMedicos');
-}
-
-module.exports = { getCentrosMedicos };
+module.exports = CentroMedicoViewModel;

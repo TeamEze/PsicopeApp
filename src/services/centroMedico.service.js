@@ -1,4 +1,5 @@
 const centroMedicoRepository = require('../data-access/repository/centroMedico.repository.js') ;
+const CentroMedicoMapper = require('../mappers/centroMedicoMapper.js');
 
 class CentroMedicoService {
   /*async addCentroMedico(name) {
@@ -18,10 +19,19 @@ class CentroMedicoService {
     await userRepository.addUser(name);
     return { success: true };
   }*/
-
   async getAllCentrosMedicos() {
-    return await centroMedicoRepository.getAllCentrosMedicos();
+    const centrosMedicos = await centroMedicoRepository.getAllCentrosMedicos();
+    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
+        CentroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+
+    return centrosMedicosDTO;
   }
+
+  async createCentroMedico(centroMedico) {
+    const nuevoCentroMedico = await centroMedicoRepository.createCentroMedico(centroMedico);
+    const centroMedicoConIncludes = await centroMedicoRepository.getCentroMedicoById(nuevoCentroMedico.idCentroMedico);
+    return CentroMedicoMapper.mapCentroMedicoToDTO(centroMedicoConIncludes);
+  } 
 }
 
 module.exports = new CentroMedicoService();
