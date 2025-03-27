@@ -1,5 +1,29 @@
 let listaColumnasGrillaCentrosMedicos = ["#", "Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado"];
 
+//Función para filtrar centros médicos
+async function FiltrarCentrosMedicos() {
+    let filters = {};
+    
+    const nombre = "Castel"//document.getElementById('txtNombre').value;
+    if (nombre) {
+        filters.nombre = nombre;
+    }
+    
+    const idLocalidad = 2//document.getElementById('cboLocalidad').value;
+    if (idLocalidad) {
+        filters.idLocalidad = idLocalidad;
+    }
+
+    const centrosMedicos = await window.viewModelAPI.getCentrosMedicosByFilters(filters);
+    const tablaCentrosMedicos = document.getElementById('tblSesiones');
+    tablaCentrosMedicos.removeChild(tablaCentrosMedicos.querySelector('tbody'));
+    const tbody = document.createElement('tbody');
+    centrosMedicos.forEach(centroMedico => {
+        ActualizarTablaConCentroMedico(centroMedico, tbody);
+    });
+    tablaCentrosMedicos.appendChild(tbody);
+}
+
 // Función para crear un centro médico
 async function CrearCentroMedico() {
     const nuevoCentroMedico = {
@@ -69,4 +93,5 @@ function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos) {
 
 // Inicializar eventos y cargar datos
 document.getElementById('btnCrearCentroMedico').addEventListener('click', CrearCentroMedico);
+document.getElementById('btnFiltrarCentroMedico').addEventListener('click', FiltrarCentrosMedicos);
 CargarCentrosMedicos();

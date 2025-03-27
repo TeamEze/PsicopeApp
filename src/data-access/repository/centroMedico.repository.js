@@ -21,6 +21,16 @@ class CentroMedicoRepository {
     });
   }
 
+  async getCentrosMedicosByFilters(filters) {
+    return await CentroMedico.findAll({
+      where: filters,
+      include: [
+        {model: Localidad, as: 'localidad'},
+        {model: Estado, as: 'estado'}
+      ]
+    });
+  } 
+
   async createCentroMedico(centroMedico) {
     return await CentroMedico.create(centroMedico);
   }
