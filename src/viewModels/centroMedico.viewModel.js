@@ -1,9 +1,12 @@
-const centroMedicoService = require('../services/centroMedico.service');
 class CentroMedicoViewModel {
 
-  static async getCentrosMedicos() {
+  constructor(centroMedicoService) {
+    this.centroMedicoService = centroMedicoService;
+  }
+
+  async getCentrosMedicos() {
     try {
-        const listaCentrosMedicos = await centroMedicoService.getAllCentrosMedicos();
+        const listaCentrosMedicos = await this.centroMedicoService.getAllCentrosMedicos();
         return listaCentrosMedicos;
     } catch (error) {
         console.error('Error al obtener los centros médicos:', error);
@@ -11,9 +14,19 @@ class CentroMedicoViewModel {
     }
   }
 
-  static async createCentroMedico(centroMedico) {
+  async getCentrosMedicosByFilters(filters) {
     try {
-        const newCentroMedico = await centroMedicoService.createCentroMedico(centroMedico);
+        const listaCentrosMedicos = await this.centroMedicoService.getCentrosMedicosByFilters(filters);
+        return listaCentrosMedicos;
+    } catch (error) {
+        console.error('Error al obtener los centros médicos:', error);
+        throw error;
+    }
+  }
+
+  async createCentroMedico(centroMedico) {
+    try {
+        const newCentroMedico = await this.centroMedicoService.createCentroMedico(centroMedico);
         return newCentroMedico;
     } catch (error) {
         console.error('Error al crear el centro médico:', error);

@@ -1,6 +1,16 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+
+// Repositorios
+const centroMedicoRepository = require('./data-access/repository/centroMedico.repository.js');
+// Mappers
+const CentroMedicoMapper = require('./mappers/centroMedicoMapper.js');
+// Servicios
+const CentroMedicoService = require('./services/centroMedico.service.js');
+const centroMedicoService = new CentroMedicoService(centroMedicoRepository, CentroMedicoMapper);
+// View Models
 const CentroMedicoViewModel = require('./viewModels/centroMedico.viewModel.js');
+const centroMedicoViewModel = new CentroMedicoViewModel(centroMedicoService);
 
 let mainWindow;
 
@@ -26,9 +36,13 @@ app.whenReady().then(async () => {
 
 // Comunicación IPC
 ipcMain.handle('getCentrosMedicos', async () => {
-  return await CentroMedicoViewModel.getCentrosMedicos();
+  return await centroMedicoViewModel.getCentrosMedicos();
 });
 
 ipcMain.handle('createCentroMedico', async (event, centroMedico) => {
-  return await CentroMedicoViewModel.createCentroMedico(centroMedico);
+  return await centroMedicoViewModel.createCentroMedico(centroMedico);
+});
+
+ipcMain.handle('getCentrosMedicosByFilters', async (event, filters) => {  
+  return await centroMedicoViewModel.getCentrosMedicosByFilters(filters);
 });
