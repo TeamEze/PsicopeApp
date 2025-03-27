@@ -1,13 +1,25 @@
-const centroMedicoService = require('../../src/services/centroMedico.service.js');
+const CentroMedicoService = require('../../src/services/centroMedico.service.js');
 const centroMedicoRepository = require('../../src/data-access/repository/centroMedico.repository.js');
 const CentroMedicoMapper = require('../../src/mappers/centroMedicoMapper.js');
 jest.mock('../../src/data-access/repository/centroMedico.repository.js');
 jest.mock('../../src/mappers/centroMedicoMapper.js');
 
 describe('CentroMedicoService', () => {
+  
+  let centroMedicoService;
+  
   beforeEach(() => {
-    // Asegurarse de que la función mock esté definida antes de cada test
+    
+    /// Crear mocks para las dependencias
+    centroMedicoRepository.getAllCentrosMedicos = jest.fn();
+    centroMedicoRepository.getCentrosMedicosByFilters = jest.fn();
+    centroMedicoRepository.createCentroMedico = jest.fn();
+    centroMedicoRepository.getCentroMedicoById = jest.fn();
     CentroMedicoMapper.mapCentroMedicoToDTO = jest.fn();
+
+    // Crear una instancia del servicio con las dependencias mockeadas
+    centroMedicoService = new CentroMedicoService(centroMedicoRepository, CentroMedicoMapper);
+
   });
 
   it('should return a list of CentroMedicoDTOs', async () => {

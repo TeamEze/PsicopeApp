@@ -1,5 +1,3 @@
-const centroMedicoRepository = require('../data-access/repository/centroMedico.repository.js') ;
-const CentroMedicoMapper = require('../mappers/centroMedicoMapper.js');
 const { Op } = require('sequelize');
 class CentroMedicoService {
   /*async addCentroMedico(name) {
@@ -19,10 +17,14 @@ class CentroMedicoService {
     await userRepository.addUser(name);
     return { success: true };
   }*/
+    constructor(centroMedicoRepository, centroMedicoMapper) {
+      this.centroMedicoRepository = centroMedicoRepository;
+      this.centroMedicoMapper = centroMedicoMapper;
+    }
   async getAllCentrosMedicos() {
-    const centrosMedicos = await centroMedicoRepository.getAllCentrosMedicos();
+    const centrosMedicos = await this.centroMedicoRepository.getAllCentrosMedicos();
     const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
-        CentroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
 
     return centrosMedicosDTO;
   }
@@ -42,17 +44,17 @@ class CentroMedicoService {
       return await this.getAllCentrosMedicos();
     } 
   
-    const centrosMedicosFiltered = await centroMedicoRepository.getCentrosMedicosByFilters(dataToFilter);
+    const centrosMedicosFiltered = await this.centroMedicoRepository.getCentrosMedicosByFilters(dataToFilter);
     const centrosMedicosDTO = centrosMedicosFiltered.map(centroMedico =>
-        CentroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+        this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
     return centrosMedicosDTO;
   } 
 
   async createCentroMedico(centroMedico) {
-    const nuevoCentroMedico = await centroMedicoRepository.createCentroMedico(centroMedico);
-    const centroMedicoConIncludes = await centroMedicoRepository.getCentroMedicoById(nuevoCentroMedico.idCentroMedico);
-    return CentroMedicoMapper.mapCentroMedicoToDTO(centroMedicoConIncludes);
+    const nuevoCentroMedico = await this.centroMedicoRepository.createCentroMedico(centroMedico);
+    const centroMedicoConIncludes = await this.centroMedicoRepository.getCentroMedicoById(nuevoCentroMedico.idCentroMedico);
+    return this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedicoConIncludes);
   } 
 }
 
-module.exports = new CentroMedicoService();
+module.exports = CentroMedicoService;
