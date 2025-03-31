@@ -1,0 +1,64 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+.container {
+  margin: 20px auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.tab-content {
+  margin-top: 20px;
+}
+
+th {
+  background-color: #343a40;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.form-group {
+  display: flex;
+  gap: 20px; 
+  align-items: center;
+}
+
+.form-group div {
+  flex: 1; /* Hace que los elementos ocupen el mismo espacio */
+  min-width: 200px; /* Ancho mínimo */
+}
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    .container {
+      width: 100%;
+      padding: 10px;
+    }
+  }
+  
