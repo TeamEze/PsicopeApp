@@ -27,7 +27,7 @@ async function FiltrarCentrosMedicos() {
 // Función para crear un centro médico
 async function CrearCentroMedico() {
     const nuevoCentroMedico = {
-        nombre: 'Nuevo Centro Médico',
+        nombre: 'Nuevo Centro Médico',//document.getElementById('nuevoCentroMedico').value; desde el formulario
         direccion: 'Calle Falsa 123',
         idLocalidad: 1,
         telefono: '123456789',
@@ -48,7 +48,7 @@ async function CrearCentroMedico() {
 async function CargarCentrosMedicos() {
     const centrosMedicos = await window.viewModelAPI.getCentrosMedicos();
     const tablaCentrosMedicos = document.getElementById('tblSesiones');
-    AgregarHeadersGrillaCentrosMedicos(tablaCentrosMedicos);
+    AgregarHeadersGrilla(tablaCentrosMedicos,listaColumnasGrillaCentrosMedicos);
 
     const tbody = document.createElement('tbody');
     centrosMedicos.forEach(centroMedico => {
@@ -82,14 +82,14 @@ function ActualizarTablaConCentroMedico(centroMedico, tbody = null) {
     }
 }
 
-// Función para agregar los headers de la tabla
+/* // Función para agregar los headers de la tabla
 function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos) {
     const tHead = document.createElement('thead');
     const rowHeaders = document.createElement('tr');
     listaColumnasGrillaCentrosMedicos.forEach(columna => CrearTableHeader(columna, rowHeaders));
     tHead.appendChild(rowHeaders);
     grillaCentrosMedicos.appendChild(tHead);
-}
+} */
 
 // Inicializar eventos y cargar datos
 document.getElementById('btnCrearCentroMedico').addEventListener('click', CrearCentroMedico);
