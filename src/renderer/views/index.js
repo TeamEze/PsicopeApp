@@ -1,63 +1,97 @@
- let listaColumnasGrillaCentrosMedicos = ["#","Nombre","Dirección", "Telefóno", "Contacto", "Email", "Duración Sesión" ];
- 
- async function CargarCentrosMedicos() {
-    const centrosMedicos = await window.electron.getCentrosMedicos();
-    //const CEntrosMedicos = [{idCentroMedico = 1, nombre= 232}, {""}]
+let listaColumnasGrillaCentrosMedicos = ["#", "Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado"];
+
+//Función para filtrar centros médicos
+async function FiltrarCentrosMedicos() {
+    let filters = {};
+    
+    const nombre = "Castel"//document.getElementById('txtNombre').value;
+    if (nombre) {
+        filters.nombre = nombre;
+    }
+    
+    const idLocalidad = 2//document.getElementById('cboLocalidad').value;
+    if (idLocalidad) {
+        filters.idLocalidad = idLocalidad;
+    }
+
+    const centrosMedicos = await window.viewModelAPI.getCentrosMedicosByFilters(filters);
     const tablaCentrosMedicos = document.getElementById('tblSesiones');
-    //AgregarHeadersGrilla(grilla, listaColumnas);
-    AgregarHeadersGrillaCentrosMedicos(tablaCentrosMedicos);
+    tablaCentrosMedicos.removeChild(tablaCentrosMedicos.querySelector('tbody'));
     const tbody = document.createElement('tbody');
     centrosMedicos.forEach(centroMedico => {
-        const tr = document.createElement('tr');
-        CrearTableData(centroMedico.dataValues.idCentroMedico, tr);
-        CrearTableData(centroMedico.dataValues.nombre, tr);
-        CrearTableData(centroMedico.dataValues.direccion, tr);
-        CrearTableData(centroMedico.dataValues.telefono, tr);
-        CrearTableData(centroMedico.dataValues.personaContacto, tr);
-        CrearTableData(centroMedico.dataValues.email, tr);
-        CrearTableData(centroMedico.dataValues.duracionSesion, tr);
-        tbody.appendChild(tr);
-        
+        ActualizarTablaConCentroMedico(centroMedico, tbody);
     });
     tablaCentrosMedicos.appendChild(tbody);
 }
 
-function ShowSection(idSeccion){
-    // Ocultar todas las secciones
-    const sections = document.querySelectorAll('.section');
-    sections.forEach(section => section.classList.remove('active'));
+// Función para crear un centro médico
+async function CrearCentroMedico() {
+    const nuevoCentroMedico = {
+        nombre: 'Nuevo Centro Médico',
+        direccion: 'Calle Falsa 123',
+        idLocalidad: 1,
+        telefono: '123456789',
+        personaContacto: 'Juan Pérez',
+        email: 'nuevo@centromedico.com',
+        duracionSesion: 60,
+        idEstado: 1
+    };
 
-    // Mostrar la sección seleccionada por ID
-    const selectedSection = document.getElementById(idSeccion);
-    if (selectedSection) {
-        selectedSection.classList.add('active');
-    }
+    // Llamar al ViewModel para crear el centro médico
+    const centroMedicoCreado = await window.viewModelAPI.createCentroMedico(nuevoCentroMedico);
 
-    // Manejar la activación de los tabs
-    const tabs = document.querySelectorAll('.nav-link');
-    tabs.forEach(tab => tab.classList.remove('active'));
-
-    // Activar el tab que fue clickeado
-    const index = Array.from(tabs).findIndex(tab => tab.getAttribute('onclick').includes(idSeccion));
-    if (index !== -1) {
-        tabs[index].classList.add('active');
-    }
-
+    // Actualizar la tabla con el nuevo centro médico
+    ActualizarTablaConCentroMedico(centroMedicoCreado);
 }
 
-function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos){
+// Función para cargar los centros médicos
+async function CargarCentrosMedicos() {
+    const centrosMedicos = await window.viewModelAPI.getCentrosMedicos();
+    const tablaCentrosMedicos = document.getElementById('tblSesiones');
+    AgregarHeadersGrillaCentrosMedicos(tablaCentrosMedicos);
+
+    const tbody = document.createElement('tbody');
+    centrosMedicos.forEach(centroMedico => {
+        ActualizarTablaConCentroMedico(centroMedico, tbody);
+    });
+    tablaCentrosMedicos.appendChild(tbody);
+}
+
+// Función para actualizar la tabla con un centro médico
+function ActualizarTablaConCentroMedico(centroMedico, tbody = null) {
+    const tablaCentrosMedicos = document.getElementById('tblSesiones');
+    const tr = document.createElement('tr');
+    CrearTableData(centroMedico.idCentroMedico, tr);
+    CrearTableData(centroMedico.nombre, tr);
+    CrearTableData(centroMedico.direccion, tr);
+    CrearTableData(centroMedico.localidad, tr);
+    CrearTableData(centroMedico.telefono, tr);
+    CrearTableData(centroMedico.personaContacto, tr);
+    CrearTableData(centroMedico.email, tr);
+    CrearTableData(centroMedico.duracionSesion, tr);
+    CrearTableData(centroMedico.estado, tr);
+
+    if (tbody) {
+        tbody.appendChild(tr);
+    } else {
+        const tbody = tablaCentrosMedicos.querySelector('tbody') || document.createElement('tbody');
+        tbody.appendChild(tr);
+        if (!tablaCentrosMedicos.contains(tbody)) {
+            tablaCentrosMedicos.appendChild(tbody);
+        }
+    }
+}
+
+// Función para agregar los headers de la tabla
+function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos) {
     const tHead = document.createElement('thead');
     const rowHeaders = document.createElement('tr');
-    CrearTableHeader("#", rowHeaders);
-    CrearTableHeader("Nombre", rowHeaders);
-    CrearTableHeader("Direccion", rowHeaders);
-    CrearTableHeader("Teléfono", rowHeaders);
-    CrearTableHeader("Contacto", rowHeaders);
-    CrearTableHeader("Email", rowHeaders);
-    CrearTableHeader("Duración Sesión", rowHeaders);
+    listaColumnasGrillaCentrosMedicos.forEach(columna => CrearTableHeader(columna, rowHeaders));
     tHead.appendChild(rowHeaders);
-    grillaCentrosMedicos.appendChild(tHead); 
+    grillaCentrosMedicos.appendChild(tHead);
 }
 
-
+// Inicializar eventos y cargar datos
+document.getElementById('btnCrearCentroMedico').addEventListener('click', CrearCentroMedico);
+document.getElementById('btnFiltrarCentroMedico').addEventListener('click', FiltrarCentrosMedicos);
 CargarCentrosMedicos();
