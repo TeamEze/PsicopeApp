@@ -14,6 +14,16 @@ class CentroMedicoViewModel {
     }
   }
 
+  async getCentrosMedicoswithPagination(page, pageSize) {
+    try {
+        const listaCentrosMedicos = await this.centroMedicoService.getAllCentrosMedicosWithPagination(page, pageSize);
+        return listaCentrosMedicos;
+    } catch (error) {
+        console.error('Error al obtener los centros médicos:', error);
+        throw error;
+    }
+  }
+
   async getCentrosMedicosByFilters(filters) {
     try {
         const listaCentrosMedicos = await this.centroMedicoService.getCentrosMedicosByFilters(filters);

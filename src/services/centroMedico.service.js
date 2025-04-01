@@ -29,6 +29,15 @@ class CentroMedicoService {
     return centrosMedicosDTO;
   }
 
+  async getAllCentrosMedicosWithPagination(page, pageSize) {
+    const result = await this.centroMedicoRepository.getAllCentrosMedicosWithPagination(page, pageSize);
+    const centrosMedicos = result.data;
+    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
+      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+    result.data = centrosMedicosDTO;
+    return result;
+  }
+
   async getCentrosMedicosByFilters(filters) {
     
     if(Object.keys(filters).length === 0) {

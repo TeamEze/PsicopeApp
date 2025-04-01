@@ -1,5 +1,7 @@
 let listaColumnasGrillaCentrosMedicos = ["#", "Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado"];
 
+const pageSize = 10; // Tamaño de página
+
 //Función para filtrar centros médicos
 async function FiltrarCentrosMedicos() {
     let filters = {};
@@ -45,9 +47,18 @@ async function CrearCentroMedico() {
 }
 
 // Función para cargar los centros médicos
-async function CargarCentrosMedicos() {
-    const centrosMedicos = await window.viewModelAPI.getCentrosMedicos();
+async function CargarCentrosMedicos(page = 1) {
+    //const centrosMedicos = await window.viewModelAPI.getCentrosMedicos();
+    let paginationData = {page:page, pageSize:pageSize};
+    const result = await window.viewModelAPI.getCentrosMedicosWithPagination(paginationData);
+    console.log(result);
+
+    let totalPages = result.totalPages;
+    let currentPage = result.currentPage;
+
+    const centrosMedicos = result.data;
     const tablaCentrosMedicos = document.getElementById('tblSesiones');
+    //tablaCentrosMedicos.removeChild(tablaCentrosMedicos.querySelector('tbody'));
     AgregarHeadersGrillaCentrosMedicos(tablaCentrosMedicos);
 
     const tbody = document.createElement('tbody');
@@ -55,6 +66,7 @@ async function CargarCentrosMedicos() {
         ActualizarTablaConCentroMedico(centroMedico, tbody);
     });
     tablaCentrosMedicos.appendChild(tbody);
+    renderPagination(currentPage, totalPages);
 }
 
 // Función para actualizar la tabla con un centro médico
@@ -90,6 +102,46 @@ function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos) {
     tHead.appendChild(rowHeaders);
     grillaCentrosMedicos.appendChild(tHead);
 }
+
+function renderPagination(currentPage, totalPages) {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = ''; // Limpiar paginación
+  
+    let paginationHTML = `<ul class="pagination">`;
+  
+    // Botón "Anterior"
+    paginationHTML += `
+      <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="changePage(${currentPage - 1}, ${totalPages})">Anterior</a>
+      </li>
+    `;
+  
+    // Números de página
+    for (let i = 1; i <= totalPages; i++) {
+      paginationHTML += `
+        <li class="page-item ${i === currentPage ? 'active' : ''}">
+          <a class="page-link" href="#" onclick="changePage(${i}, ${totalPages})">${i}</a>
+        </li>
+      `;
+    }
+  
+    // Botón "Siguiente"
+    paginationHTML += `
+      <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="changePage(${currentPage + 1}, ${totalPages})">Siguiente</a>
+      </li>
+    `;
+  
+    paginationHTML += `</ul>`;
+    paginationContainer.innerHTML = paginationHTML;
+  }
+  
+  function changePage(page, totalPages) {
+    if (page >= 1 && page <= totalPages) {
+      CargarCentrosMedicos(page);
+    }
+  }
+
 
 // Inicializar eventos y cargar datos
 document.getElementById('btnCrearCentroMedico').addEventListener('click', CrearCentroMedico);
