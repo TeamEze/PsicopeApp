@@ -47,6 +47,6 @@ ipcMain.handle('createCentroMedico', async (event, centroMedico) => {
   return await centroMedicoViewModel.createCentroMedico(centroMedico);
 });
 
-ipcMain.handle('getCentrosMedicosByFilters', async (event, filters) => {  
-  return await centroMedicoViewModel.getCentrosMedicosByFilters(filters);
+ipcMain.handle('getCentrosMedicosByFilters', async (event, filters, paginationData) => {  
+  return await centroMedicoViewModel.getCentrosMedicosByFilters(filters, paginationData.page, paginationData.pageSize);
 });

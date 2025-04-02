@@ -38,11 +38,10 @@ class CentroMedicoService {
     return result;
   }
 
-  async getCentrosMedicosByFilters(filters) {
+  async getCentrosMedicosByFilters(filters, page, pageSize) {
     
     if(Object.keys(filters).length === 0) {
-      //console.log('No filters');
-      return await this.getAllCentrosMedicos();
+      return await this.getAllCentrosMedicosWithPagination(page, pageSize);
     }
 
     let dataToFilter = {
@@ -50,13 +49,15 @@ class CentroMedicoService {
       ...(filters.nombre && { nombre: {[Op.like]: '%' + filters.nombre +'%'} })
     };
     if(Object.keys(dataToFilter).length === 0) {
-      return await this.getAllCentrosMedicos();
+      return await this.getAllCentrosMedicosWithPagination(page, pageSize);
     } 
   
-    const centrosMedicosFiltered = await this.centroMedicoRepository.getCentrosMedicosByFilters(dataToFilter);
-    const centrosMedicosDTO = centrosMedicosFiltered.map(centroMedico =>
+    const result = await this.centroMedicoRepository.getCentrosMedicosByFilters(dataToFilter, page, pageSize);
+    const centrosMedicosFiltered = result.data;
+    const centrosMedicosFilteredDTO = centrosMedicosFiltered.map(centroMedico =>
         this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
-    return centrosMedicosDTO;
+    result.data = centrosMedicosFilteredDTO;
+    return result;
   } 
 
   async createCentroMedico(centroMedico) {

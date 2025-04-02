@@ -13,15 +13,6 @@ class CentroMedicoRepository {
   }
 
   async getAllCentrosMedicosWithPagination(page, pageSize) { 
-    /*const offset = (page - 1) * pageSize;
-    return await CentroMedico.findAll({
-      limit: pageSize,
-      offset: offset,
-      include: [
-        {model: Localidad, as: 'localidad'},
-        {model: Estado, as: 'estado'}
-      ]
-    });*/
     const offset = (page - 1) * pageSize;
     const { rows, count } = await CentroMedico.findAndCountAll({
       limit: pageSize,
@@ -49,14 +40,24 @@ class CentroMedicoRepository {
     });
   }
 
-  async getCentrosMedicosByFilters(filters) {
-    return await CentroMedico.findAll({
+  async getCentrosMedicosByFilters(filters, page, pageSize) {
+    const offset = (page - 1) * pageSize;
+    const { rows, count } = await CentroMedico.findAndCountAll({
       where: filters,
+      limit: pageSize,
+      offset: offset,
       include: [
         {model: Localidad, as: 'localidad'},
         {model: Estado, as: 'estado'}
       ]
     });
+
+    return {
+      data: rows,
+      totalRecords: count,
+      totalPages: Math.ceil(count / pageSize),
+      currentPage: page,
+    };
   } 
 
   async createCentroMedico(centroMedico) {
