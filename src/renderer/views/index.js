@@ -13,7 +13,9 @@ function CargaInicial() {
     AddTableHeaders(idGrilla, listaColumnasGrillaCentrosMedicos);
     
     // Inicializar eventos
-    document.getElementById('btnCrearCentroMedico').addEventListener('click', CrearCentroMedico);
+    document.getElementById('btnNuevoCentroMedico').addEventListener('click', () => {
+        window.viewModelAPI.openNuevoCentroMedicoModal();
+      });
     document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
 }
 
@@ -45,8 +47,8 @@ async function FiltrarCentrosMedicos(pageFilter = 1) {
 }
 
 // Función para crear un centro médico
-async function CrearCentroMedico() {
-    const nuevoCentroMedico = {
+async function CrearCentroMedico(nuevoCentroMedico) {
+    /*const nuevoCentroMedico = {
         nombre: 'Nuevo Centro Médico',//document.getElementById('nuevoCentroMedico').value; desde el formulario
         direccion: 'Calle Falsa 123',
         idLocalidad: 1,
@@ -55,7 +57,7 @@ async function CrearCentroMedico() {
         email: 'nuevo@centromedico.com',
         duracionSesion: 60,
         idEstado: 1
-    };
+    };*/
 
     // Llamar al ViewModel para crear el centro médico
     const centroMedicoCreado = await window.viewModelAPI.createCentroMedico(nuevoCentroMedico);
@@ -99,6 +101,11 @@ async function CargarCentrosMedicos(page = 1) {
     UpdateTableContent(centrosMedicosData);
     renderPagination(currentPage, totalPages, Actions.GETALL);
 }
+
+// Escuchar el evento para agregar un nuevo centro médico a la grilla
+window.viewModelAPI.onNuevoCentroMedico((event, nuevoCentroMedico) => {
+    CrearCentroMedico(nuevoCentroMedico);
+});
 
 function UpdateTableContent(centrosMedicosData) {
     const tablaCentrosMedicos = document.getElementById('tblCentrosMedicos');
