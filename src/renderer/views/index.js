@@ -83,6 +83,7 @@ function ActualizarTablaConCentroMedico(centroMedico, tbody = null) {
 }
 
 /* // Función para agregar los headers de la tabla
+
 function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos) {
     const tHead = document.createElement('thead');
     const rowHeaders = document.createElement('tr');
@@ -92,6 +93,7 @@ function AgregarHeadersGrillaCentrosMedicos(grillaCentrosMedicos) {
 } */
 
 // Inicializar eventos y cargar datos
+
 document.getElementById('btnCrearCentroMedico').addEventListener('click', CrearCentroMedico);
 document.getElementById('btnFiltrarCentroMedico').addEventListener('click', FiltrarCentrosMedicos);
 CargarCentrosMedicos();
