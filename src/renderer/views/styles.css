@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-  margin: 20px auto;
+  max-width: 100%; /* Sobrescribe el ancho máximo de Bootstrap */
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -97,10 +97,39 @@ th {
 }
   
   /* Responsive */
-  @media (max-width: 600px) {
-    .container {
-      width: 100%;
-      padding: 10px;
-    }
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+    padding: 10px;
   }
-  
+}
+
+
+.table .highlight td{
+  background-color: #d4edda !important;
+  animation: fadeIn 0.5s ease-out, fadeOut 2s 2s forwards;
+}
+
+/* Animación para la entrada */
+@keyframes fadeIn {
+  0% {
+    background-color: #d4edda; /* Asegura que el fondo sea visible */
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    background-color: #d4edda; /* Mantiene el color */
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animación para el desvanecimiento */
+@keyframes fadeOut {
+  0% {
+    background-color: #d4edda;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
