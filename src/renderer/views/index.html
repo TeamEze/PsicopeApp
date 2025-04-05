@@ -28,21 +28,29 @@
       </ul>
 
       <div class="tab-content">
-          <!-- TAB CENTROS MÉDICOS -->
-          <div class="tab-pane fade show active" id="centros">
-              <div class="form-group mt-3">
-                  <label for="name">Nombre:</label>
-                  <input type="text" id="txtName" class="form-control mb-2" placeholder="Ingrese nombre">
-                  <label for="cboLocalidad">Localidad:</label>
-                  <select id="cboLocalidad" class="form-select mb-2">
-                      <option value="">Seleccione Localidad</option>
-                      <option value="1">Morón</option>
-                      <option value="2">Castelar</option>
-                  </select>
-                  <button id="btnLimpiarCentroMedico" class="btn btn-secondary">Limpiar</button>
-                  <button id="btnNuevoCentroMedico" class="btn btn-secondary">Nuevo</button>
-                  <button id="btnFiltrarCentroMedico" class="btn btn-primary">Buscar</button>
-              </div>
+        <div class="tab-pane fade show active" id="centros">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="txtName" class="form-control" placeholder="Ingrese nombre">
+                    </div>
+                    <div class="col-auto">
+                        <label for="cboLocalidad">Localidad:</label>
+                        <select id="cboLocalidad" class="form-select">
+                            <option value="">Seleccione Localidad</option>
+                            <option value="1">Morón</option>
+                            <option value="2">Castelar</option>
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex gap-2 mt-4">
+                        <button id="btnLimpiarCentroMedico" class="btn btn-secondary">Limpiar</button>
+                        <button id="btnNuevoCentroMedico" class="btn btn-dark" id="btnCrearCentroMedico">Nuevo</button>
+                        <button id="btnFiltrarCentroMedico" class="btn btn-primary" id="btnFiltrarCentroMedico" >Buscar</button>
+                    </div>
+                </div>
+            </div>            
+            
               <table id="tblCentrosMedicos" class="table">
               </table>
                <!-- Contenedor de paginación -->
