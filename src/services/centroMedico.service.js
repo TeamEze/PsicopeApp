@@ -29,6 +29,14 @@ class CentroMedicoService {
     return centrosMedicosDTO;
   }
 
+  async getCentroMedicoById(idCentroMedico) {
+    const centroMedico = await this.centroMedicoRepository.getCentroMedicoById(idCentroMedico);
+    if (!centroMedico) {
+      return null;
+    }
+    return centroMedico;
+  }
+
   async getAllCentrosMedicosWithPagination(page, pageSize) {
     const result = await this.centroMedicoRepository.getAllCentrosMedicosWithPagination(page, pageSize);
     const centrosMedicos = result.data;
@@ -62,9 +70,15 @@ class CentroMedicoService {
 
   async createCentroMedico(centroMedico) {
     const nuevoCentroMedico = await this.centroMedicoRepository.createCentroMedico(centroMedico);
-    const centroMedicoConIncludes = await this.centroMedicoRepository.getCentroMedicoById(nuevoCentroMedico.idCentroMedico);
+    const centroMedicoConIncludes = await this.centroMedicoRepository.getCentroMedicoByIdWithIncludes(nuevoCentroMedico.idCentroMedico);
     return this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedicoConIncludes);
   } 
+
+  async updateCentroMedico(centroMedico) {
+    const updatedCentroMedico = await this.centroMedicoRepository.updateCentroMedico(centroMedico);
+    const centroMedicoConIncludes = await this.centroMedicoRepository.getCentroMedicoByIdWithIncludes(updatedCentroMedico.idCentroMedico);
+    return this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedicoConIncludes);
+  }
 }
 
 module.exports = CentroMedicoService;

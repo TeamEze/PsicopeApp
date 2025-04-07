@@ -36,15 +36,14 @@ function createNuevoCentroMedicoWindow(mainWindow) {
     });
 
     nuevoCentroMedicoWindow.setMenu(null);
-    nuevoCentroMedicoWindow.loadFile('renderer/views/NuevoCentroMedico.html');
-
+    nuevoCentroMedicoWindow.loadFile(path.join(__dirname, '/renderer/views/NuevoCentroMedico.html'));
     // Evitar que la ventana se destruya al cerrarla
     nuevoCentroMedicoWindow.on('close', (event) => {
       event.preventDefault();
       nuevoCentroMedicoWindow.hide();
     });
 
-    //nuevoCentroMedicoWindow.webContents.openDevTools();
+    nuevoCentroMedicoWindow.webContents.openDevTools();
   }
 
   return nuevoCentroMedicoWindow;
