@@ -1,16 +1,19 @@
-.container {
-    margin: 20px auto;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+html, body {
+    height: 100%;
+    margin: 0;
     padding: 20px;
-    width: 300px;
-}
+  }
+  
+  .form-container {
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 
 .form-control, .form-select {
     margin-bottom: 10px;
-}
-
-.btn {
-    width: 100%;
 }
