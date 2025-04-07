@@ -13,7 +13,8 @@ function createMainWindow() {
       nodeIntegration: false // Deshabilitar Node.js en el renderizador
     }
   });
-
+  
+  mainWindow.maximize(); // <-- Esto hace que se abra maximizada
   mainWindow.setMenu(null);
   mainWindow.loadFile(path.join(__dirname, '/renderer/views/index.html'));
 
@@ -23,7 +24,7 @@ function createMainWindow() {
 function createNuevoCentroMedicoWindow(mainWindow) {
   if (!nuevoCentroMedicoWindow) {
     nuevoCentroMedicoWindow = new BrowserWindow({
-      width: 600,
+      width: 500,
       height: 700,
       parent: mainWindow,
       modal: true,

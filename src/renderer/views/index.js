@@ -1,4 +1,4 @@
-let listaColumnasGrillaCentrosMedicos = ["#", "Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado", "Editar"];
+let listaColumnasGrillaCentrosMedicos = ["Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado", "Editar"];
 const Actions = Object.freeze({
     FILTER: "filter",
     GETALL: "getAll"
@@ -17,9 +17,14 @@ function CargaInicial() {
         window.viewModelAPI.openNuevoCentroMedicoModal();
       });
     document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
+    document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
 }
 
 
+async function LimpiarCentrosMedicos() {
+    document.getElementById('txtName').value = "";
+    document.getElementById('cboLocalidad').value = "";
+}
 
 //Función para filtrar centros médicos
 async function FiltrarCentrosMedicos(pageFilter = 1) {
@@ -133,7 +138,6 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
         tr.classList.add('highlight'); // Aplicar el efecto visual
     }
     
-    CreateTableData(centroMedico.idCentroMedico, tr);
     CreateTableData(centroMedico.nombre, tr);
     CreateTableData(centroMedico.direccion, tr);
     CreateTableData(centroMedico.localidad, tr);
