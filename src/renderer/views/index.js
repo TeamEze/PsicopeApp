@@ -1,4 +1,4 @@
-let listaColumnasGrillaCentrosMedicos = ["#", "Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado"];
+let listaColumnasGrillaCentrosMedicos = ["#", "Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado", "Editar"];
 const Actions = Object.freeze({
     FILTER: "filter",
     GETALL: "getAll"
@@ -48,17 +48,6 @@ async function FiltrarCentrosMedicos(pageFilter = 1) {
 
 // Función para crear un centro médico
 async function CrearCentroMedico(nuevoCentroMedico) {
-    /*const nuevoCentroMedico = {
-        nombre: 'Nuevo Centro Médico',//document.getElementById('nuevoCentroMedico').value; desde el formulario
-        direccion: 'Calle Falsa 123',
-        idLocalidad: 1,
-        telefono: '123456789',
-        personaContacto: 'Juan Pérez',
-        email: 'nuevo@centromedico.com',
-        duracionSesion: 60,
-        idEstado: 1
-    };*/
-
     // Llamar al ViewModel para crear el centro médico
     const centroMedicoCreado = await window.viewModelAPI.createCentroMedico(nuevoCentroMedico);
 
@@ -107,6 +96,22 @@ window.viewModelAPI.onNuevoCentroMedico((event, nuevoCentroMedico) => {
     CrearCentroMedico(nuevoCentroMedico);
 });
 
+window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
+    const row = document.querySelector(`tr[data-id='${centroMedicoEdited.idCentroMedico}']`);
+        if (row) {
+            row.classList.add('highlight'); // Aplicar el efecto visual
+            const cells = row.children;
+            cells[1].textContent = centroMedicoEdited.nombre;
+            cells[2].textContent = centroMedicoEdited.direccion;
+            cells[3].textContent = centroMedicoEdited.localidad;
+            cells[4].textContent = centroMedicoEdited.telefono;
+            cells[5].textContent = centroMedicoEdited.personaContacto;
+            cells[6].textContent = centroMedicoEdited.email;
+            cells[7].textContent = centroMedicoEdited.duracionSesion;
+            setTimeout(() => row.classList.remove('highlight'), 4000);
+        }
+})
+
 function UpdateTableContent(centrosMedicosData) {
     const tablaCentrosMedicos = document.getElementById('tblCentrosMedicos');
     if (tablaCentrosMedicos.querySelector('tbody')) {
@@ -122,6 +127,8 @@ function UpdateTableContent(centrosMedicosData) {
 // Función para actualizar la tabla con un centro médico
 function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     const tr = document.createElement('tr');
+    tr.setAttribute('data-id', centroMedico.idCentroMedico); // Agregar un identificador único
+
     if (isNew) {
         tr.classList.add('highlight'); // Aplicar el efecto visual
     }
@@ -135,6 +142,22 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     CreateTableData(centroMedico.email, tr);
     CreateTableData(centroMedico.duracionSesion, tr);
     CreateTableData(centroMedico.estado, tr);
+
+    // Agregar columna de acciones
+    const tdAcciones = document.createElement('td');
+    tdAcciones.classList.add('text-center'); // Centrar el contenido
+
+    // Crear el ícono de lápiz
+    const editIcon = document.createElement('i');
+    editIcon.className = 'fas fa-edit'; // Clase de FontAwesome para el ícono de lápiz
+    editIcon.style.cursor = 'pointer'; // Cambiar el cursor al pasar sobre el ícono
+    editIcon.title = 'Editar'; // Tooltip al pasar el mouse
+    editIcon.onclick = () => {
+        window.viewModelAPI.openEditCentroMedicoModal(centroMedico.idCentroMedico); // Enviar el ID del centro médico al modal de edición
+    };
+    tdAcciones.appendChild(editIcon);
+    tr.appendChild(tdAcciones);
+
     tbody.appendChild(tr);
     // Eliminar la clase después de unos segundos
     if (isNew) {

@@ -12,6 +12,10 @@ class CentroMedicoRepository {
     });
   }
 
+  async getCentroMedicoById(id) {
+    return await CentroMedico.findByPk(id);
+  }
+
   async getAllCentrosMedicosWithPagination(page, pageSize) { 
     const offset = (page - 1) * pageSize;
     const { rows, count } = await CentroMedico.findAndCountAll({
@@ -31,7 +35,7 @@ class CentroMedicoRepository {
     };
   }     
 
-  async getCentroMedicoById(id) {
+  async getCentroMedicoByIdWithIncludes(id) {
     return await CentroMedico.findByPk(id, {
       include: [
         {model: Localidad, as: 'localidad'},
@@ -63,6 +67,13 @@ class CentroMedicoRepository {
   async createCentroMedico(centroMedico) {
     return await CentroMedico.create(centroMedico);
   }
+
+  async updateCentroMedico(centroMedico) {
+    await CentroMedico.update(centroMedico, {
+        where: { idCentroMedico: centroMedico.idCentroMedico }
+    });
+    return centroMedico;
+}
 }
 
 module.exports = new CentroMedicoRepository();

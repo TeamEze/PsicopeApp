@@ -11,33 +11,33 @@
     <div class="container">
         <h3>Nuevo Centro Médico</h3>
         <form id="frmNuevoCentroMedico">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" required>
+            <label for="txtNombre">Nombre</label>
+            <input id="txtNombre" type="text" class="form-control" required>
     
-            <label for="direccion">Dirección</label>
-            <input type="text" class="form-control" id="direccion" required>
+            <label for="txtDireccion">Dirección</label>
+            <input id="txtDireccion" type="text" class="form-control" required>
     
-            <label for="localidad">Localidad</label>
-            <select class="form-select" id="localidad" required>
+            <label for="cboLocalidad">Localidad</label>
+            <select id="cboLocalidad" class="form-select" required>
                 <option value="1">Morón</option>
                 <option value="2">Castelar</option>
                 <option>Haedo</option>
             </select>
     
-            <label for="telefono">Teléfono Contacto</label>
-            <input type="text" class="form-control" id="telefono" required>
+            <label for="txtTelefono">Teléfono Contacto</label>
+            <input id="txtTelefono" type="text" class="form-control" required>
     
-            <label for="contacto">Persona Contacto</label>
-            <input type="text" class="form-control" id="contacto" required>
+            <label for="txtPersonaContacto">Persona Contacto</label>
+            <input id="txtPersonaContacto" type="text" class="form-control" required>
     
-            <label for="email">Mail</label>
-            <input type="email" class="form-control" id="email" required>
+            <label for="txtEmail">Mail</label>
+            <input id="txtEmail" type="email" class="form-control" required>
     
-            <label for="duracion">Duración Sesión</label>
-            <input type="number" class="form-control" id="duracion" required>
+            <label for="nbDuracion">Duración Sesión</label>
+            <input id="nbDuracion" type="number" class="form-control" required>
     
             <div class="d-flex justify-content-between mt-3">
-                <button type="button" class="btn btn-secondary">Cancelar</button>
+                <button id="btnCancelarCentroMedico" type="button" class="btn btn-secondary">Cancelar</button>
                 <button id="btnGuardarCentroMedico" type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </form>

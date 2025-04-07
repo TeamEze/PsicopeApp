@@ -14,6 +14,17 @@ class CentroMedicoViewModel {
     }
   }
 
+  async getCentroMedicoById(idCentroMedico) { 
+    try {
+        const centroMedico = await this.centroMedicoService.getCentroMedicoById(idCentroMedico);
+        return centroMedico.toJSON(); // Convertir a JSON si es necesario
+    }
+    catch (error) { 
+        console.error('Error al obtener el centro médico por ID:', error);
+        throw error;
+    }
+  }
+
   async getCentrosMedicoswithPagination(page, pageSize) {
     try {
         const listaCentrosMedicos = await this.centroMedicoService.getAllCentrosMedicosWithPagination(page, pageSize);
@@ -40,6 +51,16 @@ class CentroMedicoViewModel {
         return newCentroMedico;
     } catch (error) {
         console.error('Error al crear el centro médico:', error);
+        throw error;
+    }
+  }
+
+  async updateCentroMedico(centroMedico) {
+    try {
+        const updatedCentroMedico = await this.centroMedicoService.updateCentroMedico(centroMedico);
+        return updatedCentroMedico;
+    } catch (error) {
+        console.error('Error al actualizar el centro médico:', error);
         throw error;
     }
   }

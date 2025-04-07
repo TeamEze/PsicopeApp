@@ -9,6 +9,14 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     }
   });
 
+  // Recibir datos para editar un centro médico
+  ipcMain.on('open-editCentroMedicoModal', (event, centroMedico) => {
+    if (nuevoCentroMedicoWindow) {
+      nuevoCentroMedicoWindow.webContents.send('editar-centro-medico', centroMedico); // Enviar los datos a la ventana modal
+      nuevoCentroMedicoWindow.show(); // Mostrar la ventana modal
+    }
+  });
+
   // Ocultar la ventana modal
   ipcMain.on('hide-newCentroMedicoModal', () => {
     if (nuevoCentroMedicoWindow) {
@@ -22,9 +30,18 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     mainWindow.webContents.send('nuevo-centro-medico-added', nuevoCentroMedico);
   });
 
+  ipcMain.on('centro-medico-edited', (event, centroMedicoEdited) => {
+    // Enviar los datos a la ventana principal
+    mainWindow.webContents.send('centro-medico-edited', centroMedicoEdited);
+  });
+
   // Otros manejadores IPC (por ejemplo, para obtener datos)
   ipcMain.handle('getCentrosMedicos', async () => {
     return await centroMedicoViewModel.getCentrosMedicos();
+  });
+
+  ipcMain.handle('getCentroMedicoById', async (event, idCentroMedico) => {
+    return await centroMedicoViewModel.getCentroMedicoById(idCentroMedico);
   });
 
   ipcMain.handle('getCentrosMedicosWithPagination', async (event, paginationData) => {
@@ -33,6 +50,10 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
 
   ipcMain.handle('createCentroMedico', async (event, centroMedico) => {
     return await centroMedicoViewModel.createCentroMedico(centroMedico);
+  });
+
+  ipcMain.handle('updateCentroMedico', async (event, centroMedico) => {
+    return await centroMedicoViewModel.updateCentroMedico(centroMedico);
   });
 
   ipcMain.handle('getCentrosMedicosByFilters', async (event, filters, paginationData) => {
