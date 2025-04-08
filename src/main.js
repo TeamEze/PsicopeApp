@@ -17,7 +17,7 @@ let nuevoCentroMedicoWindow;
 app.whenReady().then(async () => {
   
   mainWindow = createMainWindow(); 
-  nuevoCentroMedicoWindow = createNuevoCentroMedicoWindow();
+  nuevoCentroMedicoWindow = createNuevoCentroMedicoWindow(mainWindow);
   setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel);
   mainWindow.webContents.openDevTools();
 

@@ -1,9 +1,22 @@
-let listaColumnasGrillaCentrosMedicos = ["Nombre", "Dirección", "Localidad", "Teléfono", "Contacto", "Email", "Duración Sesión", "Estado", "Editar"];
+const alignmentLeft = "text-start";
+const alignmentCenter = "text-center";
+const alignmentRight = "text-end";
+const pageSize = 10; // Tamaño de página
+
+let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: alignmentLeft},
+                                        {columnName:"Dirección", alineacion: alignmentLeft}, 
+                                        {columnName: "Localidad", alineacion: alignmentLeft},
+                                        {columnName: "Teléfono", alineacion: alignmentRight} , 
+                                        {columnName: "Contacto", alineacion: alignmentLeft},
+                                        {columnName: "Email", alineacion: alignmentLeft},
+                                        {columnName: "Duración Sesión", alineacion: alignmentRight},
+                                        {columnName: "Estado", alineacion: alignmentLeft},
+                                        {columnName: "Editar", alineacion: alignmentCenter} ];
 const Actions = Object.freeze({
     FILTER: "filter",
     GETALL: "getAll"
 });
-const pageSize = 10; // Tamaño de página
+
 
 function CargaInicial() {
     //Carga de Localidades
@@ -106,13 +119,13 @@ window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
         if (row) {
             row.classList.add('highlight'); // Aplicar el efecto visual
             const cells = row.children;
-            cells[1].textContent = centroMedicoEdited.nombre;
-            cells[2].textContent = centroMedicoEdited.direccion;
-            cells[3].textContent = centroMedicoEdited.localidad;
-            cells[4].textContent = centroMedicoEdited.telefono;
-            cells[5].textContent = centroMedicoEdited.personaContacto;
-            cells[6].textContent = centroMedicoEdited.email;
-            cells[7].textContent = centroMedicoEdited.duracionSesion;
+            cells[0].textContent = centroMedicoEdited.nombre;
+            cells[1].textContent = centroMedicoEdited.direccion;
+            cells[2].textContent = centroMedicoEdited.localidad;
+            cells[3].textContent = centroMedicoEdited.telefono;
+            cells[4].textContent = centroMedicoEdited.personaContacto;
+            cells[5].textContent = centroMedicoEdited.email;
+            cells[6].textContent = centroMedicoEdited.duracionSesion;
             setTimeout(() => row.classList.remove('highlight'), 4000);
         }
 })
@@ -138,14 +151,14 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
         tr.classList.add('highlight'); // Aplicar el efecto visual
     }
     
-    CreateTableData(centroMedico.nombre, tr);
-    CreateTableData(centroMedico.direccion, tr);
-    CreateTableData(centroMedico.localidad, tr);
-    CreateTableData(centroMedico.telefono, tr);
-    CreateTableData(centroMedico.personaContacto, tr);
-    CreateTableData(centroMedico.email, tr);
-    CreateTableData(centroMedico.duracionSesion, tr);
-    CreateTableData(centroMedico.estado, tr);
+    CreateTableData(centroMedico.nombre, tr, alignmentLeft);
+    CreateTableData(centroMedico.direccion, tr, alignmentLeft);
+    CreateTableData(centroMedico.localidad, tr, alignmentLeft);
+    CreateTableData(centroMedico.telefono, tr, alignmentRight);
+    CreateTableData(centroMedico.personaContacto, tr, alignmentLeft);
+    CreateTableData(centroMedico.email, tr, alignmentLeft);
+    CreateTableData(centroMedico.duracionSesion, tr, alignmentRight);
+    CreateTableData(centroMedico.estado, tr, alignmentLeft);
 
     // Agregar columna de acciones
     const tdAcciones = document.createElement('td');
