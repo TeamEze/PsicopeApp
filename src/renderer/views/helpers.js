@@ -1,13 +1,15 @@
-function CreateTableData(data, rowPadre){
+function CreateTableData(data, rowPadre, alignmentClass){
     const td = document.createElement('td');
     td.textContent = data;
+    td.classList.add(alignmentClass);
     rowPadre.appendChild(td);
 }
 
-function CreateTableHeader(nombreHeader, rowHeaders){
+function CreateTableHeader(header, rowHeaders){
     const th = document.createElement('th');
-    th.textContent = nombreHeader;
+    th.textContent = header.columnName;
     th.scope = "col"
+    th.classList.add(header.alineacion)
     rowHeaders.appendChild(th);
 }
 
