@@ -52,7 +52,12 @@ function cargarLocalidades() {
   }); 
 
 function CargaInicial() {
-    //Carga de Localidades
+    const inputNombre = document.getElementById('txtName');
+    const selectLocalidad = document.getElementById('cboLocalidad');
+    const btnBuscar = document.getElementById('btnFiltrarCentroMedico');
+
+    // Inicialmente deshabilitado
+    actualizarEstadoBotonBuscar();
 
     //Crear Cabecera de tabla
     const idGrilla = document.getElementById('tblCentrosMedicos');
@@ -65,6 +70,10 @@ function CargaInicial() {
     document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
     document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
     
+    // Escuchamos cambios en los campos
+    inputNombre.addEventListener('input', actualizarEstadoBotonBuscar);
+    selectLocalidad.addEventListener('change', actualizarEstadoBotonBuscar);
+
     const textBoxName = document.getElementById('txtName');
     textBoxName.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
@@ -105,6 +114,24 @@ async function FiltrarCentrosMedicos(pageFilter = 1) {
     
     UpdateTableContent(centrosMedicosData);
     renderPagination(currentPage, totalPages, Actions.FILTER);
+}
+
+//Deshabilitar el boton buscar
+function actualizarEstadoBotonBuscar() {
+    const inputNombre = document.getElementById('txtName');
+    const selectLocalidad = document.getElementById('cboLocalidad');
+    const btnBuscar = document.getElementById('btnFiltrarCentroMedico');
+
+    const tieneNombre = inputNombre.value.trim() !== '';
+    const tieneLocalidad = selectLocalidad.value.trim() !== '';
+
+    if (tieneNombre || tieneLocalidad) {
+        btnBuscar.disabled = false;
+        btnBuscar.classList.remove('btn-disabled');
+    } else {
+        btnBuscar.disabled = true;
+        btnBuscar.classList.add('btn-disabled');
+    }
 }
 
 // Función para crear un centro médico
