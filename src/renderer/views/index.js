@@ -11,7 +11,9 @@ let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: align
                                         {columnName: "Email", alineacion: alignmentLeft},
                                         {columnName: "Duración Sesión", alineacion: alignmentRight},
                                         {columnName: "Estado", alineacion: alignmentLeft},
-                                        {columnName: "Editar", alineacion: alignmentCenter} ];
+                                        {columnName: "Editar", alineacion: alignmentCenter} ,
+                                        {columnName: "Pacientes", alineacion: alignmentCenter} ,
+                                        {columnName: "Historial Importes", alineacion: alignmentCenter} ]
 const Actions = Object.freeze({
     FILTER: "filter",
     GETALL: "getAll"
@@ -244,6 +246,18 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     };
     tdAcciones.appendChild(editIcon);
     tr.appendChild(tdAcciones);
+    
+    // Pacientes
+    const tdPacientes = document.createElement('td');
+    tdPacientes.classList.add('text-center');
+    tdPacientes.innerHTML = `<a href="#" class="text-decoration-underline text-primary">Ver más</a>`;
+    tr.appendChild(tdPacientes);
+
+    // Historial Importes
+    const tdImportes = document.createElement('td');
+    tdImportes.classList.add('text-center');
+    tdImportes.innerHTML = `<a href="#" class="text-decoration-underline text-primary">Ver más</a>`;
+    tr.appendChild(tdImportes);
 
     tbody.appendChild(tr);
     // Eliminar la clase después de unos segundos
