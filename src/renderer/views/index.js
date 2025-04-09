@@ -20,8 +20,8 @@ const Actions = Object.freeze({
 
 function CargaInicial() {
     //Carga de Localidades
+
     //Crear Cabecera de tabla
-    
     const idGrilla = document.getElementById('tblCentrosMedicos');
     AddTableHeaders(idGrilla, listaColumnasGrillaCentrosMedicos);
     
@@ -31,12 +31,21 @@ function CargaInicial() {
       });
     document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
     document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
+    
+    const textBoxName = document.getElementById('txtName');
+    textBoxName.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            // Aquí puedes poner la acción que quieras
+            FiltrarCentrosMedicos()
+        }
+    });
 }
 
 
 async function LimpiarCentrosMedicos() {
     document.getElementById('txtName').value = "";
     document.getElementById('cboLocalidad').value = "";
+    CargarCentrosMedicos();
 }
 
 //Función para filtrar centros médicos

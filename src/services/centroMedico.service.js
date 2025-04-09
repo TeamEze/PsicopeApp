@@ -54,7 +54,7 @@ class CentroMedicoService {
 
     let dataToFilter = {
       ...(filters.idLocalidad && { idLocalidad: filters.idLocalidad }),
-      ...(filters.nombre && { nombre: {[Op.like]: '%' + filters.nombre +'%'} })
+      ...(filters.nombre && { nombre: {[Op.like]: filters.nombre +'%'} })
     };
     if(Object.keys(dataToFilter).length === 0) {
       return await this.getAllCentrosMedicosWithPagination(page, pageSize);
