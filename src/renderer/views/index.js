@@ -17,6 +17,39 @@ const Actions = Object.freeze({
     GETALL: "getAll"
 });
 
+const localidades = [
+    { id: 1, nombre: 'Morón' },
+    { id: 2, nombre: 'Castelar' },
+    { id: 3, nombre: 'Haedo' },
+    { id: 4, nombre: 'El Palomar' },
+    { id: 5, nombre: 'Ramos Mejia' },
+    { id: 6, nombre: 'San Justo' },
+    { id: 7, nombre: 'Rafael Castillo' },
+  ];
+
+function cargarLocalidades() {
+    const selectLocalidad = document.getElementById('cboLocalidad');
+  
+    // Limpiar el select (por si ya tiene elementos)
+    selectLocalidad.innerHTML = '';
+  
+    // Agregar opción por defecto
+    const optionDefault = document.createElement('option');
+    optionDefault.value = '';
+    optionDefault.textContent = 'Seleccione Localidad';
+    selectLocalidad.appendChild(optionDefault);
+  
+    // Agregar las localidades simuladas
+    localidades.forEach(loc => {
+      const option = document.createElement('option');
+      option.value = loc.id;
+      option.textContent = loc.nombre;
+      selectLocalidad.appendChild(option);
+    });
+  }
+    document.addEventListener('DOMContentLoaded', () => {
+    cargarLocalidades();
+  }); 
 
 function CargaInicial() {
     //Carga de Localidades
@@ -40,6 +73,7 @@ function CargaInicial() {
         }
     });
 }
+
 
 
 async function LimpiarCentrosMedicos() {
