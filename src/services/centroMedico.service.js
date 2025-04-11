@@ -46,6 +46,15 @@ class CentroMedicoService {
     return result;
   }
 
+  async getAllCentrosMedicosWithPagination2(page, pageSize) {
+    const result = await this.centroMedicoRepository.getAllCentrosMedicosWithPagination2(page, pageSize);
+    const centrosMedicos = result.data;
+    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
+      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+    result.data = centrosMedicosDTO;
+    return result;
+  }
+
   async getCentrosMedicosByFilters(filters, page, pageSize) {
     
     if(Object.keys(filters).length === 0) {
@@ -54,10 +63,11 @@ class CentroMedicoService {
 
     let dataToFilter = {
       ...(filters.idLocalidad && { idLocalidad: filters.idLocalidad }),
-      ...(filters.nombre && { nombre: {[Op.like]: filters.nombre +'%'} })
+      ...(filters.nombre && { nombre: {[Op.like]: filters.nombre +'%'} }),
+      ...(filters.incluirInactivos === false && { idEstado: 1 })
     };
     if(Object.keys(dataToFilter).length === 0) {
-      return await this.getAllCentrosMedicosWithPagination(page, pageSize);
+      return await this.getAllCentrosMedicosWithPagination2(page, pageSize);
     } 
   
     const result = await this.centroMedicoRepository.getCentrosMedicosByFilters(dataToFilter, page, pageSize);
@@ -79,6 +89,10 @@ class CentroMedicoService {
     const centroMedicoConIncludes = await this.centroMedicoRepository.getCentroMedicoByIdWithIncludes(updatedCentroMedico.idCentroMedico);
     return this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedicoConIncludes);
   }
+
+  async updateEstadoCentroMedico(idCentroMedico, nuevoEstado) {
+    await this.centroMedicoRepository.updateEstadoCentroMedico(idCentroMedico, nuevoEstado);
+}
 }
 
 module.exports = CentroMedicoService;

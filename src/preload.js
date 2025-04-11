@@ -16,6 +16,6 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
   sendCentroMedicoEdited: (centroMedico) => ipcRenderer.send('centro-medico-edited', centroMedico), // Enviar datos del nuevo centro médico
   onNuevoCentroMedico: (callback) => ipcRenderer.on('nuevo-centro-medico-added', callback), // Escuchar evento para actualizar la grilla
   onEditarCentroMedico: (callback) => ipcRenderer.on('editar-centro-medico', callback), // Escuchar evento para editar un centro médico
-  onCentroMedicoEdited: (callback) => ipcRenderer.on('centro-medico-edited', callback) // Escuchar evento para actualizar la grilla con el centro médico editado
-
+  onCentroMedicoEdited: (callback) => ipcRenderer.on('centro-medico-edited', callback), // Escuchar evento para actualizar la grilla con el centro médico editado
+  updateEstadoCentroMedico: (idCentroMedico, nuevoEstado) => ipcRenderer.invoke('updateEstadoCentroMedico', idCentroMedico, nuevoEstado)
 });

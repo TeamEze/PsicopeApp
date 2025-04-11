@@ -59,6 +59,11 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
   ipcMain.handle('getCentrosMedicosByFilters', async (event, filters, paginationData) => {
     return await centroMedicoViewModel.getCentrosMedicosByFilters(filters, paginationData.page, paginationData.pageSize);
   });
+
+  ipcMain.handle('updateEstadoCentroMedico', async (event, idCentroMedico, nuevoEstado) => {
+    return await centroMedicoViewModel.updateEstadoCentroMedico(idCentroMedico, nuevoEstado);
+
+});
 }
 
 module.exports = { setupIpcHandlers };

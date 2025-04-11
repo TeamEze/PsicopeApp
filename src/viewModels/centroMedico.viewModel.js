@@ -64,6 +64,15 @@ class CentroMedicoViewModel {
         throw error;
     }
   }
+
+  async updateEstadoCentroMedico(idCentroMedico, nuevoEstado) {
+    try {
+        await this.centroMedicoService.updateEstadoCentroMedico(idCentroMedico, nuevoEstado);
+    } catch (error) {
+        console.error('Error al actualizar el estado del centro médico:', error);
+        throw error;
+    }
+  }
 }
 
 module.exports = CentroMedicoViewModel;

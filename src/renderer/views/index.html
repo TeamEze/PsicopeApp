@@ -32,11 +32,11 @@
         <div class="tab-pane fade show active" id="centros">
             <div class="container shadow p-3 mb-4 bg-white rounded">
                 <div class="row align-items-center">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="name">Nombre:</label>
                         <input type="text" id="txtName" class="form-control" placeholder="Ingrese nombre">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="cboLocalidad">Localidad:</label>
                         <select id="cboLocalidad" class="form-select">
                             <option value="">Seleccione Localidad</option>
@@ -44,7 +44,13 @@
                             <option value="2">Morón</option>
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex justify-content-end mt-4">
+                    <div class="col-md-3">
+                        <input class="form-check-input" type="checkbox" value="" id="chkVerInactivos">
+                        <label class="form-check-label" for="chkVerInactivos" id="lblVerInactivos">
+                          Incluir inactivos
+                        </label>
+                      </div>
+                    <div class="col-md-3 d-flex justify-content-end mt-4">
                         <button id="btnLimpiarCentroMedico" class="btn btn-secondary mx-1">Limpiar</button>
                         <button id="btnNuevoCentroMedico" class="btn btn-primary mx-1">Nuevo</button>
                         <button id="btnFiltrarCentroMedico" class="btn btn-primary mx-1" >Buscar</button>
@@ -69,7 +75,24 @@
           </div>
       </div>
   </div>
-
+  <div class="modal fade" id="confirmarInactivacionModal" tabindex="-1" aria-labelledby="confirmarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">¿Inactivar centro médico?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          Esta acción cambiará el estado del centro médico a inactivo.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancelarInactivacion" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-danger" id="btnConfirmarInactivacion">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <script src="../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="helpers.js"></script>
   <script src="index.js"></script>
