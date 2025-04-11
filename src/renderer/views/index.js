@@ -29,6 +29,42 @@ const localidades = [
     { id: 7, nombre: 'Rafael Castillo' },
   ];
 
+
+
+function CargaInicial() {
+    
+    //Crear Cabecera de tabla
+    const idGrilla = document.getElementById('tblCentrosMedicos');
+    AddTableHeaders(idGrilla, listaColumnasGrillaCentrosMedicos);
+    InicializarEventos()
+    cargarLocalidades();
+}
+
+function InicializarEventos(){
+    const txtNombre = document.getElementById('txtName');
+    const cboLocalidad = document.getElementById('cboLocalidad');
+    // Inicializar eventos
+    document.getElementById('btnNuevoCentroMedico').addEventListener('click', () => {
+        window.viewModelAPI.openNuevoCentroMedicoModal();
+      });
+    document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
+    document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
+    
+    cboLocalidad.addEventListener('change', actualizarEstadoBotonBuscar);
+    txtNombre.addEventListener('input', actualizarEstadoBotonBuscar);
+    txtNombre.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            // Aquí puedes poner la acción que quieras
+            FiltrarCentrosMedicos()
+        }
+    });
+
+    const checkbox = document.getElementById('chkVerInactivos');
+    checkbox.addEventListener('change', function () {
+        FiltrarCentrosMedicos();
+    });
+}
+
 function cargarLocalidades() {
     const selectLocalidad = document.getElementById('cboLocalidad');
   
@@ -50,43 +86,11 @@ function cargarLocalidades() {
     });
   }
 
-function CargaInicial() {
-    const txtNombre = document.getElementById('txtName');
-    const cboLocalidad = document.getElementById('cboLocalidad');
-
-    //Crear Cabecera de tabla
-    const idGrilla = document.getElementById('tblCentrosMedicos');
-    AddTableHeaders(idGrilla, listaColumnasGrillaCentrosMedicos);
-    
-    // Inicializar eventos
-    document.getElementById('btnNuevoCentroMedico').addEventListener('click', () => {
-        window.viewModelAPI.openNuevoCentroMedicoModal();
-      });
-    document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
-    document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
-    
-    cboLocalidad.addEventListener('change', actualizarEstadoBotonBuscar);
-    txtNombre.addEventListener('input', actualizarEstadoBotonBuscar);
-    txtNombre.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            // Aquí puedes poner la acción que quieras
-            FiltrarCentrosMedicos()
-        }
-    });
-
-    const checkbox = document.getElementById('chkVerInactivos');
-    checkbox.addEventListener('change', function () {
-        FiltrarCentrosMedicos();
-    });
-
-    cargarLocalidades();
-}
-
-
 async function LimpiarCentrosMedicos() {
     document.getElementById('txtName').value = "";
     document.getElementById('cboLocalidad').value = "";
     document.getElementById('chkVerInactivos').checked = false;
+    document.getElementById('btnFiltrarCentroMedico').classList.add('btn-disabled');
     CargarCentrosMedicos();
 }
 
@@ -96,9 +100,21 @@ function IncluirInactivosChecked() {
 
 //Función para filtrar centros médicos
 async function FiltrarCentrosMedicos(pageFilter = 1) {
-    let filters = {};
     let paginationData = {page: pageFilter, pageSize:pageSize};
+    let filters = ObtenerFiltros();    
+
+    const result = await window.viewModelAPI.getPaginatedFilteredCentrosMedicos(filters, paginationData);
     
+    let totalPages = result.totalPages;
+    let currentPage = result.currentPage;
+    const centrosMedicosData = result.data;
+    
+    UpdateTableContent(centrosMedicosData);
+    renderPagination(currentPage, totalPages, Actions.FILTER);
+}
+
+function ObtenerFiltros(){
+    let filters = {};
     const nombre = document.getElementById('txtName').value;
     if (nombre) {
         filters.nombre = nombre;
@@ -111,16 +127,7 @@ async function FiltrarCentrosMedicos(pageFilter = 1) {
 
     const incluirInactivos = document.getElementById('chkVerInactivos').checked;
     filters.incluirInactivos = incluirInactivos;
-   
-
-    const result = await window.viewModelAPI.getPaginatedFilteredCentrosMedicos(filters, paginationData);
-    
-    let totalPages = result.totalPages;
-    let currentPage = result.currentPage;
-    const centrosMedicosData = result.data;
-    
-    UpdateTableContent(centrosMedicosData);
-    renderPagination(currentPage, totalPages, Actions.FILTER);
+    return filters;
 }
 
 //Deshabilitar el boton buscar
