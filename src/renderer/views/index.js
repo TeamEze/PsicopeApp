@@ -10,7 +10,7 @@ let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: align
                                         {columnName: "Contacto", alineacion: alignmentLeft},
                                         {columnName: "Email", alineacion: alignmentLeft},
                                         {columnName: "Duración Sesión", alineacion: alignmentRight},
-                                        {columnName: "Estado", alineacion: alignmentLeft},
+                                        {columnName: "Estado", alineacion: alignmentCenter},
                                         {columnName: "Editar", alineacion: alignmentCenter} ,
                                         {columnName: "Pacientes", alineacion: alignmentCenter} ,
                                         {columnName: "Historial Importes", alineacion: alignmentCenter} ]
@@ -20,8 +20,8 @@ const Actions = Object.freeze({
 });
 
 const localidades = [
-    { id: 1, nombre: 'Morón' },
-    { id: 2, nombre: 'Castelar' },
+    { id: 1, nombre: 'Castelar' },
+    { id: 2, nombre: 'Morón' },
     { id: 3, nombre: 'Haedo' },
     { id: 4, nombre: 'El Palomar' },
     { id: 5, nombre: 'Ramos Mejia' },
@@ -289,6 +289,7 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
             };
         }
         else {
+            await window.viewModelAPI.updateEstadoCentroMedico(centroMedico.idCentroMedico, nuevoEstado);
             tr.classList.toggle('table-secondary', nuevoEstado === 2); // Cambiar estilo si está inactivo
             editIcon.classList.toggle('disabled-icon', nuevoEstado === 2);
         }
