@@ -38,23 +38,6 @@ class CentroMedicoRepository {
   }
 
   /**
-   * Obtiene el número total de centros médicos activos.
-   * Un centro médico se considera activo si su `idEstado` es igual a 1.
-   *
-   * @async
-   * @function
-   * @returns {Promise<number>} El número total de centros médicos activos.
-   */
-  async getTotalActiveCentrosMedicos() {
-    const totalCount = await CentroMedico.count({
-      where: {
-        idEstado: 1
-      }
-    });
-    return totalCount;
-  }
-
-  /**
    * Retrieves a list of medical centers (centros médicos) by their IDs.
    * @param {Array<number>} idList - An array of IDs representing the medical centers to retrieve.
    * @returns {Promise<Array<Object>>} A promise that resolves to an array of medical center objects,
@@ -72,33 +55,6 @@ class CentroMedicoRepository {
       order: [['nombre', 'ASC']]
     });
     return centros;
-  }
-  
-  
-  /**
-   * Retrieves a paginated list of IDs for active medical centers (centros médicos).
-   * A medical center is considered active if its `idEstado` is equal to 1.
-   *
-   * @async
-   * @function
-   * @param {number} offset - The starting index for pagination.
-   * @param {number} pageSize - The number of records to retrieve per page.
-   * @returns {Promise<Array<number>>} A promise that resolves to an array of IDs for active medical centers.
-   */
-  async getPaginatedActiveCentroMedicoIds(offset, pageSize) {
-    const idResult = await CentroMedico.findAll({
-      attributes: ['idCentroMedico'],
-      where: {
-        idEstado: 1
-      },
-      order: [['nombre', 'ASC']],
-      limit: pageSize,
-      offset: offset,
-      raw: true
-    });
-
-    const ids = idResult.map(row => row.idCentroMedico);
-    return ids;
   }
 
   /**
