@@ -3,138 +3,138 @@ const Estado = require('../models/estado.model.js');
 const Localidad = require('../models/localidad.model.js');
 
 class CentroMedicoRepository {
-  async getAllCentrosMedicos() {
-    return await CentroMedico.findAll({
-      include: [
-        {model: Localidad, as: 'localidad'},
-        {model: Estado, as: 'estado'}
-      ]
-    });
-  }
 
   async getCentroMedicoById(id) {
     return await CentroMedico.findByPk(id);
   }
 
-  async getAllCentrosMedicosWithPagination2(page, pageSize) { 
-    
-    const offset = (page - 1) * pageSize;
-
-    // Paso 1: obtener solo los IDs paginados
-    const idResult = await CentroMedico.findAll({
-      attributes: ['idCentroMedico'],
-      order: [['nombre', 'ASC']],
-      limit: pageSize,
-      offset: offset,
-      raw: true
-    });
-
-    const ids = idResult.map(row => row.idCentroMedico);
-
-    if (ids.length === 0) {
-      return {
-        data: [],
-        totalRecords: 0,
-        totalPages: 0,
-        currentPage: page
-      };
-    }
-
-    // Paso 2: obtener los datos completos usando los IDs
-    const centros = await CentroMedico.findAll({
-      where: {
-        idCentroMedico: ids
-      },
-      include: [
-        { model: Localidad, as: 'localidad', required: true },
-        { model: Estado, as: 'estado', required: true }
-      ],
-      order: [['nombre', 'ASC']] // mantenemos el orden
-    });
-
-    // Total de registros para paginación
-    const totalCount = await CentroMedico.count();
-
-    return {
-      data: centros,
-      totalRecords: totalCount,
-      totalPages: Math.ceil(totalCount / pageSize),
-      currentPage: page
+  /**
+   * Obtiene el número total de registros de centros médicos que cumplen con los filtros especificados.
+   *
+   * @async
+   * @function getTotalFilteredCentrosMedicos
+   * @param {Object} filters - Un objeto que contiene los filtros a aplicar en la consulta.
+   * @returns {Promise<number>} El número total de centros médicos que coinciden con los filtros.
+   */
+  async getTotalFilteredCentrosMedicos(filters) {
+    const whereClause = {
+      ...filters
     };
-  }   
-
-  async getAllCentrosMedicosWithPagination(page, pageSize) { 
-    
-    const offset = (page - 1) * pageSize;
-
-    // Paso 1: obtener solo los IDs paginados
-    const idResult = await CentroMedico.findAll({
-      attributes: ['idCentroMedico'],
-      where: {
-        idEstado: 1
-      },
-      order: [['nombre', 'ASC']],
-      limit: pageSize,
-      offset: offset,
-      raw: true
+    const totalCount = await CentroMedico.count({
+      where: whereClause
     });
+    return totalCount;
+  }       
 
-    const ids = idResult.map(row => row.idCentroMedico);
+  /**
+   * Obtiene el número total de registros en la tabla de centros médicos.
+   * 
+   * @async
+   * @function
+   * @returns {Promise<number>} El número total de centros médicos.
+   */
+  async getTotalCentrosMedicos(){
+    return await CentroMedico.count();
+  }
 
-    if (ids.length === 0) {
-      return {
-        data: [],
-        totalRecords: 0,
-        totalPages: 0,
-        currentPage: page
-      };
-    }
-
-    // Paso 2: obtener los datos completos usando los IDs
-    const centros = await CentroMedico.findAll({
-      where: {
-        idCentroMedico: ids
-      },
-      include: [
-        { model: Localidad, as: 'localidad', required: true },
-        { model: Estado, as: 'estado', required: true }
-      ],
-      order: [['nombre', 'ASC']] // mantenemos el orden
-    });
-
-    // Total de registros para paginación
+  /**
+   * Obtiene el número total de centros médicos activos.
+   * Un centro médico se considera activo si su `idEstado` es igual a 1.
+   *
+   * @async
+   * @function
+   * @returns {Promise<number>} El número total de centros médicos activos.
+   */
+  async getTotalActiveCentrosMedicos() {
     const totalCount = await CentroMedico.count({
       where: {
         idEstado: 1
       }
     });
-
-    return {
-      data: centros,
-      totalRecords: totalCount,
-      totalPages: Math.ceil(totalCount / pageSize),
-      currentPage: page
-    };
-  }     
-
-  async getCentroMedicoByIdWithIncludes(id) {
-    return await CentroMedico.findByPk(id, {
-      include: [
-        {model: Localidad, as: 'localidad', required: true},
-        {model: Estado, as: 'estado', required: true}
-      ]
-    });
+    return totalCount;
   }
 
-  async getCentrosMedicosByFilters(filters, page, pageSize) {
-    const offset = (page - 1) * pageSize;
+  /**
+   * Retrieves a list of medical centers (centros médicos) by their IDs.
+   * @param {Array<number>} idList - An array of IDs representing the medical centers to retrieve.
+   * @returns {Promise<Array<Object>>} A promise that resolves to an array of medical center objects,
+   * including their associated localidad and estado, ordered by their name in ascending order.
+   */
+  async getCentrosMedicosByIds(idList) {
+    const centros = await CentroMedico.findAll({
+      where: {
+        idCentroMedico: idList
+      },
+      include: [
+        { model: Localidad, as: 'localidad', required: true },
+        { model: Estado, as: 'estado', required: true }
+      ],
+      order: [['nombre', 'ASC']]
+    });
+    return centros;
+  }
+  
+  
+  /**
+   * Retrieves a paginated list of IDs for active medical centers (centros médicos).
+   * A medical center is considered active if its `idEstado` is equal to 1.
+   *
+   * @async
+   * @function
+   * @param {number} offset - The starting index for pagination.
+   * @param {number} pageSize - The number of records to retrieve per page.
+   * @returns {Promise<Array<number>>} A promise that resolves to an array of IDs for active medical centers.
+   */
+  async getPaginatedActiveCentroMedicoIds(offset, pageSize) {
+    const idResult = await CentroMedico.findAll({
+      attributes: ['idCentroMedico'],
+      where: {
+        idEstado: 1
+      },
+      order: [['nombre', 'ASC']],
+      limit: pageSize,
+      offset: offset,
+      raw: true
+    });
 
-    // Armamos los filtros dinámicos
+    const ids = idResult.map(row => row.idCentroMedico);
+    return ids;
+  }
+
+  /**
+   * Retrieves a paginated list of Centro Medico IDs from the database.
+   *
+   * @async
+   * @function getPaginatedCentroMedicoIds
+   * @param {number} offset - The starting index for the pagination.
+   * @param {number} pageSize - The number of records to retrieve per page.
+   * @returns {Promise<number[]>} A promise that resolves to an array of Centro Medico IDs.
+   */
+  async getPaginatedCentroMedicoIds(offset, pageSize) {
+    const idResult = await CentroMedico.findAll({
+      attributes: ['idCentroMedico'],
+      order: [['nombre', 'ASC']],
+      limit: pageSize,
+      offset: offset,
+      raw: true
+    });
+
+    const ids = idResult.map(row => row.idCentroMedico);
+    return ids;
+  }
+
+  /**
+   * Retrieves a paginated list of CentroMedico IDs based on the provided filters.
+   *
+   * @param {number} offset - The starting index for pagination.
+   * @param {number} pageSize - The number of records to retrieve per page.
+   * @param {Object} filters - An object containing the filtering criteria.
+   * @returns {Promise<number[]>} A promise that resolves to an array of CentroMedico IDs.
+   */
+  async getPaginatedFilteredCentroMedicoIds(offset, pageSize, filters) {
     const whereClause = {
       ...filters
     };
-
-    // Paso 1: Traer solo los IDs paginados con filtros aplicados
     const idResult = await CentroMedico.findAll({
       attributes: ['idCentroMedico'],
       where: whereClause,
@@ -143,41 +143,17 @@ class CentroMedicoRepository {
       offset: offset,
       raw: true
     });
-
     const ids = idResult.map(row => row.idCentroMedico);
+    return ids;
+  }
 
-    if (ids.length === 0) {
-      return {
-        data: [],
-        totalRecords: 0,
-        totalPages: 0,
-        currentPage: page
-      };
-    }
-
-    // Paso 2: Obtener los datos completos con joins
-    const centros = await CentroMedico.findAll({
-      where: {
-        idCentroMedico: ids
-      },
+  async getCentroMedicoByIdWithIncludes(id) {
+    return await CentroMedico.findByPk(id, {
       include: [
-        { model: Localidad, as: 'localidad', required: true },
-        { model: Estado, as: 'estado', required: true }
-      ],
-      order: [['nombre', 'ASC']] // mantener el orden para coherencia
+        {model: Localidad, as: 'localidad', required: true},
+        {model: Estado, as: 'estado', required: true}
+      ]
     });
-
-    // Total con filtros
-    const totalCount = await CentroMedico.count({
-      where: whereClause
-    });
-
-    return {
-      data: centros,
-      totalRecords: totalCount,
-      totalPages: Math.ceil(totalCount / pageSize),
-      currentPage: page
-    };
   }
 
   async createCentroMedico(centroMedico) {

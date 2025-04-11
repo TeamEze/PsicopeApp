@@ -37,45 +37,104 @@ class CentroMedicoService {
     return centroMedico;
   }
 
-  async getAllCentrosMedicosWithPagination(page, pageSize) {
-    const result = await this.centroMedicoRepository.getAllCentrosMedicosWithPagination(page, pageSize);
-    const centrosMedicos = result.data;
-    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
-      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
-    result.data = centrosMedicosDTO;
-    return result;
-  }
-
-  async getAllCentrosMedicosWithPagination2(page, pageSize) {
-    const result = await this.centroMedicoRepository.getAllCentrosMedicosWithPagination2(page, pageSize);
-    const centrosMedicos = result.data;
-    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
-      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
-    result.data = centrosMedicosDTO;
-    return result;
-  }
-
-  async getCentrosMedicosByFilters(filters, page, pageSize) {
-    
-    if(Object.keys(filters).length === 0) {
-      return await this.getAllCentrosMedicosWithPagination(page, pageSize);
+  /**
+   * Retrieves a paginated list of active medical centers (centros médicos).
+   *
+   * @async
+   * @function
+   * @param {number} page - The current page number (1-based index).
+   * @param {number} pageSize - The number of records per page.
+   * @returns {Promise<Object>} An object containing the paginated data:
+   * - `data` {Array<Object>} - The list of active medical centers in DTO format.
+   * - `totalRecords` {number} - The total number of active medical centers.
+   * - `totalPages` {number} - The total number of pages.
+   * - `currentPage` {number} - The current page number.
+   * 
+   * @description
+   * This function fetches a paginated list of active medical centers from the repository.
+   * It calculates the offset based on the page and pageSize, retrieves the corresponding
+   * IDs, and fetches the medical center details. It also calculates the total number of
+   * active medical centers and maps the data to DTO format before returning the result.
+   */
+  async getPaginatedActiveCentrosMedicos(page, pageSize) {
+    const offset = (page - 1) * pageSize;
+    const ids = await this.centroMedicoRepository.getPaginatedActiveCentroMedicoIds(offset, pageSize);
+    if (ids.length === 0) {
+      return {
+        data: [],
+        totalRecords: 0,
+        totalPages: 0,
+        currentPage: page
+      };
     }
+    const centrosMedicos = await this.centroMedicoRepository.getCentrosMedicosByIds(ids);
+    const totalCount = await this.centroMedicoRepository.getTotalActiveCentrosMedicos();
+    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
+      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+    return {
+      data: centrosMedicosDTO,
+      totalRecords: totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page
+    };
+  }
 
+  async getPaginatedCentrosMedicos(page, pageSize) {
+    const offset = (page - 1) * pageSize;
+    const ids = await this.centroMedicoRepository.getPaginatedCentroMedicoIds(offset, pageSize);
+    if (ids.length === 0) {
+      return {
+        data: [],
+        totalRecords: 0,
+        totalPages: 0,
+        currentPage: page
+      };
+    }
+    const centrosMedicos = await this.centroMedicoRepository.getCentrosMedicosByIds(ids);
+    const totalCount = await this.centroMedicoRepository.getTotalCentrosMedicos();
+    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
+      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+    return {
+      data: centrosMedicosDTO,
+      totalRecords: totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page
+    };
+  }
+
+  async getPaginatedFilteredCentrosMedicos(filters, page, pageSize) {
+    
     let dataToFilter = {
       ...(filters.idLocalidad && { idLocalidad: filters.idLocalidad }),
       ...(filters.nombre && { nombre: {[Op.like]: filters.nombre +'%'} }),
       ...(filters.incluirInactivos === false && { idEstado: 1 })
     };
+
     if(Object.keys(dataToFilter).length === 0) {
-      return await this.getAllCentrosMedicosWithPagination2(page, pageSize);
+      // Fetch all paginated medical centers without filters
+      return await this.getPaginatedCentrosMedicos(page, pageSize);
     } 
-  
-    const result = await this.centroMedicoRepository.getCentrosMedicosByFilters(dataToFilter, page, pageSize);
-    const centrosMedicosFiltered = result.data;
-    const centrosMedicosFilteredDTO = centrosMedicosFiltered.map(centroMedico =>
-        this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
-    result.data = centrosMedicosFilteredDTO;
-    return result;
+
+    const offset = (page - 1) * pageSize;
+    const ids = await this.centroMedicoRepository.getPaginatedFilteredCentroMedicoIds(offset, pageSize, dataToFilter);
+    if (ids.length === 0) {
+      return {
+        data: [],
+        totalRecords: 0,
+        totalPages: 0,
+        currentPage: page
+      };
+    }
+    const centrosMedicos = await this.centroMedicoRepository.getCentrosMedicosByIds(ids);
+    const totalCount = await this.centroMedicoRepository.getTotalFilteredCentrosMedicos(dataToFilter);
+    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
+      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
+    return {
+      data: centrosMedicosDTO,
+      totalRecords: totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page
+    };
   } 
 
   async createCentroMedico(centroMedico) {

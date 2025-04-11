@@ -44,8 +44,8 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     return await centroMedicoViewModel.getCentroMedicoById(idCentroMedico);
   });
 
-  ipcMain.handle('getCentrosMedicosWithPagination', async (event, paginationData) => {
-    return await centroMedicoViewModel.getCentrosMedicoswithPagination(paginationData.page, paginationData.pageSize);
+  ipcMain.handle('getPaginatedActiveCentrosMedicos', async (event, paginationData) => {
+    return await centroMedicoViewModel.getPaginatedActiveCentrosMedicos(paginationData.page, paginationData.pageSize);
   });
 
   ipcMain.handle('createCentroMedico', async (event, centroMedico) => {
@@ -56,8 +56,8 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     return await centroMedicoViewModel.updateCentroMedico(centroMedico);
   });
 
-  ipcMain.handle('getCentrosMedicosByFilters', async (event, filters, paginationData) => {
-    return await centroMedicoViewModel.getCentrosMedicosByFilters(filters, paginationData.page, paginationData.pageSize);
+  ipcMain.handle('getPaginatedFilteredCentrosMedicos', async (event, filters, paginationData) => {
+    return await centroMedicoViewModel.getPaginatedFilteredCentrosMedicos(filters, paginationData.page, paginationData.pageSize);
   });
 
   ipcMain.handle('updateEstadoCentroMedico', async (event, idCentroMedico, nuevoEstado) => {

@@ -25,9 +25,9 @@ class CentroMedicoViewModel {
     }
   }
 
-  async getCentrosMedicoswithPagination(page, pageSize) {
+  async getPaginatedActiveCentrosMedicos(page, pageSize) {
     try {
-        const listaCentrosMedicos = await this.centroMedicoService.getAllCentrosMedicosWithPagination(page, pageSize);
+        const listaCentrosMedicos = await this.centroMedicoService.getPaginatedActiveCentrosMedicos(page, pageSize);
         return listaCentrosMedicos;
     } catch (error) {
         console.error('Error al obtener los centros médicos:', error);
@@ -35,9 +35,9 @@ class CentroMedicoViewModel {
     }
   }
 
-  async getCentrosMedicosByFilters(filters, page, pageSize) {
+  async getPaginatedFilteredCentrosMedicos(filters, page, pageSize) {
     try {
-        const listaCentrosMedicos = await this.centroMedicoService.getCentrosMedicosByFilters(filters, page, pageSize);
+        const listaCentrosMedicos = await this.centroMedicoService.getPaginatedFilteredCentrosMedicos(filters, page, pageSize);
         return listaCentrosMedicos;
     } catch (error) {
         console.error('Error al obtener los centros médicos:', error);

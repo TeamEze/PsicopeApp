@@ -4,10 +4,10 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('viewModelAPI', {
   getCentrosMedicos: () => ipcRenderer.invoke('getCentrosMedicos'),
   getCentroMedicoById: (idCentroMedico) => ipcRenderer.invoke('getCentroMedicoById', idCentroMedico),
-  getCentrosMedicosWithPagination: (paginationData) => ipcRenderer.invoke('getCentrosMedicosWithPagination', paginationData),
+  getPaginatedActiveCentrosMedicos: (paginationData) => ipcRenderer.invoke('getPaginatedActiveCentrosMedicos', paginationData),
   createCentroMedico: (centroMedico) => ipcRenderer.invoke('createCentroMedico', centroMedico),
   updateCentroMedico: (centroMedico) => ipcRenderer.invoke('updateCentroMedico', centroMedico),
-  getCentrosMedicosByFilters: (filters, paginationData) => ipcRenderer.invoke('getCentrosMedicosByFilters', filters, paginationData),
+  getPaginatedFilteredCentrosMedicos: (filters, paginationData) => ipcRenderer.invoke('getPaginatedFilteredCentrosMedicos', filters, paginationData),
   openNuevoCentroMedicoModal: () => ipcRenderer.send('open-newCentroMedicoModal'),
   openEditCentroMedicoModal: (centroMedico) => ipcRenderer.send('open-editCentroMedicoModal', centroMedico), // Enviar datos para editar
   hideNuevoCentroMedicoModal: () => ipcRenderer.send('hide-newCentroMedicoModal'),
