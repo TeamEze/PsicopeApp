@@ -95,7 +95,14 @@ th {
   flex: 1; /* Hace que los elementos ocupen el mismo espacio */
   min-width: 200px; /* Ancho mínimo */
 }
-  
+
+.btn-disabled {
+  background-color: #ccc !important;
+  border-color: #ccc !important;
+  color: #666 !important;
+  pointer-events: none;
+}
+
   /* Responsive */
 @media (max-width: 600px) {
   .container {

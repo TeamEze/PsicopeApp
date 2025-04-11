@@ -11,15 +11,55 @@ let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: align
                                         {columnName: "Email", alineacion: alignmentLeft},
                                         {columnName: "Duración Sesión", alineacion: alignmentRight},
                                         {columnName: "Estado", alineacion: alignmentLeft},
-                                        {columnName: "Editar", alineacion: alignmentCenter} ];
+                                        {columnName: "Editar", alineacion: alignmentCenter} ,
+                                        {columnName: "Pacientes", alineacion: alignmentCenter} ,
+                                        {columnName: "Historial Importes", alineacion: alignmentCenter} ]
 const Actions = Object.freeze({
     FILTER: "filter",
     GETALL: "getAll"
 });
 
+const localidades = [
+    { id: 1, nombre: 'Morón' },
+    { id: 2, nombre: 'Castelar' },
+    { id: 3, nombre: 'Haedo' },
+    { id: 4, nombre: 'El Palomar' },
+    { id: 5, nombre: 'Ramos Mejia' },
+    { id: 6, nombre: 'San Justo' },
+    { id: 7, nombre: 'Rafael Castillo' },
+  ];
+
+function cargarLocalidades() {
+    const selectLocalidad = document.getElementById('cboLocalidad');
+  
+    // Limpiar el select (por si ya tiene elementos)
+    selectLocalidad.innerHTML = '';
+  
+    // Agregar opción por defecto
+    const optionDefault = document.createElement('option');
+    optionDefault.value = '';
+    optionDefault.textContent = 'Seleccione Localidad';
+    selectLocalidad.appendChild(optionDefault);
+  
+    // Agregar las localidades simuladas
+    localidades.forEach(loc => {
+      const option = document.createElement('option');
+      option.value = loc.id;
+      option.textContent = loc.nombre;
+      selectLocalidad.appendChild(option);
+    });
+  }
+    document.addEventListener('DOMContentLoaded', () => {
+    cargarLocalidades();
+  }); 
 
 function CargaInicial() {
-    //Carga de Localidades
+    const inputNombre = document.getElementById('txtName');
+    const selectLocalidad = document.getElementById('cboLocalidad');
+    const btnBuscar = document.getElementById('btnFiltrarCentroMedico');
+
+    // Inicialmente deshabilitado
+    actualizarEstadoBotonBuscar();
 
     //Crear Cabecera de tabla
     const idGrilla = document.getElementById('tblCentrosMedicos');
@@ -32,6 +72,10 @@ function CargaInicial() {
     document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
     document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
     
+    // Escuchamos cambios en los campos
+    inputNombre.addEventListener('input', actualizarEstadoBotonBuscar);
+    selectLocalidad.addEventListener('change', actualizarEstadoBotonBuscar);
+
     const textBoxName = document.getElementById('txtName');
     textBoxName.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
@@ -40,6 +84,7 @@ function CargaInicial() {
         }
     });
 }
+
 
 
 async function LimpiarCentrosMedicos() {
@@ -71,6 +116,24 @@ async function FiltrarCentrosMedicos(pageFilter = 1) {
     
     UpdateTableContent(centrosMedicosData);
     renderPagination(currentPage, totalPages, Actions.FILTER);
+}
+
+//Deshabilitar el boton buscar
+function actualizarEstadoBotonBuscar() {
+    const inputNombre = document.getElementById('txtName');
+    const selectLocalidad = document.getElementById('cboLocalidad');
+    const btnBuscar = document.getElementById('btnFiltrarCentroMedico');
+
+    const tieneNombre = inputNombre.value.trim() !== '';
+    const tieneLocalidad = selectLocalidad.value.trim() !== '';
+
+    if (tieneNombre || tieneLocalidad) {
+        btnBuscar.disabled = false;
+        btnBuscar.classList.remove('btn-disabled');
+    } else {
+        btnBuscar.disabled = true;
+        btnBuscar.classList.add('btn-disabled');
+    }
 }
 
 // Función para crear un centro médico
@@ -183,6 +246,18 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     };
     tdAcciones.appendChild(editIcon);
     tr.appendChild(tdAcciones);
+    
+    // Pacientes
+    const tdPacientes = document.createElement('td');
+    tdPacientes.classList.add('text-center');
+    tdPacientes.innerHTML = `<a href="#" class="text-decoration-underline text-primary">Ver más</a>`;
+    tr.appendChild(tdPacientes);
+
+    // Historial Importes
+    const tdImportes = document.createElement('td');
+    tdImportes.classList.add('text-center');
+    tdImportes.innerHTML = `<a href="#" class="text-decoration-underline text-primary">Ver más</a>`;
+    tr.appendChild(tdImportes);
 
     tbody.appendChild(tr);
     // Eliminar la clase después de unos segundos
