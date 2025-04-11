@@ -57,8 +57,11 @@ class CentroMedicoService {
    * active medical centers and maps the data to DTO format before returning the result.
    */
   async getPaginatedActiveCentrosMedicos(page, pageSize) {
+    const dataToFilter = {
+      idEstado: 1 // Activos
+    };
     const offset = (page - 1) * pageSize;
-    const ids = await this.centroMedicoRepository.getPaginatedActiveCentroMedicoIds(offset, pageSize);
+    const ids = await this.centroMedicoRepository.getPaginatedFilteredCentroMedicoIds(offset, pageSize, dataToFilter);
     if (ids.length === 0) {
       return {
         data: [],
@@ -68,7 +71,7 @@ class CentroMedicoService {
       };
     }
     const centrosMedicos = await this.centroMedicoRepository.getCentrosMedicosByIds(ids);
-    const totalCount = await this.centroMedicoRepository.getTotalActiveCentrosMedicos();
+    const totalCount = await this.centroMedicoRepository.getTotalFilteredCentrosMedicos(dataToFilter);
     const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
       this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
     return {
