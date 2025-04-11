@@ -10,7 +10,7 @@ let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: align
                                         {columnName: "Contacto", alineacion: alignmentLeft},
                                         {columnName: "Email", alineacion: alignmentLeft},
                                         {columnName: "Duración Sesión", alineacion: alignmentRight},
-                                        {columnName: "Estado", alineacion: alignmentLeft},
+                                        {columnName: "Estado", alineacion: alignmentCenter},
                                         {columnName: "Editar", alineacion: alignmentCenter} ,
                                         {columnName: "Pacientes", alineacion: alignmentCenter} ,
                                         {columnName: "Historial Importes", alineacion: alignmentCenter} ]
@@ -20,8 +20,8 @@ const Actions = Object.freeze({
 });
 
 const localidades = [
-    { id: 1, nombre: 'Morón' },
-    { id: 2, nombre: 'Castelar' },
+    { id: 1, nombre: 'Castelar' },
+    { id: 2, nombre: 'Morón' },
     { id: 3, nombre: 'Haedo' },
     { id: 4, nombre: 'El Palomar' },
     { id: 5, nombre: 'Ramos Mejia' },
@@ -49,17 +49,10 @@ function cargarLocalidades() {
       selectLocalidad.appendChild(option);
     });
   }
-    document.addEventListener('DOMContentLoaded', () => {
-    cargarLocalidades();
-  }); 
 
 function CargaInicial() {
-    const inputNombre = document.getElementById('txtName');
-    const selectLocalidad = document.getElementById('cboLocalidad');
-    const btnBuscar = document.getElementById('btnFiltrarCentroMedico');
-
-    // Inicialmente deshabilitado
-    actualizarEstadoBotonBuscar();
+    const txtNombre = document.getElementById('txtName');
+    const cboLocalidad = document.getElementById('cboLocalidad');
 
     //Crear Cabecera de tabla
     const idGrilla = document.getElementById('tblCentrosMedicos');
@@ -72,25 +65,33 @@ function CargaInicial() {
     document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
     document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
     
-    // Escuchamos cambios en los campos
-    inputNombre.addEventListener('input', actualizarEstadoBotonBuscar);
-    selectLocalidad.addEventListener('change', actualizarEstadoBotonBuscar);
-
-    const textBoxName = document.getElementById('txtName');
-    textBoxName.addEventListener('keydown', function(event) {
+    cboLocalidad.addEventListener('change', actualizarEstadoBotonBuscar);
+    txtNombre.addEventListener('input', actualizarEstadoBotonBuscar);
+    txtNombre.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             // Aquí puedes poner la acción que quieras
             FiltrarCentrosMedicos()
         }
     });
-}
 
+    const checkbox = document.getElementById('chkVerInactivos');
+    checkbox.addEventListener('change', function () {
+        FiltrarCentrosMedicos();
+    });
+
+    cargarLocalidades();
+}
 
 
 async function LimpiarCentrosMedicos() {
     document.getElementById('txtName').value = "";
     document.getElementById('cboLocalidad').value = "";
+    document.getElementById('chkVerInactivos').checked = false;
     CargarCentrosMedicos();
+}
+
+function IncluirInactivosChecked() {
+    return document.getElementById('chkVerInactivos').checked;
 }
 
 //Función para filtrar centros médicos
@@ -108,7 +109,11 @@ async function FiltrarCentrosMedicos(pageFilter = 1) {
         filters.idLocalidad = idLocalidad;
     }
 
-    const result = await window.viewModelAPI.getCentrosMedicosByFilters(filters, paginationData);
+    const incluirInactivos = document.getElementById('chkVerInactivos').checked;
+    filters.incluirInactivos = incluirInactivos;
+   
+
+    const result = await window.viewModelAPI.getPaginatedFilteredCentrosMedicos(filters, paginationData);
     
     let totalPages = result.totalPages;
     let currentPage = result.currentPage;
@@ -159,7 +164,7 @@ async function CrearCentroMedico(nuevoCentroMedico) {
     } else {
         // Si no pertenece a la página actual, recargar la paginación
         const paginationData = { page: currentPage, pageSize: pageSize };
-        const result = await window.viewModelAPI.getCentrosMedicosWithPagination(paginationData);
+        const result = await window.viewModelAPI.getPaginatedActiveCentrosMedicos(paginationData);
         const totalPages = result.totalPages;
         renderPagination(currentPage, totalPages, Actions.GETALL);
     }
@@ -170,7 +175,7 @@ async function CrearCentroMedico(nuevoCentroMedico) {
 async function CargarCentrosMedicos(page = 1) {
     //const centrosMedicos = await window.viewModelAPI.getCentrosMedicos();
     let paginationData = {page:page, pageSize:pageSize};
-    const result = await window.viewModelAPI.getCentrosMedicosWithPagination(paginationData);
+    const result = await window.viewModelAPI.getPaginatedActiveCentrosMedicos(paginationData);
     //console.log(result);
 
     let totalPages = result.totalPages;
@@ -230,7 +235,60 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     CreateTableData(centroMedico.personaContacto, tr, alignmentLeft);
     CreateTableData(centroMedico.email, tr, alignmentLeft);
     CreateTableData(centroMedico.duracionSesion, tr, alignmentRight);
-    CreateTableData(centroMedico.estado, tr, alignmentLeft);
+    //CreateTableData(centroMedico.estado, tr, alignmentLeft);
+    // Agregar columna de switch (activar/inactivar)
+    const tdSwitch = document.createElement('td');
+    tdSwitch.classList.add('text-center');
+
+    const divSwitch = document.createElement('div');
+    divSwitch.classList.add('form-check', 'form-switch', 'd-flex', 'justify-content-center', 'align-items-center');
+    
+    const switchInput = document.createElement('input');
+    switchInput.type = 'checkbox';
+    switchInput.checked = centroMedico.estado === 'Activo'; // Activo si `idEstado` es 1
+    switchInput.title = centroMedico.estado === 'Activo' ? 'Inactivar' : 'Activar';
+    tr.classList.toggle('table-secondary', centroMedico.estado !== 'Activo'); // Cambiar estilo si está inactivo
+    switchInput.classList.add('form-check-input');
+    switchInput.addEventListener('change', async () => {
+        const nuevoEstado = switchInput.checked ? 1 : 2; // 1 = Activo, 2 = Inactivo
+        if  (nuevoEstado === 2) {
+            // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById('confirmarInactivacionModal'), {
+                backdrop: 'static',
+                keyboard: false
+              });
+            modal.show();
+
+            // Si se confirma, ejecutar acción
+            document.getElementById('btnConfirmarInactivacion').onclick = async () => {
+                modal.hide();
+                await window.viewModelAPI.updateEstadoCentroMedico(centroMedico.idCentroMedico, nuevoEstado);
+                switchInput.title = nuevoEstado === 1 ? 'Inactivar' : 'Activar';    
+
+                if (!IncluirInactivosChecked()) {
+                    tr.classList.add('fade-out-row'); // Agrega la clase para el efecto
+                    setTimeout(() => tr.remove(), 800); 
+                }
+                else{
+                    tr.classList.toggle('table-secondary', nuevoEstado === 2); // Cambiar estilo si está inactivo
+                    editIcon.classList.toggle('disabled-icon', nuevoEstado === 2);
+                }
+            };
+            //Si se cancela
+            document.getElementById('btnCancelarInactivacion').onclick = () => {
+                switchInput.checked = true;
+            };
+        }
+        else {
+            await window.viewModelAPI.updateEstadoCentroMedico(centroMedico.idCentroMedico, nuevoEstado);
+            tr.classList.toggle('table-secondary', nuevoEstado === 2); // Cambiar estilo si está inactivo
+            editIcon.classList.toggle('disabled-icon', nuevoEstado === 2);
+        }
+    });
+
+    divSwitch.appendChild(switchInput);
+    tdSwitch.appendChild(divSwitch);
+    tr.appendChild(tdSwitch);
 
     // Agregar columna de acciones
     const tdAcciones = document.createElement('td');
@@ -239,6 +297,7 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     // Crear el ícono de lápiz
     const editIcon = document.createElement('i');
     editIcon.className = 'fas fa-edit'; // Clase de FontAwesome para el ícono de lápiz
+    editIcon.classList.toggle('disabled-icon', centroMedico.estado !== 'Activo');
     editIcon.style.cursor = 'pointer'; // Cambiar el cursor al pasar sobre el ícono
     editIcon.title = 'Editar'; // Tooltip al pasar el mouse
     editIcon.onclick = () => {

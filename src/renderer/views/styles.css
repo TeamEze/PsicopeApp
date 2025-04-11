@@ -64,7 +64,7 @@ th {
   text-align: center;
 }
 
-.btn-secondary {
+/*. btn-secondary {
   background-color: #6c757d;
   color: white;
 }
@@ -72,18 +72,18 @@ th {
 .btn-primary {
   background-color: #007bff;
   color: white;
-}
+} */
 
 .btn:hover {
   opacity: 0.8;
 }
 
-.table-responsive {
+/* .table-responsive {
   display: block;
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-}
+} */
 
 .form-group {
   display: flex;
@@ -147,4 +147,35 @@ th {
 
 .fas.fa-edit:hover {
   color: #0056b3; /* Azul más oscuro al pasar el mouse */
+}
+
+/*.table-secondary {
+  background-color: #f8f9fa !important;  Fondo gris claro 
+  color: #6c757d;  Texto gris 
+}*/
+
+/* .form-check-input:checked {
+  background-color: #27c97d; 
+  border-color: #27c97d;
+} */
+
+.fade-out-row {
+  animation: fadeOutRow 0.8s ease forwards;
+}
+
+@keyframes fadeOutRow {
+  from {
+      opacity: 0.5;
+      transform: translateY(0);
+  }
+  to {
+      opacity: 0;
+      transform: translateY(-10px); /* Mover la fila ligeramente hacia arriba */
+  }
+}
+
+.disabled-icon {
+  opacity: 0.5;             /* apariencia deshabilitada */
+  pointer-events: none;     /* no permite clics */
+  cursor: not-allowed;      /* cursor deshabilitado */
 }
