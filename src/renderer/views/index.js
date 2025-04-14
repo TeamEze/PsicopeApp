@@ -2,6 +2,10 @@ const alignmentLeft = "text-start";
 const alignmentCenter = "text-center";
 const alignmentRight = "text-end";
 const pageSize = 10; // Tamaño de página
+let centroMedicoActual = null;
+let trActual = null;
+let switchInputActual = null;
+let modal = null;
 
 let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: alignmentLeft},
                                         {columnName:"Dirección", alineacion: alignmentLeft}, 
@@ -13,10 +17,15 @@ let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: align
                                         {columnName: "Estado", alineacion: alignmentCenter},
                                         {columnName: "Editar", alineacion: alignmentCenter} ,
                                         {columnName: "Pacientes", alineacion: alignmentCenter} ,
-                                        {columnName: "Historial Importes", alineacion: alignmentCenter} ]
+                                        {columnName: "Historial", alineacion: alignmentCenter} ]
 const Actions = Object.freeze({
     FILTER: "filter",
     GETALL: "getAll"
+});
+
+const Estados = Object.freeze({
+    ACTIVO: 1,
+    INACTIVO: 2
 });
 
 const localidades = [
@@ -63,6 +72,13 @@ function InicializarEventos(){
     checkbox.addEventListener('change', function () {
         FiltrarCentrosMedicos();
     });
+
+    document.getElementById('btnConfirmarInactivacion').onclick = manejarConfirmacionInactivacion;
+
+    document.getElementById('btnCancelarInactivacion').onclick = () => {
+        document.activeElement.blur();
+        switchInputActual.checked = true;
+    };
 }
 
 function cargarLocalidades() {
@@ -201,7 +217,7 @@ window.viewModelAPI.onNuevoCentroMedico((event, nuevoCentroMedico) => {
 window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
     const row = document.querySelector(`tr[data-id='${centroMedicoEdited.idCentroMedico}']`);
         if (row) {
-            row.classList.add('highlight'); // Aplicar el efecto visual
+            animarFilaEditada(row);
             const cells = row.children;
             cells[0].textContent = centroMedicoEdited.nombre;
             cells[1].textContent = centroMedicoEdited.direccion;
@@ -210,7 +226,6 @@ window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
             cells[4].textContent = centroMedicoEdited.personaContacto;
             cells[5].textContent = centroMedicoEdited.email;
             cells[6].textContent = centroMedicoEdited.duracionSesion;
-            setTimeout(() => row.classList.remove('highlight'), 4000);
         }
 })
 
@@ -232,7 +247,7 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     tr.setAttribute('data-id', centroMedico.idCentroMedico); // Agregar un identificador único
 
     if (isNew) {
-        tr.classList.add('highlight'); // Aplicar el efecto visual
+        animarNuevaFila(tr); // Aplicar la animación a la fila
     }
     
     CreateTableData(centroMedico.nombre, tr, alignmentLeft);
@@ -242,95 +257,182 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     CreateTableData(centroMedico.personaContacto, tr, alignmentLeft);
     CreateTableData(centroMedico.email, tr, alignmentLeft);
     CreateTableData(centroMedico.duracionSesion, tr, alignmentRight);
-    //CreateTableData(centroMedico.estado, tr, alignmentLeft);
-    // Agregar columna de switch (activar/inactivar)
-    const tdSwitch = document.createElement('td');
-    tdSwitch.classList.add('text-center');
 
-    const divSwitch = document.createElement('div');
-    divSwitch.classList.add('form-check', 'form-switch', 'd-flex', 'justify-content-center', 'align-items-center');
-    
-    const switchInput = document.createElement('input');
-    switchInput.type = 'checkbox';
-    switchInput.checked = centroMedico.estado === 'Activo'; // Activo si `idEstado` es 1
-    switchInput.title = centroMedico.estado === 'Activo' ? 'Inactivar' : 'Activar';
-    tr.classList.toggle('table-secondary', centroMedico.estado !== 'Activo'); // Cambiar estilo si está inactivo
-    switchInput.classList.add('form-check-input');
-    switchInput.addEventListener('change', async () => {
-        const nuevoEstado = switchInput.checked ? 1 : 2; // 1 = Activo, 2 = Inactivo
-        if  (nuevoEstado === 2) {
-            // Mostrar el modal
-            const modal = new bootstrap.Modal(document.getElementById('confirmarInactivacionModal'), {
-                backdrop: 'static',
-                keyboard: false
-              });
-            modal.show();
+    crearColumnaEstado(tr, centroMedico);
+    crearColumnaEditar(tr, centroMedico);
+    crearColumnaPacientes(tr, centroMedico);
+    crearColumnaHistorial(tr, centroMedico);
 
-            // Si se confirma, ejecutar acción
-            document.getElementById('btnConfirmarInactivacion').onclick = async () => {
-                modal.hide();
-                await window.viewModelAPI.updateEstadoCentroMedico(centroMedico.idCentroMedico, nuevoEstado);
-                switchInput.title = nuevoEstado === 1 ? 'Inactivar' : 'Activar';    
+    tbody.appendChild(tr);
 
-                if (!IncluirInactivosChecked()) {
-                    tr.classList.add('fade-out-row'); // Agrega la clase para el efecto
-                    setTimeout(() => tr.remove(), 800); 
-                }
-                else{
-                    tr.classList.toggle('table-secondary', nuevoEstado === 2); // Cambiar estilo si está inactivo
-                    editIcon.classList.toggle('disabled-icon', nuevoEstado === 2);
-                }
-            };
-            //Si se cancela
-            document.getElementById('btnCancelarInactivacion').onclick = () => {
-                switchInput.checked = true;
-            };
+}   
+
+function animarNuevaFila(tr) {   
+    tr.classList.add("table-success", "highlight");
+
+  // Esperar que termine la animación para remover las clases
+  tr.addEventListener("animationend", function handleAnimationEnd(e) {
+    // Solo actuar cuando termine la animación 'fadeOut'
+    if (e.animationName === "fadeOut") {
+      tr.classList.remove("highlight", "table-success");
+      tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
+    }
+  });
+}
+
+function animarFilaEditada(tr) {   
+    tr.classList.add("table-primary", "highlight");
+
+  // Esperar que termine la animación para remover las clases
+  tr.addEventListener("animationend", function handleAnimationEnd(e) {
+    // Solo actuar cuando termine la animación 'fadeOut'
+    if (e.animationName === "fadeOut") {
+      tr.classList.remove("highlight", "table-primary");
+      tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
+    }
+  });
+}
+
+function crearColumnaEstado(tr, centroMedico) {
+     // Agregar columna de switch (activar/inactivar)
+     const tdSwitch = document.createElement('td');
+     tdSwitch.classList.add('text-center');
+ 
+     const divSwitch = document.createElement('div');
+     divSwitch.classList.add('form-check', 'form-switch', 'd-flex', 'justify-content-center', 'align-items-center');
+     
+     const switchInput = document.createElement('input');
+     switchInput.type = 'checkbox';
+     switchInput.checked = centroMedico.estado === 'Activo'; // Activo si `idEstado` es 1
+     switchInput.title = centroMedico.estado === 'Activo' ? 'Inactivar' : 'Activar';
+     tr.classList.toggle('table-secondary', centroMedico.estado !== 'Activo'); // Cambiar estilo si está inactivo
+     switchInput.classList.add('form-check-input');
+
+     switchInput.addEventListener('change', async () => {
+        const nuevoEstado = switchInput.checked ? Estados.ACTIVO : Estados.INACTIVO; // 1 = Activo, 2 = Inactivo
+        // Guardar el contexto para usar después en la confirmación
+        centroMedicoActual = centroMedico;
+        trActual = tr;
+        switchInputActual = switchInput;
+        if  (nuevoEstado === Estados.INACTIVO) {
+            abrirModalInactivarCentroMedico(centroMedico.nombre);
         }
         else {
-            await window.viewModelAPI.updateEstadoCentroMedico(centroMedico.idCentroMedico, nuevoEstado);
-            tr.classList.toggle('table-secondary', nuevoEstado === 2); // Cambiar estilo si está inactivo
-            editIcon.classList.toggle('disabled-icon', nuevoEstado === 2);
+            reactivarCentroMedico();
         }
-    });
+     });
+ 
+     divSwitch.appendChild(switchInput);
+     tdSwitch.appendChild(divSwitch);
+     tr.appendChild(tdSwitch);
+ 
+}
 
-    divSwitch.appendChild(switchInput);
-    tdSwitch.appendChild(divSwitch);
-    tr.appendChild(tdSwitch);
+async function reactivarCentroMedico() {
+    await window.viewModelAPI.updateEstadoCentroMedico(centroMedicoActual.idCentroMedico, Estados.ACTIVO);
+    switchInputActual.title = 'Inactivar';
+    trActual.classList.remove('table-secondary');
+    trActual.querySelector("#editIcon").classList.remove('disabled-icon');
+    toggleIconLink(trActual.querySelector("#lnkPacientes"), "Ver pacientes", false);
+    toggleIconLink(trActual.querySelector("#lnkHistorial"), "Ver historial importes", false);
+}
 
-    // Agregar columna de acciones
-    const tdAcciones = document.createElement('td');
-    tdAcciones.classList.add('text-center'); // Centrar el contenido
+async function manejarConfirmacionInactivacion() {
+    const nuevoEstado = 2;
 
-    // Crear el ícono de lápiz
+    modal.hide();
+    document.activeElement.blur();
+
+    await window.viewModelAPI.updateEstadoCentroMedico(centroMedicoActual.idCentroMedico, nuevoEstado);
+    switchInputActual.title = 'Activar';
+
+    if (!IncluirInactivosChecked()) {
+        trActual.classList.add('fade-out-row');
+        setTimeout(() => trActual.remove(), 800);
+    } else {
+        trActual.classList.add('table-secondary');
+        trActual.querySelector("#editIcon").classList.add('disabled-icon');
+    }
+
+    toggleIconLink(trActual.querySelector("#lnkPacientes"), "Ver pacientes", true);
+    toggleIconLink(trActual.querySelector("#lnkHistorial"), "Ver historial importes", true);
+}
+
+function abrirModalInactivarCentroMedico(nombreCentroMedico) {
+    const modalInactivar = document.getElementById("confirmarInactivacionModal");
+    const body = modalInactivar.querySelector(".modal-body");
+    body.innerHTML = `Esta acción cambiará el estado del centro médico <strong>${nombreCentroMedico}</strong> a inactivo`;
+        // Mostrar el modal
+        modal = new bootstrap.Modal(modalInactivar, {
+            backdrop: 'static',
+            keyboard: false
+        });
+    modal.show();
+}
+
+function crearColumnaEditar(tr, centroMedico) {
+    const tdEditar = document.createElement('td');
+    tdEditar.classList.add('text-center'); 
+
     const editIcon = document.createElement('i');
-    editIcon.className = 'fas fa-edit'; // Clase de FontAwesome para el ícono de lápiz
+    editIcon.id = 'editIcon';
+    editIcon.className = 'fas fa-edit'; 
     editIcon.classList.toggle('disabled-icon', centroMedico.estado !== 'Activo');
-    editIcon.style.cursor = 'pointer'; // Cambiar el cursor al pasar sobre el ícono
-    editIcon.title = 'Editar'; // Tooltip al pasar el mouse
+    editIcon.style.cursor = 'pointer'; 
+    editIcon.title = 'Editar'; 
     editIcon.onclick = () => {
         window.viewModelAPI.openEditCentroMedicoModal(centroMedico.idCentroMedico); // Enviar el ID del centro médico al modal de edición
     };
-    tdAcciones.appendChild(editIcon);
-    tr.appendChild(tdAcciones);
-    
+    tdEditar.appendChild(editIcon);
+    tr.appendChild(tdEditar);
+}
+
+function crearColumnaPacientes(tr, centroMedico) {  
     // Pacientes
     const tdPacientes = document.createElement('td');
     tdPacientes.classList.add('text-center');
-    tdPacientes.innerHTML = `<a href="#" class="text-decoration-underline text-primary">Ver más</a>`;
+    const lnkPacientes = document.createElement('a');
+    lnkPacientes.id = 'lnkPacientes';
+    lnkPacientes.href = "#";
+    //linkPacientes.className = 'btn btn-outline-primary btn-sm';
+    lnkPacientes.style.cssText = 'text-decoration: none;'; // Cambiar el cursor al pasar sobre el ícono
+    lnkPacientes.title = 'Ver pacientes'; // Tooltip al pasar el mouse
+    lnkPacientes.textContent = "🧑‍⚕️";
+    toggleIconLink(lnkPacientes, "Ver pacientes", centroMedico.estado !== 'Activo');
+
+    tdPacientes.appendChild(lnkPacientes);
     tr.appendChild(tdPacientes);
+}
 
-    // Historial Importes
-    const tdImportes = document.createElement('td');
-    tdImportes.classList.add('text-center');
-    tdImportes.innerHTML = `<a href="#" class="text-decoration-underline text-primary">Ver más</a>`;
-    tr.appendChild(tdImportes);
+function crearColumnaHistorial(tr, centroMedico) {
+    // Pacientes
+    const tdHistorial = document.createElement('td');
+    tdHistorial.classList.add('text-center');
+    const lnkHistorial = document.createElement('a');
+    lnkHistorial.id = 'lnkHistorial';
+    lnkHistorial.href = "#";
+    lnkHistorial.style.cssText = 'text-decoration: none;'; // Cambiar el cursor al pasar sobre el ícono
+    lnkHistorial.title = 'Ver historial importes'; // Tooltip al pasar el mouse
+    lnkHistorial.textContent = "🕒";
+    toggleIconLink(lnkHistorial, "Ver historial importes", centroMedico.estado !== 'Activo');
+    tdHistorial.appendChild(lnkHistorial);
+    tr.appendChild(tdHistorial);
+}
 
-    tbody.appendChild(tr);
-    // Eliminar la clase después de unos segundos
-    if (isNew) {
-        setTimeout(() => tr.classList.remove('highlight'), 4000);
+function toggleIconLink(iconLink, title, disabled)
+{
+    if (!disabled) {
+        iconLink.classList.remove("disabled");
+        iconLink.style.pointerEvents = "auto";
+        iconLink.style.opacity = "1";
+        iconLink.title = title;
+    } else {
+        iconLink.classList.add("disabled");
+        iconLink.style.pointerEvents = "none";
+        iconLink.style.opacity = "0.5";
+        iconLink.title = title;
     }
-}   
+}
 
 function renderPagination(currentPage, totalPages, actionMethod) {
     const paginationContainer = document.getElementById('pagination');
