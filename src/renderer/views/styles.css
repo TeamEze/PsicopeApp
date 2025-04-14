@@ -113,31 +113,28 @@ th {
 
 
 .table .highlight td{
-  background-color: #d4edda !important;
   animation: fadeIn 0.5s ease-out, fadeOut 2s 2s forwards;
 }
 
 /* Animación para la entrada */
 @keyframes fadeIn {
   0% {
-    background-color: #d4edda; /* Asegura que el fondo sea visible */
     opacity: 0;
     transform: scale(0.95);
   }
   100% {
-    background-color: #d4edda; /* Mantiene el color */
     opacity: 1;
     transform: scale(1);
   }
 }
 
-/* Animación para el desvanecimiento */
+/* Salida */
 @keyframes fadeOut {
   0% {
-    background-color: #d4edda;
+    opacity: 1;
   }
   100% {
-    background-color: transparent;
+    opacity: 1;
   }
 }
 
