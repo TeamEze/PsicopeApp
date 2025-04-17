@@ -32,7 +32,11 @@ document.getElementById('btnCancelarCentroMedico').addEventListener('click', () 
   // Manejar el clic en el botón "Guardar"
 document.getElementById('frmNuevoCentroMedico').addEventListener('submit', async (event) => {
     event.preventDefault(); // Evitar el envío del formulario por defecto
-  
+
+    if (!validarFormularioCentroMedico()) {
+      return; //Si hay errores en el form, no continúa
+    }
+
     const centroMedico = {
       idCentroMedico: editingCentroMedicoId, // Incluye el ID si está en modo edición
       nombre: document.getElementById('txtNombre').value,
@@ -60,4 +64,72 @@ document.getElementById('frmNuevoCentroMedico').addEventListener('submit', async
     window.viewModelAPI.hideNuevoCentroMedicoModal();
   });
 
+  function validarFormularioCentroMedico() {
+    let valido = true;
+  
+    // Elementos
+    const nombre = document.getElementById('txtNombre');
+    const direccion = document.getElementById('txtDireccion');
+    const localidad = document.getElementById('cboLocalidad');
+    const telefono = document.getElementById('txtTelefono');
+    const contacto = document.getElementById('txtPersonaContacto');
+    const email = document.getElementById('txtEmail');
+    const duracion = document.getElementById('nbDuracion');
+  
+    // Resetear errores
+    [nombre, direccion, localidad, telefono, contacto, email, duracion].forEach(el => {
+      el.classList.remove('is-invalid');
+    });
+    document.querySelectorAll('.invalid-feedback').forEach(el => {
+      el.textContent = '';
+    });
+  
+    // Validaciones
+    if (nombre.value.trim() === '' || nombre.value.trim().length > 50) {
+      valido = false;
+      nombre.classList.add('is-invalid');
+      document.getElementById('errorNombre').textContent = 'El nombre es obligatorio y debe tener hasta 50 caracteres.';
+    }
+  
+    if (direccion.value.trim() === '' || direccion.value.trim().length > 50) {
+      valido = false;
+      direccion.classList.add('is-invalid');
+      document.getElementById('errorDireccion').textContent = 'La dirección es obligatoria y debe tener hasta 50 caracteres.';
+    }
+  
+    if (localidad.value.trim() === '') {
+      valido = false;
+      localidad.classList.add('is-invalid');
+      document.getElementById('errorLocalidad').textContent = 'Debe seleccionar una localidad.';
+    }
+  
+    if (!/^\d{1,10}$/.test(telefono.value.trim())) {
+      valido = false;
+      telefono.classList.add('is-invalid');
+      document.getElementById('errorTelefono').textContent = 'El teléfono debe tener exactamente 10 dígitos numéricos.';
+    }
+  
+    if (contacto.value.trim() === '' || contacto.value.trim().length > 50) {
+      valido = false;
+      contacto.classList.add('is-invalid');
+      document.getElementById('errorContacto').textContent = 'La persona de contacto es obligatoria y debe tener hasta 50 caracteres.';
+    }
+  
+    if (email.value.trim() !== '') {
+        const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!regexEmail.test(email.value.trim())) {
+        valido = false;
+        email.classList.add('is-invalid');
+        document.getElementById('errorEmail').textContent = 'El email ingresado no es válido.';
+      }
+    }
+  
+    if (!/^\d+$/.test(duracion.value.trim()) || parseInt(duracion.value.trim()) <= 0) {
+      valido = false;
+      duracion.classList.add('is-invalid');
+      document.getElementById('errorDuracion').textContent = 'La duración debe ser un número mayor a 0.';
+    }
+  
+    return valido;
+  }
  
