@@ -9,32 +9,39 @@
 </head>
 <body>
     <div class="container">
-        <form id="frmNuevoCentroMedico">
-            <label for="txtNombre">Nombre</label>
-            <input id="txtNombre" type="text" class="form-control" required>
-    
-            <label for="txtDireccion">Dirección</label>
-            <input id="txtDireccion" type="text" class="form-control" required>
-    
-            <label for="cboLocalidad">Localidad</label>
-            <select id="cboLocalidad" class="form-select" required>
-                <option value="">Seleccione Localidad</option>
-                <option value="1">Castelar</option>
-                <option value="2">Morón</option>
-                <option>Haedo</option>
-            </select>
-    
-            <label for="txtTelefono">Teléfono Contacto</label>
-            <input id="txtTelefono" type="text" class="form-control" required>
-    
-            <label for="txtPersonaContacto">Persona Contacto</label>
-            <input id="txtPersonaContacto" type="text" class="form-control" required>
-    
-            <label for="txtEmail">Mail</label>
-            <input id="txtEmail" type="email" class="form-control" required>
-    
-            <label for="nbDuracion">Duración Sesión</label>
-            <input id="nbDuracion" type="number" class="form-control" required>
+        <form id="frmNuevoCentroMedico" onsubmit="return validarFormularioCentroMedico()">
+          <label for="txtNombre">Nombre <span class="text-danger">*</span></label>
+          <input id="txtNombre" type="text" class="form-control" required>
+          <div id="errorNombre" class="invalid-feedback"></div>
+
+          <label for="txtDireccion">Dirección <span class="text-danger">*</span></label>
+          <input id="txtDireccion" type="text" class="form-control" required>
+          <div id="errorDireccion" class="invalid-feedback"></div>
+
+          <label for="cboLocalidad">Localidad <span class="text-danger">*</span></label>
+          <select id="cboLocalidad" class="form-select" required>
+            <option value="">Seleccione Localidad</option>
+            <option value="1">Castelar</option>
+            <option value="2">Morón</option>
+            <option>Haedo</option>
+          </select>
+          <div id="errorLocalidad" class="invalid-feedback"></div>
+
+          <label for="txtTelefono">Teléfono Contacto <span class="text-danger">*</span></label>
+          <input id="txtTelefono" type="text" class="form-control" required>
+          <div id="errorTelefono" class="invalid-feedback"></div>
+
+          <label for="txtPersonaContacto">Persona Contacto <span class="text-danger">*</span></label>
+          <input id="txtPersonaContacto" type="text" class="form-control" required>
+          <div id="errorContacto" class="invalid-feedback"></div>
+
+          <label for="txtEmail">Mail</label> <!-- ❌ sin asterisco -->
+          <input id="txtEmail" type="email" class="form-control">
+          <div id="errorEmail" class="invalid-feedback"></div>
+
+          <label for="nbDuracion">Duración Sesión <span class="text-danger">*</span></label>
+          <input id="nbDuracion" type="number" class="form-control" required>
+          <div id="errorDuracion" class="invalid-feedback"></div>
     
             <div class="d-flex justify-content-between mt-3 gap-2">
                 <button id="btnCancelarCentroMedico" type="button" class="btn btn-secondary w-50">
