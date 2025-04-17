@@ -2,10 +2,21 @@ const alignmentLeft = "text-start";
 const alignmentCenter = "text-center";
 const alignmentRight = "text-end";
 const pageSize = 10; // Tamaño de página
+
 let centroMedicoActual = null;
 let trActual = null;
 let switchInputActual = null;
 let modal = null;
+
+let txtNombre = null;
+let cboLocalidad = null;
+let btnNuevoCentroMedico = null;
+let btnFiltrarCentroMedico = null;
+let btnLimpiarCentroMedico = null;
+let chkVerInactivos = null;
+let btnConfirmarInactivacion = null;
+let btnCancelarInactivacion = null;
+let tblCentrosMedicos = null;
 
 let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: alignmentLeft},
                                         {columnName:"Dirección", alineacion: alignmentLeft}, 
@@ -40,84 +51,82 @@ const localidades = [
 
 
 
-function CargaInicial() {
+function cargaInicial() {
     
-    //Crear Cabecera de tabla
-    const idGrilla = document.getElementById('tblCentrosMedicos');
-    AddTableHeaders(idGrilla, listaColumnasGrillaCentrosMedicos);
-    InicializarEventos()
+    inicializarObjetosDOM();
+    inicializarEventos();
+    addTableHeaders(tblCentrosMedicos, listaColumnasGrillaCentrosMedicos);
     cargarLocalidades();
 }
 
-function InicializarEventos(){
-    const txtNombre = document.getElementById('txtName');
-    const cboLocalidad = document.getElementById('cboLocalidad');
-    // Inicializar eventos
-    document.getElementById('btnNuevoCentroMedico').addEventListener('click', () => {
-        window.viewModelAPI.openNuevoCentroMedicoModal();
-      });
-    document.getElementById('btnFiltrarCentroMedico').addEventListener('click', () => FiltrarCentrosMedicos());
-    document.getElementById('btnLimpiarCentroMedico').addEventListener('click', () => LimpiarCentrosMedicos());
-    
+function inicializarObjetosDOM() {
+    txtNombre = document.getElementById('txtName');
+    cboLocalidad = document.getElementById('cboLocalidad');
+    btnNuevoCentroMedico = document.getElementById('btnNuevoCentroMedico');
+    btnFiltrarCentroMedico = document.getElementById('btnFiltrarCentroMedico');
+    btnLimpiarCentroMedico = document.getElementById('btnLimpiarCentroMedico');
+    chkVerInactivos = document.getElementById('chkVerInactivos');
+    btnConfirmarInactivacion = document.getElementById('btnConfirmarInactivacion');
+    btnCancelarInactivacion = document.getElementById('btnCancelarInactivacion');
+    tblCentrosMedicos = document.getElementById('tblCentrosMedicos');
+}
+
+function inicializarEventos(){
+    btnNuevoCentroMedico.addEventListener('click', () => {window.viewModelAPI.openNuevoCentroMedicoModal();});
+    btnFiltrarCentroMedico.addEventListener('click', () => filtrarCentrosMedicos());
+    btnLimpiarCentroMedico.addEventListener('click', () => limpiarCentrosMedicos());
     cboLocalidad.addEventListener('change', actualizarEstadoBotonBuscar);
     txtNombre.addEventListener('input', actualizarEstadoBotonBuscar);
     txtNombre.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
-            // Aquí puedes poner la acción que quieras
-            FiltrarCentrosMedicos()
+            filtrarCentrosMedicos();
         }
     });
-
-    const checkbox = document.getElementById('chkVerInactivos');
-    checkbox.addEventListener('change', function () {
-        FiltrarCentrosMedicos();
+    chkVerInactivos.addEventListener('change', function () {
+        filtrarCentrosMedicos();
     });
-
-    document.getElementById('btnConfirmarInactivacion').onclick = manejarConfirmacionInactivacion;
-
-    document.getElementById('btnCancelarInactivacion').onclick = () => {
+    btnConfirmarInactivacion.onclick = manejarConfirmacionInactivacion;
+    btnCancelarInactivacion.onclick = () => {
         document.activeElement.blur();
         switchInputActual.checked = true;
     };
 }
 
 function cargarLocalidades() {
-    const selectLocalidad = document.getElementById('cboLocalidad');
-  
     // Limpiar el select (por si ya tiene elementos)
-    selectLocalidad.innerHTML = '';
+    cboLocalidad.innerHTML = '';
   
     // Agregar opción por defecto
     const optionDefault = document.createElement('option');
     optionDefault.value = '';
     optionDefault.textContent = 'Seleccione Localidad';
-    selectLocalidad.appendChild(optionDefault);
+    cboLocalidad.appendChild(optionDefault);
   
     // Agregar las localidades simuladas
     localidades.forEach(loc => {
       const option = document.createElement('option');
       option.value = loc.id;
       option.textContent = loc.nombre;
-      selectLocalidad.appendChild(option);
+      cboLocalidad.appendChild(option);
     });
   }
 
-async function LimpiarCentrosMedicos() {
-    document.getElementById('txtName').value = "";
-    document.getElementById('cboLocalidad').value = "";
-    document.getElementById('chkVerInactivos').checked = false;
-    document.getElementById('btnFiltrarCentroMedico').classList.add('btn-disabled');
-    CargarCentrosMedicos();
+async function limpiarCentrosMedicos() {
+    txtNombre.value = "";
+    cboLocalidad.value = "";
+    chkVerInactivos.checked = false;
+    btnFiltrarCentroMedico.classList.add('btn-disabled');
+    cargarCentrosMedicos();
 }
 
-function IncluirInactivosChecked() {
+function incluirInactivosChecked() {
     return document.getElementById('chkVerInactivos').checked;
 }
 
 //Función para filtrar centros médicos
-async function FiltrarCentrosMedicos(pageFilter = 1) {
+async function filtrarCentrosMedicos(pageFilter = 1) {
     let paginationData = {page: pageFilter, pageSize:pageSize};
-    let filters = ObtenerFiltros();    
+    let filters = obtenerFiltros();    
 
     const result = await window.viewModelAPI.getPaginatedFilteredCentrosMedicos(filters, paginationData);
     
@@ -125,53 +134,46 @@ async function FiltrarCentrosMedicos(pageFilter = 1) {
     let currentPage = result.currentPage;
     const centrosMedicosData = result.data;
     
-    UpdateTableContent(centrosMedicosData);
+    updateTableContent(centrosMedicosData);
     renderPagination(currentPage, totalPages, Actions.FILTER);
 }
 
-function ObtenerFiltros(){
+function obtenerFiltros(){
     let filters = {};
-    const nombre = document.getElementById('txtName').value;
+    const nombre = txtNombre.value;
     if (nombre) {
         filters.nombre = nombre;
     }
     
-    const idLocalidad = document.getElementById('cboLocalidad').value;
+    const idLocalidad = cboLocalidad.value;
     if (idLocalidad) {
         filters.idLocalidad = idLocalidad;
     }
 
-    const incluirInactivos = document.getElementById('chkVerInactivos').checked;
+    const incluirInactivos = chkVerInactivos.checked;
     filters.incluirInactivos = incluirInactivos;
     return filters;
 }
 
 //Deshabilitar el boton buscar
 function actualizarEstadoBotonBuscar() {
-    const inputNombre = document.getElementById('txtName');
-    const selectLocalidad = document.getElementById('cboLocalidad');
-    const btnBuscar = document.getElementById('btnFiltrarCentroMedico');
-
-    const tieneNombre = inputNombre.value.trim() !== '';
-    const tieneLocalidad = selectLocalidad.value.trim() !== '';
+    const tieneNombre = txtNombre.value.trim() !== '';
+    const tieneLocalidad = cboLocalidad.value.trim() !== '';
 
     if (tieneNombre || tieneLocalidad) {
-        btnBuscar.disabled = false;
-        btnBuscar.classList.remove('btn-disabled');
+        btnFiltrarCentroMedico.disabled = false;
+        btnFiltrarCentroMedico.classList.remove('btn-disabled');
     } else {
-        btnBuscar.disabled = true;
-        btnBuscar.classList.add('btn-disabled');
+        btnFiltrarCentroMedico.disabled = true;
+        btnFiltrarCentroMedico.classList.add('btn-disabled');
     }
 }
 
-// Función para crear un centro médico
-async function CrearCentroMedico(nuevoCentroMedico) {
-    // Llamar al ViewModel para crear el centro médico
+async function crearCentroMedico(nuevoCentroMedico) {
+
     const centroMedicoCreado = await window.viewModelAPI.createCentroMedico(nuevoCentroMedico);
 
-    // Obtener la tabla y el cuerpo de la tabla
-    const tablaCentrosMedicos = document.getElementById('tblCentrosMedicos');
-    const tbody = tablaCentrosMedicos.querySelector('tbody') || document.createElement('tbody');
+    const tbody = tblCentrosMedicos.querySelector('tbody') || document.createElement('tbody');
 
     // Verificar si el nuevo registro pertenece a la página actual
     const currentPage = parseInt(document.querySelector('.pagination .active a')?.textContent || 1, 10);
@@ -179,10 +181,9 @@ async function CrearCentroMedico(nuevoCentroMedico) {
     const isOnCurrentPage = registrosEnPaginaActual < pageSize;
 
     if (isOnCurrentPage) {
-        // Agregar el nuevo registro a la tabla y resaltarlo
-        AddCentroMedicoToTable(centroMedicoCreado, tbody, true);
-        if (!tablaCentrosMedicos.contains(tbody)) {
-            tablaCentrosMedicos.appendChild(tbody);
+        addCentroMedicoToTable(centroMedicoCreado, tbody, true);
+        if (!tblCentrosMedicos.contains(tbody)) {
+            tblCentrosMedicos.appendChild(tbody);
         }
     } else {
         // Si no pertenece a la página actual, recargar la paginación
@@ -195,23 +196,21 @@ async function CrearCentroMedico(nuevoCentroMedico) {
 }
 
 // Función para cargar los centros médicos
-async function CargarCentrosMedicos(page = 1) {
-    //const centrosMedicos = await window.viewModelAPI.getCentrosMedicos();
+async function cargarCentrosMedicos(page = 1) {
     let paginationData = {page:page, pageSize:pageSize};
     const result = await window.viewModelAPI.getPaginatedActiveCentrosMedicos(paginationData);
-    //console.log(result);
 
     let totalPages = result.totalPages;
     let currentPage = result.currentPage;
     const centrosMedicosData = result.data;
     
-    UpdateTableContent(centrosMedicosData);
+    updateTableContent(centrosMedicosData);
     renderPagination(currentPage, totalPages, Actions.GETALL);
 }
 
 // Escuchar el evento para agregar un nuevo centro médico a la grilla
 window.viewModelAPI.onNuevoCentroMedico((event, nuevoCentroMedico) => {
-    CrearCentroMedico(nuevoCentroMedico);
+    crearCentroMedico(nuevoCentroMedico);
 });
 
 window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
@@ -229,20 +228,19 @@ window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
         }
 })
 
-function UpdateTableContent(centrosMedicosData) {
-    const tablaCentrosMedicos = document.getElementById('tblCentrosMedicos');
-    if (tablaCentrosMedicos.querySelector('tbody')) {
-        tablaCentrosMedicos.removeChild(tablaCentrosMedicos.querySelector('tbody'));
+function updateTableContent(centrosMedicosData) {
+    if (tblCentrosMedicos.querySelector('tbody')) {
+        tblCentrosMedicos.removeChild(tblCentrosMedicos.querySelector('tbody'));
     }
     const tbody = document.createElement('tbody');
     centrosMedicosData.forEach(centroMedico => {
-        AddCentroMedicoToTable(centroMedico, tbody);
+        addCentroMedicoToTable(centroMedico, tbody);
     });
-    tablaCentrosMedicos.appendChild(tbody);
+    tblCentrosMedicos.appendChild(tbody);
 }
 
 // Función para actualizar la tabla con un centro médico
-function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
+function addCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     const tr = document.createElement('tr');
     tr.setAttribute('data-id', centroMedico.idCentroMedico); // Agregar un identificador único
 
@@ -250,13 +248,13 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
         animarNuevaFila(tr); // Aplicar la animación a la fila
     }
     
-    CreateTableData(centroMedico.nombre, tr, alignmentLeft);
-    CreateTableData(centroMedico.direccion, tr, alignmentLeft);
-    CreateTableData(centroMedico.localidad, tr, alignmentLeft);
-    CreateTableData(centroMedico.telefono, tr, alignmentRight);
-    CreateTableData(centroMedico.personaContacto, tr, alignmentLeft);
-    CreateTableData(centroMedico.email, tr, alignmentLeft);
-    CreateTableData(centroMedico.duracionSesion, tr, alignmentRight);
+    createTableData(centroMedico.nombre, tr, alignmentLeft);
+    createTableData(centroMedico.direccion, tr, alignmentLeft);
+    createTableData(centroMedico.localidad, tr, alignmentLeft);
+    createTableData(centroMedico.telefono, tr, alignmentRight);
+    createTableData(centroMedico.personaContacto, tr, alignmentLeft);
+    createTableData(centroMedico.email, tr, alignmentLeft);
+    createTableData(centroMedico.duracionSesion, tr, alignmentRight);
 
     crearColumnaEstado(tr, centroMedico);
     crearColumnaEditar(tr, centroMedico);
@@ -270,14 +268,14 @@ function AddCentroMedicoToTable(centroMedico, tbody, isNew=false) {
 function animarNuevaFila(tr) {   
     tr.classList.add("table-success", "highlight");
 
-  // Esperar que termine la animación para remover las clases
-  tr.addEventListener("animationend", function handleAnimationEnd(e) {
-    // Solo actuar cuando termine la animación 'fadeOut'
-    if (e.animationName === "fadeOut") {
-      tr.classList.remove("highlight", "table-success");
-      tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
-    }
-  });
+    // Esperar que termine la animación para remover las clases
+    tr.addEventListener("animationend", function handleAnimationEnd(e) {
+        // Solo actuar cuando termine la animación 'fadeOut'
+        if (e.animationName === "fadeOut") {
+        tr.classList.remove("highlight", "table-success");
+        tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
+        }
+    });
 }
 
 function animarFilaEditada(tr) {   
@@ -344,18 +342,18 @@ async function manejarConfirmacionInactivacion() {
     document.activeElement.blur();
 
     await window.viewModelAPI.updateEstadoCentroMedico(centroMedicoActual.idCentroMedico, nuevoEstado);
+    //Agregar validación para verificar si el centro médico fue inactivado correctamente
     switchInputActual.title = 'Activar';
 
-    if (!IncluirInactivosChecked()) {
+    if (!incluirInactivosChecked()) {
         trActual.classList.add('fade-out-row');
         setTimeout(() => trActual.remove(), 800);
     } else {
         trActual.classList.add('table-secondary');
         trActual.querySelector("#editIcon").classList.add('disabled-icon');
+        toggleIconLink(trActual.querySelector("#lnkPacientes"), "Ver pacientes", true);
+        toggleIconLink(trActual.querySelector("#lnkHistorial"), "Ver historial importes", true);
     }
-
-    toggleIconLink(trActual.querySelector("#lnkPacientes"), "Ver pacientes", true);
-    toggleIconLink(trActual.querySelector("#lnkHistorial"), "Ver historial importes", true);
 }
 
 function abrirModalInactivarCentroMedico(nombreCentroMedico) {
@@ -492,12 +490,12 @@ function changePage(page, totalPages, actionMethod) {
     if (page >= 1 && page <= totalPages) {
         // Determinar qué método ejecutar según el nombre
         if (actionMethod === Actions.FILTER) {
-            FiltrarCentrosMedicos(page);
+            filtrarCentrosMedicos(page);
         } else if (actionMethod === Actions.GETALL) {
-            CargarCentrosMedicos(page);
+            cargarCentrosMedicos(page);
         }
     }
 }
 
-CargaInicial();
-CargarCentrosMedicos();
+cargaInicial();
+cargarCentrosMedicos();

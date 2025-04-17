@@ -1,11 +1,11 @@
-function CreateTableData(data, rowPadre, alignmentClass){
+function createTableData(data, rowPadre, alignmentClass){
     const td = document.createElement('td');
     td.textContent = data;
     td.classList.add(alignmentClass);
     rowPadre.appendChild(td);
 }
 
-function CreateTableHeader(header, rowHeaders){
+function createTableHeader(header, rowHeaders){
     const th = document.createElement('th');
     th.textContent = header.columnName;
     th.scope = "col"
@@ -13,10 +13,10 @@ function CreateTableHeader(header, rowHeaders){
     rowHeaders.appendChild(th);
 }
 
-function AddTableHeaders(idTabla, listaColumnas) {
+function addTableHeaders(idTabla, listaColumnas) {
     const tHead = document.createElement('thead');
     const rowHeaders = document.createElement('tr');
-    listaColumnas.forEach(columna => CreateTableHeader(columna, rowHeaders));
+    listaColumnas.forEach(columna => createTableHeader(columna, rowHeaders));
     tHead.appendChild(rowHeaders);
     idTabla.appendChild(tHead);
 }
