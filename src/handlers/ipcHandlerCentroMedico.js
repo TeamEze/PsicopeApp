@@ -62,8 +62,11 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
 
   ipcMain.handle('updateEstadoCentroMedico', async (event, idCentroMedico, nuevoEstado) => {
     return await centroMedicoViewModel.updateEstadoCentroMedico(idCentroMedico, nuevoEstado);
+  });
 
-});
+  ipcMain.handle('getAllLocalidades', async () => {
+    return await centroMedicoViewModel.getAllLocalidades();
+  });
 }
 
 module.exports = { setupIpcHandlers };

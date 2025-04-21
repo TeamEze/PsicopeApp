@@ -1,135 +1,194 @@
 let isEditing = false;
 let editingCentroMedicoId = null;
+const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-// Escuchar el evento 'clear-form' para limpiar el formulario
-window.viewModelAPI.clearForm(() => {
-    const form = document.getElementById('frmNuevoCentroMedico');
-    if (form) {
-      form.reset(); // Limpia todos los controles del formulario
+
+function mostrarEstiloValido(campo, msjError){
+  campo.classList.remove('is-invalid');
+  campo.classList.add('is-valid');
+  if (msjError && msjError.classList.contains('invalid-feedback')) {
+    msjError.style.display = 'none';
+  }
+}
+
+function mostrarEstiloInvalido(campo, msjError){
+  campo.classList.remove('is-valid');
+  campo.classList.add('is-invalid');
+  if (msjError && msjError.classList.contains('invalid-feedback')) {
+    msjError.style.display = 'block';
+  }
+}
+
+function duracionCumpleCondiciones(duracion){
+  if (duracion.trim() === '' || parseInt(duracion, 10) <= 0 || parseInt(duracion, 10) > 60){
+    return false;
+  }
+  return true;
+}
+
+function validarDuracion(duracion, msjError) {
+  if (!duracionCumpleCondiciones(duracion.value)) {
+    duracion.setCustomValidity('Inválido');
+    msjError.textContent = 'La duración debe ser mayor a 0 y menor o igual a 60 (min).';
+    mostrarEstiloInvalido(duracion, msjError);
+  } else {
+    duracion.setCustomValidity('');
+    msjError.textContent = '';
+    mostrarEstiloValido(duracion, msjError);
+  }
+}
+
+function validarEmail(email, msjError) {
+  if (email.value.trim() === "" || regexEmail.test(email.value.trim())) {
+    email.setCustomValidity('');
+    mostrarEstiloValido(email, msjError);
+  } else {
+    email.setCustomValidity('Email inválido');
+    mostrarEstiloInvalido(email, msjError);
+  }
+}
+
+function validarCampo(campo) {
+  const msjError = campo.nextElementSibling;
+
+  if (campo.id === 'txtEmail') {
+    validarEmail(campo, msjError);
+    return;
+  }
+
+  if (campo.id === 'nbDuracion') {
+    validarDuracion(campo, msjError);
+    return;
+  }
+
+  // Validación genérica para otros campos
+  if (campo.validity.valid) {
+    mostrarEstiloValido(campo, msjError);
+  } else {
+    mostrarEstiloInvalido(campo, msjError);
+  }
+}
+
+function validarFormulario(form) {
+  const campos = form.querySelectorAll('input, select');
+  let formularioValido = true;
+
+  campos.forEach(campo => {
+    validarCampo(campo); 
+    if (!campo.validity.valid) {
+      formularioValido = false;
     }
   });
 
-window.viewModelAPI.onEditarCentroMedico(async (event, idCentroMedico) => {
-    isEditing = true;
-    editingCentroMedicoId = idCentroMedico;
+  return formularioValido;
+}
 
-    centroMedico= await window.viewModelAPI.getCentroMedicoById(idCentroMedico);
+async function cargarLocalidades() {
+  // Limpiar el select (por si ya tiene elementos)
+  const cboLocalidad = document.getElementById('cboLocalidad');
+  cboLocalidad.innerHTML = '';
 
-    document.getElementById('txtNombre').value = centroMedico.nombre;
-    document.getElementById('txtDireccion').value = centroMedico.direccion;
-    document.getElementById('cboLocalidad').value = centroMedico.idLocalidad;
-    document.getElementById('txtTelefono').value = centroMedico.telefono;
-    document.getElementById('txtPersonaContacto').value = centroMedico.personaContacto;
-    document.getElementById('txtEmail').value = centroMedico.email;
-    document.getElementById('nbDuracion').value = centroMedico.duracionSesion;
-});
+  // Agregar opción por defecto
+  const optionDefault = document.createElement('option');
+  optionDefault.value = '';
+  optionDefault.textContent = 'Seleccione Localidad';
+  cboLocalidad.appendChild(optionDefault);
 
-document.getElementById('btnCancelarCentroMedico').addEventListener('click', () => {
-  // Cerrar la ventana modal
-  window.viewModelAPI.hideNuevoCentroMedicoModal();
-});
+  const localidades = await window.viewModelAPI.getAllLocalidades(); 
 
-  // Manejar el clic en el botón "Guardar"
-document.getElementById('frmNuevoCentroMedico').addEventListener('submit', async (event) => {
-    event.preventDefault(); // Evitar el envío del formulario por defecto
+  localidades.forEach(localidad => {
+      const option = document.createElement('option');
+      option.value = localidad.idLocalidad;
+      option.textContent = localidad.descripcion;
+      cboLocalidad.appendChild(option);
+  });
+}
 
-    if (!validarFormularioCentroMedico()) {
-      return; //Si hay errores en el form, no continúa
-    }
+// Obtiene los datos del formulario
+function obtenerDatosFormulario(form) {
+  return {
+    idCentroMedico: editingCentroMedicoId,
+    nombre: document.getElementById('txtNombre').value,
+    direccion: document.getElementById('txtDireccion').value,
+    idLocalidad: parseInt(document.getElementById('cboLocalidad').value, 10),
+    telefono: document.getElementById('txtTelefono').value,
+    personaContacto: document.getElementById('txtPersonaContacto').value,
+    email: document.getElementById('txtEmail').value,
+    duracionSesion: parseInt(document.getElementById('nbDuracion').value, 10),
+    idEstado: 1
+  };
+}
 
-    const centroMedico = {
-      idCentroMedico: editingCentroMedicoId, // Incluye el ID si está en modo edición
-      nombre: document.getElementById('txtNombre').value,
-      direccion: document.getElementById('txtDireccion').value,
-      idLocalidad: parseInt(document.getElementById('cboLocalidad').value, 10),
-      telefono: document.getElementById('txtTelefono').value,
-      personaContacto: document.getElementById('txtPersonaContacto').value,
-      email: document.getElementById('txtEmail').value,
-      duracionSesion: parseInt(document.getElementById('nbDuracion').value, 10),
-      idEstado: 1
-    };
-  
-    if (isEditing) {
-      const centroMedicoEdited = await window.viewModelAPI.updateCentroMedico(centroMedico)
-      window.viewModelAPI.sendCentroMedicoEdited(centroMedicoEdited);
+function limpiarFormulario(form) {
+  form.reset();
+  form.classList.remove('was-validated');
+  const campos = form.querySelectorAll('.form-control, .form-select');
+  campos.forEach(campo => campo.classList.remove('is-valid', 'is-invalid'));
+  const mensajesError = form.querySelectorAll('.invalid-feedback');
+  mensajesError.forEach(msg => (msg.style.display = 'none'));
+}
 
-      isEditing = false;
-      editingCentroMedicoId = null;
-    } else {
-        // Enviar los datos al proceso principal para crear un nuevo registro
-        window.viewModelAPI.sendNuevoCentroMedico(centroMedico);
-    }
-  
-    // Cerrar la ventana modal
+function inicializarFormulario() {
+  const form = document.getElementById('frmNuevoCentroMedico');
+  const campos = form.querySelectorAll('input, select');
+
+  campos.forEach(campo => {
+    const evento = campo.tagName === 'SELECT' ? 'change' : 'input';
+    campo.addEventListener(evento, () => validarCampo(campo));
+  });
+
+  document.getElementById('btnCancelarCentroMedico').addEventListener('click', () => {
+    //limpiarFormulario(form);
     window.viewModelAPI.hideNuevoCentroMedicoModal();
   });
 
-  function validarFormularioCentroMedico() {
-    let valido = true;
-  
-    // Elementos
-    const nombre = document.getElementById('txtNombre');
-    const direccion = document.getElementById('txtDireccion');
-    const localidad = document.getElementById('cboLocalidad');
-    const telefono = document.getElementById('txtTelefono');
-    const contacto = document.getElementById('txtPersonaContacto');
-    const email = document.getElementById('txtEmail');
-    const duracion = document.getElementById('nbDuracion');
-  
-    // Resetear errores
-    [nombre, direccion, localidad, telefono, contacto, email, duracion].forEach(el => {
-      el.classList.remove('is-invalid');
-    });
-    document.querySelectorAll('.invalid-feedback').forEach(el => {
-      el.textContent = '';
-    });
-  
-    // Validaciones
-    if (nombre.value.trim() === '' || nombre.value.trim().length > 50) {
-      valido = false;
-      nombre.classList.add('is-invalid');
-      document.getElementById('errorNombre').textContent = 'El nombre es obligatorio y debe tener hasta 50 caracteres.';
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!validarFormulario(form)) return;
+
+    const centroMedico = obtenerDatosFormulario(form);
+    if (isEditing) {
+      const centroMedicoEdited = await window.viewModelAPI.updateCentroMedico(centroMedico);
+      window.viewModelAPI.sendCentroMedicoEdited(centroMedicoEdited);
+      isEditing = false;
+      editingCentroMedicoId = null;
+    } else {
+      window.viewModelAPI.sendNuevoCentroMedico(centroMedico);
     }
-  
-    if (direccion.value.trim() === '' || direccion.value.trim().length > 50) {
-      valido = false;
-      direccion.classList.add('is-invalid');
-      document.getElementById('errorDireccion').textContent = 'La dirección es obligatoria y debe tener hasta 50 caracteres.';
-    }
-  
-    if (localidad.value.trim() === '') {
-      valido = false;
-      localidad.classList.add('is-invalid');
-      document.getElementById('errorLocalidad').textContent = 'Debe seleccionar una localidad.';
-    }
-  
-    if (!/^\d{1,10}$/.test(telefono.value.trim())) {
-      valido = false;
-      telefono.classList.add('is-invalid');
-      document.getElementById('errorTelefono').textContent = 'El teléfono debe tener exactamente 10 dígitos numéricos.';
-    }
-  
-    if (contacto.value.trim() === '' || contacto.value.trim().length > 50) {
-      valido = false;
-      contacto.classList.add('is-invalid');
-      document.getElementById('errorContacto').textContent = 'La persona de contacto es obligatoria y debe tener hasta 50 caracteres.';
-    }
-  
-    if (email.value.trim() !== '') {
-        const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!regexEmail.test(email.value.trim())) {
-        valido = false;
-        email.classList.add('is-invalid');
-        document.getElementById('errorEmail').textContent = 'El email ingresado no es válido.';
-      }
-    }
-  
-    if (!/^\d+$/.test(duracion.value.trim()) || parseInt(duracion.value.trim()) <= 0) {
-      valido = false;
-      duracion.classList.add('is-invalid');
-      document.getElementById('errorDuracion').textContent = 'La duración debe ser un número mayor a 0.';
-    }
-  
-    return valido;
+
+    limpiarFormulario(form);
+    window.viewModelAPI.hideNuevoCentroMedicoModal();
+  });
+
+  cargarLocalidades();
+}
+
+window.viewModelAPI.clearForm(() => {
+  const form = document.getElementById('frmNuevoCentroMedico');
+  if (form) {
+    form.reset(); // Limpia todos los controles del formulario
+    limpiarFormulario(form); // Limpia las validaciones y estilos 
   }
- 
+});
+
+// Maneja el evento de edición de un centro médico
+window.viewModelAPI.onEditarCentroMedico(async (event, idCentroMedico) => {
+  isEditing = true;
+  editingCentroMedicoId = idCentroMedico;
+
+  const form = document.getElementById('frmNuevoCentroMedico');
+  limpiarFormulario(form);
+
+  const centroMedico = await window.viewModelAPI.getCentroMedicoById(idCentroMedico);
+  document.getElementById('txtNombre').value = centroMedico.nombre;
+  document.getElementById('txtDireccion').value = centroMedico.direccion;
+  document.getElementById('cboLocalidad').value = centroMedico.idLocalidad;
+  document.getElementById('txtTelefono').value = centroMedico.telefono;
+  document.getElementById('txtPersonaContacto').value = centroMedico.personaContacto;
+  document.getElementById('txtEmail').value = centroMedico.email;
+  document.getElementById('nbDuracion').value = centroMedico.duracionSesion;
+});
+
+
+// Inicializa el formulario al cargar la página
+inicializarFormulario();
