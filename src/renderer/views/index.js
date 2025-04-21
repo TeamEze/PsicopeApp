@@ -39,18 +39,6 @@ const Estados = Object.freeze({
     INACTIVO: 2
 });
 
-const localidades = [
-    { id: 1, nombre: 'Castelar' },
-    { id: 2, nombre: 'Morón' },
-    { id: 3, nombre: 'Haedo' },
-    { id: 4, nombre: 'El Palomar' },
-    { id: 5, nombre: 'Ramos Mejia' },
-    { id: 6, nombre: 'San Justo' },
-    { id: 7, nombre: 'Rafael Castillo' },
-  ];
-
-
-
 function cargaInicial() {
     
     inicializarObjetosDOM();
@@ -92,7 +80,7 @@ function inicializarEventos(){
     };
 }
 
-function cargarLocalidades() {
+async function cargarLocalidades() {
     // Limpiar el select (por si ya tiene elementos)
     cboLocalidad.innerHTML = '';
   
@@ -101,12 +89,13 @@ function cargarLocalidades() {
     optionDefault.value = '';
     optionDefault.textContent = 'Seleccione Localidad';
     cboLocalidad.appendChild(optionDefault);
-  
-    // Agregar las localidades simuladas
-    localidades.forEach(loc => {
+    
+    const localidades = await window.viewModelAPI.getAllLocalidades(); 
+
+    localidades.forEach(localidad => {
       const option = document.createElement('option');
-      option.value = loc.id;
-      option.textContent = loc.nombre;
+      option.value = localidad.id;
+      option.textContent = localidad.descripcion;
       cboLocalidad.appendChild(option);
     });
   }

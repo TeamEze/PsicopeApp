@@ -1,7 +1,8 @@
 class CentroMedicoViewModel {
 
-  constructor(centroMedicoService) {
+  constructor(centroMedicoService, localidadService) {
     this.centroMedicoService = centroMedicoService;
+    this.localidadService = localidadService;
   }
 
   async getCentrosMedicos() {
@@ -71,6 +72,16 @@ class CentroMedicoViewModel {
     } catch (error) {
         console.error('Error al actualizar el estado del centro médico:', error);
         throw error;
+    }
+  }
+
+  async getAllLocalidades(){
+    try {
+      await this.localidadService.getAllLocalidades();
+    } 
+    catch (error) {
+      console.error('Error al obtener las localidades', error);
+      throw error;
     }
   }
 }
