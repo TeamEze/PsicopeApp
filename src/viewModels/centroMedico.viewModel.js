@@ -77,7 +77,7 @@ class CentroMedicoViewModel {
 
   async getAllLocalidades(){
     try {
-      await this.localidadService.getAllLocalidades();
+      return await this.localidadService.getAllLocalidades();
     } 
     catch (error) {
       console.error('Error al obtener las localidades', error);

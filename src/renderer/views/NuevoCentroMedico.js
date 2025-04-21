@@ -83,6 +83,27 @@ function validarFormulario(form) {
   return formularioValido;
 }
 
+async function cargarLocalidades() {
+  // Limpiar el select (por si ya tiene elementos)
+  const cboLocalidad = document.getElementById('cboLocalidad');
+  cboLocalidad.innerHTML = '';
+
+  // Agregar opción por defecto
+  const optionDefault = document.createElement('option');
+  optionDefault.value = '';
+  optionDefault.textContent = 'Seleccione Localidad';
+  cboLocalidad.appendChild(optionDefault);
+
+  const localidades = await window.viewModelAPI.getAllLocalidades(); 
+
+  localidades.forEach(localidad => {
+      const option = document.createElement('option');
+      option.value = localidad.idLocalidad;
+      option.textContent = localidad.descripcion;
+      cboLocalidad.appendChild(option);
+  });
+}
+
 // Obtiene los datos del formulario
 function obtenerDatosFormulario(form) {
   return {
@@ -138,6 +159,8 @@ function inicializarFormulario() {
     limpiarFormulario(form);
     window.viewModelAPI.hideNuevoCentroMedicoModal();
   });
+
+  cargarLocalidades();
 }
 
 window.viewModelAPI.clearForm(() => {
