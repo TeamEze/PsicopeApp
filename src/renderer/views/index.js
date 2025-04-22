@@ -104,7 +104,7 @@ async function limpiarCentrosMedicos() {
     txtNombre.value = "";
     cboLocalidad.value = "";
     chkVerInactivos.checked = false;
-    btnFiltrarCentroMedico.classList.add('btn-disabled');
+    btnFiltrarCentroMedico.classList.add('disabled');
     cargarCentrosMedicos();
 }
 
@@ -151,10 +151,10 @@ function actualizarEstadoBotonBuscar() {
 
     if (tieneNombre || tieneLocalidad) {
         btnFiltrarCentroMedico.disabled = false;
-        btnFiltrarCentroMedico.classList.remove('btn-disabled');
+        btnFiltrarCentroMedico.classList.remove('disabled');
     } else {
         btnFiltrarCentroMedico.disabled = true;
-        btnFiltrarCentroMedico.classList.add('btn-disabled');
+        btnFiltrarCentroMedico.classList.add('disabled');
     }
 }
 
@@ -177,11 +177,26 @@ async function crearCentroMedico(nuevoCentroMedico) {
     } else {
         // Si no pertenece a la página actual, recargar la paginación
         const paginationData = { page: currentPage, pageSize: pageSize };
-        const result = await window.viewModelAPI.getPaginatedActiveCentrosMedicos(paginationData);
-        const totalPages = result.totalPages;
-        renderPagination(currentPage, totalPages, Actions.GETALL);
+        if (existenfiltrosActivos()) {
+            const result = await window.viewModelAPI.getPaginatedFilteredCentrosMedicos(obtenerFiltros(), paginationData);
+            const totalPages = result.totalPages;
+            renderPagination(currentPage, totalPages, Actions.FILTER); 
+        }
+        else{
+            const result = await window.viewModelAPI.getPaginatedActiveCentrosMedicos(paginationData);
+            const totalPages = result.totalPages;
+            renderPagination(currentPage, totalPages, Actions.GETALL);         
+        }
     }
     
+}
+
+function existenfiltrosActivos() {
+    let filtros = obtenerFiltros();
+    if ('nombre' in filtros || 'idLocalidad' in filtros || filtros.incluirInactivos) {
+        return true;
+    }
+    return false;
 }
 
 // Función para cargar los centros médicos
