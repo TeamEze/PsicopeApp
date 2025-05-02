@@ -79,6 +79,16 @@ class CentroMedicoRepository {
     return ids;
   }
 
+  async getActiveCentroMedico(){
+    const centrosMedicos = await CentroMedico.findAll({
+      attributes: ['idCentroMedico','nombre'],
+      order: [['nombre', 'ASC']],
+      where: {
+        idEstado: 1
+      }
+    });
+    return centrosMedicos;
+  }
   /**
    * Retrieves a paginated list of CentroMedico IDs based on the provided filters.
    *

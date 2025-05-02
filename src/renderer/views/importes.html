@@ -1,34 +1,33 @@
-<div class="container">
-    <h1 class="text-center">Gestión de Importes</h1>
-    <div class="row">
-      <div class="col-md-12">
-        <table id="tblImportes" class="table table-striped">
-          <thead>
-            <tr>
-              <th>Concepto</th>
-              <th>Monto</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Aquí se cargarán dinámicamente los datos -->
-          </tbody>
-        </table>
+<div class="container shadow-sm p-3 mb-4 bg-light rounded border">
+  <div class="row align-items-center">
+      <div class="col-md-4">
+          <label for="cboCentroMedico">Centro Médico:</label>
+          <select id="cboCentroMedico" class="form-select">
+          </select>
       </div>
+      <div class="col-md-4">
+          <label for="cboEstado">Estado:</label>
+          <select id="cboEstado" class="form-select">
+          </select>
+      </div>
+      <div class="col-md-4">
+        <label for="cboTipo">Tipo:</label>
+        <select id="cboTipo" class="form-select">
+        </select>
     </div>
   </div>
-
-  <table id="tblImportes" class="table table-striped">
-    <thead>
-      <tr>
-        <th>Concepto</th>
-        <th>Monto</th>
-        <th>Fecha</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Aquí se cargarán dinámicamente los datos -->
-    </tbody>
-  </table>
+  <div class="row align-items-center">    
+      <div class="col-md-4">
+        <label for="fechaVigenciaDesde" class="form-label">Vigencia Desde: </label>
+        <input type="date" class="form-control" id="fechaVigenciaDesde" name="fecha">
+      </div>
+      <div class="col-md-4">
+        <label for="fechaVigenciaHasta" class="form-label">Vigencia Hasta: </label>
+        <input type="date" class="form-control" id="fechaVigenciaHasta" name="fecha">
+      </div>
+      <div class="col-md-3 d-flex justify-content-end mt-4">
+        <button id="btnLimpiarCentroMedico" class="btn btn-secondary mx-1">Limpiar</button>
+        <button id="btnNuevoCentroMedico" class="btn btn-primary mx-1">Nuevo</button>
+        <button id="btnFiltrarCentroMedico" class="btn btn-primary mx-1 disabled" >Buscar</button>
+    </div>
+</div>    

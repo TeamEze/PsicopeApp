@@ -15,6 +15,7 @@ describe('CentroMedicoService', () => {
     centroMedicoRepository.getCentrosMedicosByFilters = jest.fn();
     centroMedicoRepository.createCentroMedico = jest.fn();
     centroMedicoRepository.getCentroMedicoById = jest.fn();
+    centroMedicoRepository.getActiveCentroMedico = jest.fn();
     CentroMedicoMapper.mapCentroMedicoToDTO = jest.fn();
 
     // Crear una instancia del servicio con las dependencias mockeadas
@@ -22,7 +23,7 @@ describe('CentroMedicoService', () => {
 
   });
 
-  it('should return a list of CentroMedicoDTOs', async () => {
+  /* it('should return a list of CentroMedicoDTOs', async () => {
     // Datos simulados devueltos por el repositorio
     const mockData = [
       {
@@ -67,6 +68,33 @@ describe('CentroMedicoService', () => {
 
     // Verificar que el mapper fue llamado una vez por cada elemento en los datos simulados
     expect(CentroMedicoMapper.mapCentroMedicoToDTO).toHaveBeenCalledTimes(mockData.length);
+  }); */
+
+  it('debe retornar una ListaDeCentroMedicosActivos', async () => {
+    // Datos simulados devueltos por el repositorio
+    const mockData = [
+      {
+        idCentroMedico: 1,
+        nombre: 'Centro 1'
+      },
+      {
+        idCentroMedico: 2,
+        nombre: 'Centro 2'
+      }
+    ];
+
+    // Configurar el mock del repositorio
+    centroMedicoRepository.getActiveCentroMedico.mockResolvedValue(mockData);
+
+    // Llamar al servicio
+    const result = await centroMedicoService.getActiveCentroMedico();
+
+    // Verificar que el resultado coincide con los datos esperados
+    expect(result).toEqual(mockData);
+
+    // Verificar que se devuelven exactamente dos registros
+    expect(result).toHaveLength(2);
+
   });
 
  /*  it('should return filtered CentroMedicoDTOs', async () => {

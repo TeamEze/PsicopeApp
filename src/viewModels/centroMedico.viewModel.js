@@ -120,6 +120,21 @@ class CentroMedicoViewModel {
       return {ok: false};
     }
   }
-}
 
+  async getActiveCentroMedico(){
+    try {
+      const centrosMedicos = await this.centroMedicoService.getActiveCentroMedico();
+      return {ok: true, data: centrosMedicos};
+    } 
+    catch (error) {
+      await this.errorLogService.handleError(
+        error.message,
+        null,
+        error.stack,
+        'CentroMedicoViewModel.getActiveCentroMedico'
+      );
+      return {ok: false};
+    }
+  }
+}
 module.exports = CentroMedicoViewModel;
