@@ -28,7 +28,7 @@
           <div id="errorLocalidad" class="invalid-feedback">La localidad es obligatoria</div>
 
           <label for="txtTelefono">Teléfono Contacto <span class="text-danger">*</span></label>
-          <input id="txtTelefono" type="text" class="form-control" required maxlength="10">
+          <input id="txtTelefono" type="text" class="form-control" required >
           <div id="errorTelefono" class="invalid-feedback">El teléfono es obligatorio (Máx. 10 caracteres)</div>
 
           <label for="txtPersonaContacto">Persona Contacto <span class="text-danger">*</span></label>
@@ -52,8 +52,8 @@
                 </button>
               </div>
         </form>
-    </div>
     <script src="../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="NuevoCentroMedico.js"></script>
+    <script src="helpers.js"></script>
+    <script type="module" src="NuevoCentroMedico.js"></script>
 </body>
 </html>

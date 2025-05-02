@@ -8,8 +8,13 @@ const centroMedicoRepository = require('./data-access/repository/centroMedico.re
 const CentroMedicoMapper = require('./mappers/centroMedicoMapper.js');
 const CentroMedicoService = require('./services/centroMedico.service.js');
 const centroMedicoService = new CentroMedicoService(centroMedicoRepository, CentroMedicoMapper);
+const errorLogRepository = require('./data-access/repository/errorLog.repository.js');
+const ErrorLogService = require('./services/errorLog.service.js');
+const errorLogService = new ErrorLogService(errorLogRepository);
+
 const CentroMedicoViewModel = require('./viewModels/centroMedico.viewModel.js');
-const centroMedicoViewModel = new CentroMedicoViewModel(centroMedicoService, localidadService);
+const centroMedicoViewModel = new CentroMedicoViewModel(centroMedicoService, localidadService, errorLogService);
+
 
 
 const {setupIpcHandlers} = require('./handlers/ipcHandlerCentroMedico.js');
@@ -22,7 +27,7 @@ app.whenReady().then(async () => {
   
   mainWindow = createMainWindow(); 
   nuevoCentroMedicoWindow = createNuevoCentroMedicoWindow(mainWindow);
-  setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel);
+  setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel, errorLogService);
   mainWindow.webContents.openDevTools();
 
 });

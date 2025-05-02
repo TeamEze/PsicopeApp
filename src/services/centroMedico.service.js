@@ -21,13 +21,6 @@ class CentroMedicoService {
       this.centroMedicoRepository = centroMedicoRepository;
       this.centroMedicoMapper = centroMedicoMapper;
     }
-  async getAllCentrosMedicos() {
-    const centrosMedicos = await this.centroMedicoRepository.getAllCentrosMedicos();
-    const centrosMedicosDTO = centrosMedicos.map(centroMedico =>
-      this.centroMedicoMapper.mapCentroMedicoToDTO(centroMedico)); 
-
-    return centrosMedicosDTO;
-  }
 
   async getCentroMedicoById(idCentroMedico) {
     const centroMedico = await this.centroMedicoRepository.getCentroMedicoById(idCentroMedico);
