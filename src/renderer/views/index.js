@@ -39,6 +39,28 @@ const Estados = Object.freeze({
     INACTIVO: 2
 });
 
+/* document.addEventListener('DOMContentLoaded', () => {
+    const tabImportes = document.querySelector('a[href="#importes"]');
+    const importesContainer = document.getElementById('importes');
+  
+    tabImportes.addEventListener('click', async () => {
+        if (importesContainer.innerHTML.trim() !== '') return;
+      
+        try {
+          const html = await window.viewModelAPI.readFile('importes.html');
+          importesContainer.innerHTML = html;
+      
+          // Cargar el script importes.js
+          const script = document.createElement('script');
+          script.src = 'importes.js';
+          document.body.appendChild(script);
+        } catch (error) {
+          console.error('Error al cargar el tab Importes:', error);
+          alert('No se pudo cargar el contenido de Importes. Por favor, inténtelo de nuevo.');
+        }
+      });
+  }); */
+
 function cargaInicial() {
     
     inicializarObjetosDOM();
@@ -438,7 +460,26 @@ function crearColumnaPacientes(tr, centroMedico) {
     tdPacientes.classList.add('text-center');
     const lnkPacientes = document.createElement('a');
     lnkPacientes.id = 'lnkPacientes';
-    lnkPacientes.href = "#";
+    //lnkPacientes.href = "#";
+    lnkPacientes.onclick = async () => {
+        // 1. Guardar el ID globalmente para que importes.js lo lea
+        window.parametrosImportes = { idCentroMedico: centroMedico.idCentroMedico };
+        //if (importesContainer.innerHTML.trim() !== '') return;
+        // 2. Leer e insertar importes.html en el contenedor
+        const html = await window.viewModelAPI.readFile('importes.html');
+        document.getElementById('importes').innerHTML = html;
+      
+        // 3. Cargar el script asociado
+        const script = document.createElement('script');
+        script.src = 'importes.js';
+        script.onload = () => console.log('importes.js cargado');
+        script.onerror = () => console.error('Error al cargar importes.js');
+        document.body.appendChild(script);
+      
+        // 4. Cambiar a la pestaña "Importes"
+        document.querySelector('a[href="#importes"]').click();
+      };
+      
     //linkPacientes.className = 'btn btn-outline-primary btn-sm';
     lnkPacientes.style.cssText = 'text-decoration: none;'; // Cambiar el cursor al pasar sobre el ícono
     lnkPacientes.title = 'Ver pacientes'; // Tooltip al pasar el mouse

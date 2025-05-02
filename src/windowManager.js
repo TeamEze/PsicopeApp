@@ -10,7 +10,8 @@ function createMainWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true, // Mantener el aislamiento del contexto
-      nodeIntegration: false // Deshabilitar Node.js en el renderizador
+      nodeIntegration: false, // Deshabilitar Node.js en el renderizador
+      webSecurity: false
     }
   });
   
