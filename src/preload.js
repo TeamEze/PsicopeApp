@@ -1,3 +1,5 @@
+/* const fs = require('fs');
+const path = require('path'); */
 const { contextBridge, ipcRenderer } = require('electron');
 
 // Exponer métodos seguros a la UI
@@ -20,4 +22,5 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
   getAllLocalidades: () => ipcRenderer.invoke('getAllLocalidades'),
   reportError: (errorData) => ipcRenderer.invoke('logError', errorData),
   onSolicitarCancelar: (callback) => ipcRenderer.on('solicitar-cancelar', callback),
+  readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
 });

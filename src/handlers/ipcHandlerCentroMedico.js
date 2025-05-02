@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path')
 const { ipcMain } = require('electron');
 
 function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel, errorLogService) {
@@ -74,6 +76,11 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     const { message, parameters, stack, source } = errorData;
     await errorLogService.handleError(message, parameters, stack, source);
   });
+  ipcMain.handle('read-file', (event, filePath) => {
+    const fullPath = path.resolve(__dirname, '../renderer/views', filePath); // ajusta si tu renderer está en otra carpeta
+    return fs.readFileSync(fullPath, 'utf-8');
+  });
+  
 }
 
 module.exports = { setupIpcHandlers };
