@@ -2,7 +2,6 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 // Exponer métodos seguros a la UI
 contextBridge.exposeInMainWorld('viewModelAPI', {
-  getCentrosMedicos: () => ipcRenderer.invoke('getCentrosMedicos'),
   getCentroMedicoById: (idCentroMedico) => ipcRenderer.invoke('getCentroMedicoById', idCentroMedico),
   getPaginatedActiveCentrosMedicos: (paginationData) => ipcRenderer.invoke('getPaginatedActiveCentrosMedicos', paginationData),
   createCentroMedico: (centroMedico) => ipcRenderer.invoke('createCentroMedico', centroMedico),
@@ -18,5 +17,7 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
   onEditarCentroMedico: (callback) => ipcRenderer.on('editar-centro-medico', callback), // Escuchar evento para editar un centro médico
   onCentroMedicoEdited: (callback) => ipcRenderer.on('centro-medico-edited', callback), // Escuchar evento para actualizar la grilla con el centro médico editado
   updateEstadoCentroMedico: (idCentroMedico, nuevoEstado) => ipcRenderer.invoke('updateEstadoCentroMedico', idCentroMedico, nuevoEstado),
-  getAllLocalidades: () => ipcRenderer.invoke('getAllLocalidades')
+  getAllLocalidades: () => ipcRenderer.invoke('getAllLocalidades'),
+  reportError: (errorData) => ipcRenderer.invoke('logError', errorData),
+  onSolicitarCancelar: (callback) => ipcRenderer.on('solicitar-cancelar', callback),
 });

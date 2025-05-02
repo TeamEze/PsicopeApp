@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel) {
+function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel, errorLogService) {
   // Abrir la ventana modal y limpiar el formulario
   ipcMain.on('open-newCentroMedicoModal', () => {
     if (nuevoCentroMedicoWindow) {
@@ -35,11 +35,13 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     mainWindow.webContents.send('centro-medico-edited', centroMedicoEdited);
   });
 
-  // Otros manejadores IPC (por ejemplo, para obtener datos)
-  ipcMain.handle('getCentrosMedicos', async () => {
-    return await centroMedicoViewModel.getCentrosMedicos();
+   // Interceptar el cierre con la X
+   nuevoCentroMedicoWindow.on('close', (e) => {
+    e.preventDefault(); // evitamos que se cierre sin más
+    nuevoCentroMedicoWindow.webContents.send('solicitar-cancelar'); // pedimos al renderer que ejecute cancelar
   });
 
+  // Otros manejadores IPC (por ejemplo, para obtener datos)
   ipcMain.handle('getCentroMedicoById', async (event, idCentroMedico) => {
     return await centroMedicoViewModel.getCentroMedicoById(idCentroMedico);
   });
@@ -66,6 +68,11 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
 
   ipcMain.handle('getAllLocalidades', async () => {
     return await centroMedicoViewModel.getAllLocalidades();
+  });
+
+  ipcMain.handle('logError', async (event, errorData) => {
+    const { message, parameters, stack, source } = errorData;
+    await errorLogService.handleError(message, parameters, stack, source);
   });
 }
 

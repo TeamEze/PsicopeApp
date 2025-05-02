@@ -1,3 +1,5 @@
+import ViewModelAPIError from './errors.js';
+
 let isEditing = false;
 let editingCentroMedicoId = null;
 const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -84,24 +86,30 @@ function validarFormulario(form) {
 }
 
 async function cargarLocalidades() {
-  // Limpiar el select (por si ya tiene elementos)
-  const cboLocalidad = document.getElementById('cboLocalidad');
-  cboLocalidad.innerHTML = '';
+  try {
+    const cboLocalidad = document.getElementById('cboLocalidad');
+    cboLocalidad.innerHTML = '';
 
-  // Agregar opción por defecto
-  const optionDefault = document.createElement('option');
-  optionDefault.value = '';
-  optionDefault.textContent = 'Seleccione Localidad';
-  cboLocalidad.appendChild(optionDefault);
+    // Agregar opción por defecto
+    const optionDefault = document.createElement('option');
+    optionDefault.value = '';
+    optionDefault.textContent = 'Seleccione Localidad';
+    cboLocalidad.appendChild(optionDefault);
 
-  const localidades = await window.viewModelAPI.getAllLocalidades(); 
+    const resutado = await window.viewModelAPI.getAllLocalidades(); 
+    if (!resutado.ok) throw new Error();
 
-  localidades.forEach(localidad => {
-      const option = document.createElement('option');
-      option.value = localidad.idLocalidad;
-      option.textContent = localidad.descripcion;
-      cboLocalidad.appendChild(option);
-  });
+    const localidades = resutado.data; 
+    localidades.forEach(localidad => {
+        const option = document.createElement('option');
+        option.value = localidad.idLocalidad;
+        option.textContent = localidad.descripcion;
+        cboLocalidad.appendChild(option);
+    });
+  } catch (error) {
+    mostrarErrorBonito('Error al cargar localidades. Por favor, Por favor, inténtelo de nuevo más tarde.');
+  }
+  
 }
 
 // Obtiene los datos del formulario
@@ -139,29 +147,51 @@ function inicializarFormulario() {
 
   document.getElementById('btnCancelarCentroMedico').addEventListener('click', () => {
     //limpiarFormulario(form);
+    isEditing = false;
+    editingCentroMedicoId = null;
     window.viewModelAPI.hideNuevoCentroMedicoModal();
   });
 
   form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    if (!validarFormulario(form)) return;
+    try {
+      event.preventDefault();
+      if (!validarFormulario(form)) return;
 
-    const centroMedico = obtenerDatosFormulario(form);
-    if (isEditing) {
-      const centroMedicoEdited = await window.viewModelAPI.updateCentroMedico(centroMedico);
-      window.viewModelAPI.sendCentroMedicoEdited(centroMedicoEdited);
-      isEditing = false;
-      editingCentroMedicoId = null;
-    } else {
-      window.viewModelAPI.sendNuevoCentroMedico(centroMedico);
+      throw new Error('no se puede dividir por 0');//BORRar
+      const centroMedico = obtenerDatosFormulario(form);
+      if (isEditing) {
+        const resultado = await window.viewModelAPI.updateCentroMedico(centroMedico);
+        if(!resultado.ok) throw new ViewModelAPIError();
+        window.viewModelAPI.sendCentroMedicoEdited(resultado.data);
+        isEditing = false;
+        editingCentroMedicoId = null;
+      } else {
+        window.viewModelAPI.sendNuevoCentroMedico(centroMedico);
+      }
+
+      limpiarFormulario(form);
+      window.viewModelAPI.hideNuevoCentroMedicoModal();
+    } catch (error) {
+      if (error instanceof ViewModelAPIError) {
+        console.error('Error en ViewModelAPI.updateCentroMedico:');
+        mostrarErrorBonito('Ocurrió un error al procesar el formulario. Por favor, contacte al administrador.');
+      }
+      else {
+        console.error('Error genérico en el formulario:', error);
+        mostrarErrorBonito('Error inesperado al procesar el formulario. Por favor, contacte al administrador.');
+        loguearError(error, 'NuevoCentroMedico.js - submit form');
+      }
     }
-
-    limpiarFormulario(form);
-    window.viewModelAPI.hideNuevoCentroMedicoModal();
   });
 
   cargarLocalidades();
 }
+
+window.viewModelAPI.onSolicitarCancelar(() => {
+  isEditing = false;
+  editingCentroMedicoId = null;
+  window.viewModelAPI.hideNuevoCentroMedicoModal();
+});
 
 window.viewModelAPI.clearForm(() => {
   const form = document.getElementById('frmNuevoCentroMedico');
@@ -173,20 +203,28 @@ window.viewModelAPI.clearForm(() => {
 
 // Maneja el evento de edición de un centro médico
 window.viewModelAPI.onEditarCentroMedico(async (event, idCentroMedico) => {
-  isEditing = true;
-  editingCentroMedicoId = idCentroMedico;
+  try {
+    isEditing = true;
+    editingCentroMedicoId = idCentroMedico;
 
-  const form = document.getElementById('frmNuevoCentroMedico');
-  limpiarFormulario(form);
+    const form = document.getElementById('frmNuevoCentroMedico');
+    limpiarFormulario(form);
 
-  const centroMedico = await window.viewModelAPI.getCentroMedicoById(idCentroMedico);
-  document.getElementById('txtNombre').value = centroMedico.nombre;
-  document.getElementById('txtDireccion').value = centroMedico.direccion;
-  document.getElementById('cboLocalidad').value = centroMedico.idLocalidad;
-  document.getElementById('txtTelefono').value = centroMedico.telefono;
-  document.getElementById('txtPersonaContacto').value = centroMedico.personaContacto;
-  document.getElementById('txtEmail').value = centroMedico.email;
-  document.getElementById('nbDuracion').value = centroMedico.duracionSesion;
+    const resultado = await window.viewModelAPI.getCentroMedicoById(idCentroMedico);
+    if (!resultado.ok) throw new Error();
+
+    const centroMedico = resultado.data;
+    document.getElementById('txtNombre').value = centroMedico.nombre;
+    document.getElementById('txtDireccion').value = centroMedico.direccion;
+    document.getElementById('cboLocalidad').value = centroMedico.idLocalidad;
+    document.getElementById('txtTelefono').value = centroMedico.telefono;
+    document.getElementById('txtPersonaContacto').value = centroMedico.personaContacto;
+    document.getElementById('txtEmail').value = centroMedico.email;
+    document.getElementById('nbDuracion').value = centroMedico.duracionSesion;
+  } catch (error) {
+    mostrarErrorBonito('Error al obtener datos del centro médico. Por favor, inténtelo de nuevo más tarde.');
+  }
+  
 });
 
 
