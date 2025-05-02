@@ -157,7 +157,6 @@ function inicializarFormulario() {
       event.preventDefault();
       if (!validarFormulario(form)) return;
 
-      throw new Error('no se puede dividir por 0');//BORRar
       const centroMedico = obtenerDatosFormulario(form);
       if (isEditing) {
         const resultado = await window.viewModelAPI.updateCentroMedico(centroMedico);
