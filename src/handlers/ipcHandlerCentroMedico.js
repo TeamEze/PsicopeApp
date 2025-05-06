@@ -80,7 +80,9 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     const fullPath = path.resolve(__dirname, '../renderer/views', filePath); // ajusta si tu renderer está en otra carpeta
     return fs.readFileSync(fullPath, 'utf-8');
   });
-  
+   ipcMain.handle('getActiveCentroMedico', async() => {
+    return await centroMedicoViewModel.getActiveCentroMedico();
+   });
 }
 
 module.exports = { setupIpcHandlers };

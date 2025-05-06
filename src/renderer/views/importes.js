@@ -1,4 +1,4 @@
-function ejecutarImportes() {
+function cargarHistorialImportes() {
   const parametros = window.parametrosImportes || {};
   const idCentroMedico = parametros.idCentroMedico;
 
@@ -7,31 +7,36 @@ function ejecutarImportes() {
   } else {
     console.log('Cargando importes para centro médico ID:', idCentroMedico);
   }
+  cargarCentroMedicos();
 
-  const tblImportes = document.getElementById('tblImportes');
+  /* const tblImportes = document.getElementById('tblImportes');
   if (!tblImportes) {
     console.warn('tblImportes no encontrado, reintentando...');
-    setTimeout(ejecutarImportes, 50);
-    return;
+    /* setTimeout(ejecutarImportes, 50); */
+   /*  return; */ 
   }
+cargarHistorialImportes();
 
-  const datosImportes = [
-    { concepto: 'Consulta', monto: 1500, fecha: '2025-05-01' },
-    { concepto: 'Terapia', monto: 2000, fecha: '2025-05-02' },
-  ];
+async function cargarCentroMedicos(){
+  try {
+    cboCentroMedico.innerHTML = '';
+    // Agregar opción por defecto
+    const optionDefault = document.createElement('option');
+    optionDefault.value = '';
+    optionDefault.textContent = 'Seleccione Centro Médico';
+    cboCentroMedico.appendChild(optionDefault);
 
-  datosImportes.forEach((importe) => {
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-      <td>${importe.concepto}</td>
-      <td>${importe.monto}</td>
-      <td>${importe.fecha}</td>
-      <td>
-        <button class="btn btn-sm btn-primary">Editar</button>
-        <button class="btn btn-sm btn-danger">Eliminar</button>
-      </td>
-    `;
-    tblImportes.querySelector('tbody').appendChild(fila);
-  });
+    const resultado = await window.viewModelAPI.getActiveCentroMedico(); 
+    if (!resultado.ok) throw new Error();
+    
+    const centrosMedicos = resultado.data;
+    centrosMedicos.forEach(centroMedico => {
+        const option = document.createElement('option');
+        option.value = centroMedico.dataValues.idCentroMedico;
+        option.textContent = centroMedico.dataValues.nombre;
+        cboCentroMedico.appendChild(option);
+    });
+} catch (error) {
+    mostrarErrorBonito("Ocurrió un error al cargar los Centro Médicos. Por favor, inténtelo de nuevo más tarde.");
 }
-ejecutarImportes();
+}

@@ -23,4 +23,5 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
   reportError: (errorData) => ipcRenderer.invoke('logError', errorData),
   onSolicitarCancelar: (callback) => ipcRenderer.on('solicitar-cancelar', callback),
   readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
+  getActiveCentroMedico: () => ipcRenderer.invoke('getActiveCentroMedico'),
 });
