@@ -24,4 +24,6 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
   onSolicitarCancelar: (callback) => ipcRenderer.on('solicitar-cancelar', callback),
   readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
   getActiveCentroMedico: () => ipcRenderer.invoke('getActiveCentroMedico'),
+  mostrarErrorGenerico: (mensaje) => ipcRenderer.send('mostrar-error-generico', mensaje),
+  onMostrarErrorGenerico: (callback) => ipcRenderer.on('mostrar-error-generico', callback), // Escuchar evento para mostrar error genérico
 });
