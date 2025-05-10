@@ -37,6 +37,11 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
     mainWindow.webContents.send('centro-medico-edited', centroMedicoEdited);
   });
 
+  ipcMain.on('mostrar-error-generico', (event, centroMedicoEdited) => {
+    // Enviar los datos a la ventana principal
+    mainWindow.webContents.send('mostrar-error-generico', centroMedicoEdited);
+  });
+
    // Interceptar el cierre con la X
    nuevoCentroMedicoWindow.on('close', (e) => {
     e.preventDefault(); // evitamos que se cierre sin más

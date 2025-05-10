@@ -25,7 +25,7 @@ async function cargarCentroMedicos(){
     optionDefault.value = '';
     optionDefault.textContent = 'Seleccione Centro Médico';
     cboCentroMedico.appendChild(optionDefault);
-
+    throw new Error();
     const resultado = await window.viewModelAPI.getActiveCentroMedico(); 
     if (!resultado.ok) throw new Error();
     
@@ -37,6 +37,6 @@ async function cargarCentroMedicos(){
         cboCentroMedico.appendChild(option);
     });
 } catch (error) {
-    mostrarErrorBonito("Ocurrió un error al cargar los Centro Médicos. Por favor, inténtelo de nuevo más tarde.");
+    mostrarErrorUsuario("Ocurrió un error al cargar los Centro Médicos. Por favor, inténtelo de nuevo más tarde.");
 }
 }

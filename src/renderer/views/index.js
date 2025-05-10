@@ -1,3 +1,5 @@
+import ViewModelAPIError from './errors.js';
+
 const alignmentLeft = "text-start";
 const alignmentCenter = "text-center";
 const alignmentRight = "text-end";
@@ -112,7 +114,7 @@ async function cargarLocalidades() {
         cboLocalidad.appendChild(optionDefault);
 
         const resultado = await window.viewModelAPI.getAllLocalidades(); 
-        if (!resultado.ok) throw new Error();
+        if (!resultado.ok) throw new ViewModelAPIError();
         
         const localidades = resultado.data;
         localidades.forEach(localidad => {
@@ -122,7 +124,15 @@ async function cargarLocalidades() {
             cboLocalidad.appendChild(option);
         });
     } catch (error) {
-        mostrarErrorBonito("Ocurrió un error al cargar las localidades. Por favor, inténtelo de nuevo más tarde.");
+        if (error instanceof ViewModelAPIError) {
+            console.error('Error en ViewModelAPI.getAllLocalidades:');
+            mostrarErrorUsuario("Ocurrió un error al cargar las localidades. Por favor, inténtelo de nuevo más tarde.");
+        }
+        else {
+            console.error('Error genérico al cargar localidades:', error);
+            mostrarErrorUsuario('Error inesperado al cargar las localidades. Por favor, contacte al administrador.');
+            loguearError(error, 'index.js - cargarLocalidades');
+        }
     }
 }
 
@@ -144,7 +154,7 @@ async function filtrarCentrosMedicos(pageFilter = 1) {
         let paginationData = {page: pageFilter, pageSize:pageSize};
         let filters = obtenerFiltros();      
         const resultado = await window.viewModelAPI.getPaginatedFilteredCentrosMedicos(filters, paginationData);
-        if (!resultado.ok) throw new Error();
+        if (!resultado.ok) throw new ViewModelAPIError();
 
         const result = resultado.data;
         let totalPages = result.totalPages;
@@ -154,7 +164,15 @@ async function filtrarCentrosMedicos(pageFilter = 1) {
         updateTableContent(centrosMedicosData);
         renderPagination(currentPage, totalPages, Actions.FILTER);
     } catch (error) {
-        mostrarErrorBonito("Ocurrió un error al filtrar los centros médicos. Por favor, inténtelo de nuevo más tarde.");
+        if (error instanceof ViewModelAPIError) {
+            console.error('Error en ViewModelAPI.getPaginatedFilteredCentrosMedicos:');
+            mostrarErrorUsuario("Ocurrió un error al filtrar los centros médicos. Por favor, contacte al administrador.");
+        }
+        else {
+            console.error('Error genérico al filtrar centros médicos', error);
+            mostrarErrorUsuario('Error inesperado al filtrar los centros médicos. Por favor, contacte al administrador.');
+            loguearError(error, 'index.js - filtrarCentrosMedicos');
+        }
     }
     
 }
@@ -194,7 +212,7 @@ async function crearCentroMedico(nuevoCentroMedico) {
 
     try {
         const resultado = await window.viewModelAPI.createCentroMedico(nuevoCentroMedico);
-        if (!resultado.ok) throw new Error();
+        if (!resultado.ok) throw new ViewModelAPIError();
         
         const centroMedicoCreado = resultado.data;
 
@@ -215,21 +233,29 @@ async function crearCentroMedico(nuevoCentroMedico) {
             const paginationData = { page: currentPage, pageSize: pageSize };
             if (existenfiltrosActivos()) {
                 const resultado = await window.viewModelAPI.getPaginatedFilteredCentrosMedicos(obtenerFiltros(), paginationData);
-                if (!resultado.ok) throw new Error();
+                if (!resultado.ok) throw new ViewModelAPIError();
                 const result = resultado.data;
                 const totalPages = result.totalPages;
                 renderPagination(currentPage, totalPages, Actions.FILTER); 
             }
             else{
                 const resultado = await window.viewModelAPI.getPaginatedActiveCentrosMedicos(paginationData);
-                if (!resultado.ok) throw new Error();
+                if (!resultado.ok) throw new ViewModelAPIError();
                 const result = resultado.data;
                 const totalPages = result.totalPages;
                 renderPagination(currentPage, totalPages, Actions.GETALL);         
             }
         }
     } catch (error) {
-        mostrarErrorBonito("Ocurrió un error al crear el centro médico. Por favor, inténtelo de nuevo más tarde.");
+        if (error instanceof ViewModelAPIError) {
+            console.error('Error en ViewModelAPI.createCentroMedico:');
+            mostrarErrorUsuario("Ocurrió un error al crear el centro médico. Por favor, contacte al administrador.");
+        }
+        else {
+            console.error('Error genérico al crear el centro médico', error);
+            mostrarErrorUsuario('Error inesperado al crear centro médico. Por favor, contacte al administrador.');
+            loguearError(error, 'index.js - crearCentroMedico');
+        }
     } 
 
    
@@ -248,8 +274,9 @@ function existenfiltrosActivos() {
 async function cargarCentrosMedicos(page = 1) {
     try {
         let paginationData = {page:page, pageSize:pageSize};
+        //throw new Error('Prueba');
         const resultado = await window.viewModelAPI.getPaginatedActiveCentrosMedicos(paginationData);
-        if (!resultado.ok) throw new Error();
+        if (!resultado.ok) throw new ViewModelAPIError();
 
         const result = resultado.data;
         let totalPages = result.totalPages;
@@ -257,9 +284,25 @@ async function cargarCentrosMedicos(page = 1) {
         const centrosMedicosData = result.data;
         
         updateTableContent(centrosMedicosData);
-        renderPagination(currentPage, totalPages, Actions.GETALL);
+
+        const paginationConfig = {
+            currentPage: currentPage,
+            totalPages: totalPages,
+            actionMethod: Actions.GETALL,
+            changePageCallback: changePage
+        }
+
+        renderPagination(paginationConfig);
     } catch (error) {
-        mostrarErrorBonito("Ocurrió un error al cargar los centros médicos. Por favor, inténtelo de nuevo más tarde.");
+        if (error instanceof ViewModelAPIError) {
+            console.error('Error en ViewModelAPI.getPaginatedActiveCentrosMedicos:');
+            mostrarErrorUsuario("Ocurrió un error al cargar los centros médicos. Por favor, contacte al administrador.");
+        }
+        else {
+            console.error('Error genérico al cargar centros médicos', error);
+            mostrarErrorUsuario('Error inesperado al cargar centros médicos. Por favor, contacte al administrador.');
+            loguearError(error, 'index.js - cargarCentrosMedicos');
+        }
     }
     
 }
@@ -282,6 +325,10 @@ window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
             cells[5].textContent = centroMedicoEdited.email;
             cells[6].textContent = centroMedicoEdited.duracionSesion;
         }
+})
+
+window.viewModelAPI.onMostrarErrorGenerico((event, mensaje) => {
+    mostrarErrorUsuario(mensaje);
 })
 
 function updateTableContent(centrosMedicosData) {
@@ -385,14 +432,22 @@ function crearColumnaEstado(tr, centroMedico) {
 async function reactivarCentroMedico() {
     try {
         const resultado = await window.viewModelAPI.updateEstadoCentroMedico(centroMedicoActual.idCentroMedico, Estados.ACTIVO);
-        if(!resultado.ok) throw new Error();
+        if(!resultado.ok) throw new ViewModelAPIError();
         switchInputActual.title = 'Inactivar';
         trActual.classList.remove('table-secondary');
         trActual.querySelector("#editIcon").classList.remove('disabled-icon');
         toggleIconLink(trActual.querySelector("#lnkPacientes"), "Ver pacientes", false);
         toggleIconLink(trActual.querySelector("#lnkHistorial"), "Ver historial importes", false);
     } catch (error) {
-        mostrarErrorBonito("Ocurrió un error al reactivar el centro médico. Por favor, inténtelo de nuevo más tarde.");
+        if (error instanceof ViewModelAPIError) {
+            console.error('Error en ViewModelAPI.updateEstadoCentroMedico:');
+            mostrarErrorUsuario("Ocurrió un error al reactivar el centro médico. Por favor, contacte al administrador.");
+        }
+        else {
+            console.error('Error genérico al reactivar el centro médico', error);
+            mostrarErrorUsuario("Error inesperado al reactivar el centro médico. Por favor, contacte al administrador.");
+            loguearError(error, 'index.js - reactivarCentroMedico');
+        }
     }
     
 }
@@ -405,7 +460,7 @@ async function manejarConfirmacionInactivacion() {
         document.activeElement.blur();
 
         const resultado = await window.viewModelAPI.updateEstadoCentroMedico(centroMedicoActual.idCentroMedico, nuevoEstado);
-        if(!resultado.ok) throw new Error();
+        if(!resultado.ok) throw new ViewModelAPIError();
 
         //Agregar validación para verificar si el centro médico fue inactivado correctamente
         switchInputActual.title = 'Activar';
@@ -420,7 +475,15 @@ async function manejarConfirmacionInactivacion() {
             toggleIconLink(trActual.querySelector("#lnkHistorial"), "Ver historial importes", true);
         }
     } catch (error) {
-        mostrarErrorBonito("Ocurrió un error al inactivar el centro médico. Por favor, inténtelo de nuevo más tarde.");
+        if (error instanceof ViewModelAPIError) {
+            console.error('Error en ViewModelAPI.updateEstadoCentroMedico:');
+            mostrarErrorUsuario("Ocurrió un error al inactivar el centro médico. Por favor, contacte al administrador.");
+        }
+        else {
+            console.error('Error genérico al inactivar el centro médico', error);
+            mostrarErrorUsuario("Error inesperado al inactivar el centro médico. Por favor, contacte al administrador.");
+            loguearError(error, 'index.js - manejarConfirmacionInactivacion');
+        }
     }
     
 }
@@ -520,60 +583,6 @@ function toggleIconLink(iconLink, title, disabled)
     }
 }
 
-function renderPagination(currentPage, totalPages, actionMethod) {
-    const paginationContainer = document.getElementById('pagination');
-    paginationContainer.innerHTML = ''; // Limpiar paginación
-  
-    let paginationHTML = `<ul class="pagination">`;
-  
-     // Botón "Anterior"
-    paginationHTML += `
-    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-        <a class="page-link" href="#" onclick="changePage(${currentPage - 1}, ${totalPages}, '${actionMethod}')">Anterior</a>
-    </li>
-    `;
-  
-    const maxPagesToShow = 5; // Número máximo de páginas visibles
-    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-    if (startPage > 1) {
-        paginationHTML += `
-        <li class="page-item">
-            <a class="page-link" href="#" onclick="changePage(1, ${totalPages}, '${actionMethod}')">1</a>
-        </li>
-        ${startPage > 2 ? `<li class="page-item disabled"><span class="page-link">...</span></li>` : ''}
-        `;
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-        paginationHTML += `
-        <li class="page-item ${i === currentPage ? 'active' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${i}, ${totalPages}, '${actionMethod}')">${i}</a>
-        </li>
-        `;
-    }
-
-    if (endPage < totalPages) {
-        paginationHTML += `
-        ${endPage < totalPages - 1 ? `<li class="page-item disabled"><span class="page-link">...</span></li>` : ''}
-        <li class="page-item">
-            <a class="page-link" href="#" onclick="changePage(${totalPages}, ${totalPages}, '${actionMethod}')">${totalPages}</a>
-        </li>
-        `;
-    }
-
-    // Botón "Siguiente"
-    paginationHTML += `
-        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="#" onclick="changePage(${currentPage + 1}, ${totalPages}, '${actionMethod}')">Siguiente</a>
-        </li>
-    `;
-  
-    paginationHTML += `</ul>`;
-    paginationContainer.innerHTML = paginationHTML;
-}
-  
 function changePage(page, totalPages, actionMethod) {
     if (page >= 1 && page <= totalPages) {
         // Determinar qué método ejecutar según el nombre

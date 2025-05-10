@@ -21,89 +21,143 @@ function addTableHeaders(idTabla, listaColumnas) {
     idTabla.appendChild(tHead);
 }
 
-/* function mostrarErrorBonito(mensaje) {
-    // Si ya existe un diálogo, lo cerramos primero
-    const alertaExistente = document.querySelector('.alerta-error-dialogo');
-    if (alertaExistente) {
-        alertaExistente.close();
-        alertaExistente.remove();
+function renderPagination({ currentPage, totalPages, actionMethod, changePageCallback }) {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = ''; // Limpiar paginación
+    
+    const ul = document.createElement('ul');
+    ul.classList.add('pagination');
+    
+    // Botón "Anterior"
+    const liAnterior = document.createElement('li');
+    liAnterior.classList.add('page-item');
+    if (currentPage === 1) {
+        liAnterior.classList.add('disabled');
+    }
+    const aAnterior = document.createElement('a');
+    aAnterior.classList.add('page-link');
+    aAnterior.href = '#';
+    aAnterior.textContent = 'Anterior';
+    aAnterior.addEventListener('click', (e) => {
+        e.preventDefault();
+        changePageCallback(currentPage - 1, totalPages, actionMethod);
+    });
+    liAnterior.appendChild(aAnterior);
+    ul.appendChild(liAnterior);
+    
+    const maxPagesToShow = 5; // Número máximo de páginas visibles
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+    if (startPage > 1) {
+        const liPrimera = document.createElement('li');
+        liPrimera.classList.add('page-item');
+        const aPrimera = document.createElement('a');
+        aPrimera.classList.add('page-link');
+        aPrimera.href = '#';
+        aPrimera.textContent = '1';
+        aPrimera.addEventListener('click', (e) => {
+            e.preventDefault();
+            changePageCallback(1, totalPages, actionMethod);
+        });
+        liPrimera.appendChild(aPrimera);
+        ul.appendChild(liPrimera);
+
+        if (startPage > 2) {
+            const liEllipsis = document.createElement('li');
+            liEllipsis.classList.add('page-item', 'disabled');
+            const spanEllipsis = document.createElement('span');
+            spanEllipsis.classList.add('page-link');
+            spanEllipsis.textContent = '...';
+            liEllipsis.appendChild(spanEllipsis);
+            ul.appendChild(liEllipsis);
+        }
     }
 
-    const dialogo = document.createElement('dialog');
-    dialogo.className = 'alerta-error-dialogo';
-
-    Object.assign(dialogo.style, {
-        padding: '1.5rem',
-        border: 'none',
-        borderRadius: '0.75rem',
-        backgroundColor: '#f8d7da',
-        color: '#721c24',
-        fontSize: '1rem',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
-        maxWidth: '90vw',
-        width: 'auto',
-        textAlign: 'center',
-        zIndex: '9999',
-    });
-
-    dialogo.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <span style="font-size: 2rem;">⚠️</span>
-            <p style="margin-top: 1rem;">${mensaje}</p>
-            <button style="
-                margin-top: 1.5rem;
-                padding: 0.5rem 1rem;
-                background-color: #721c24;
-                color: white;
-                border: none;
-                border-radius: 0.5rem;
-                cursor: pointer;
-            ">Aceptar</button>
-        </div>
-    `;
-
-    document.body.appendChild(dialogo);
-
-    // Abrir el diálogo
-    dialogo.showModal();
-
-    // Cuando el usuario hace click en el botón, cierra el diálogo
-    const botonAceptar = dialogo.querySelector('button');
-    botonAceptar.addEventListener('click', () => {
-        dialogo.close();
-        dialogo.remove();
-    });
-
-    // Cierre automático opcional después de 5 segundos
-    setTimeout(() => {
-        if (dialogo.open) {
-            dialogo.close();
-            dialogo.remove();
+    for (let i = startPage; i <= endPage; i++) {
+        const li = document.createElement('li');
+        li.classList.add('page-item');
+        if (i === currentPage) {
+            li.classList.add('active');
         }
-    }, 5000);
-} */
+        const a = document.createElement('a');
+        a.classList.add('page-link');
+        a.href = '#';
+        a.textContent = i;
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            changePageCallback(i, totalPages, actionMethod);
+        });
+        li.appendChild(a);
+        ul.appendChild(li);
+    }
 
-    function mostrarErrorBonito(mensaje) {
-        const alerta = document.createElement('div');
-        alerta.className = 'alert alert-danger shadow-lg text-center';
-        alerta.style.position = 'fixed';
-        alerta.style.bottom = '20px';
-        alerta.style.left = '50%';
-        alerta.style.transform = 'translateX(-50%)';
-        alerta.style.zIndex = '9999';
-        alerta.style.minWidth = '300px';
-        alerta.style.maxWidth = '80%';
-        alerta.style.padding = '15px';
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const liEllipsis = document.createElement('li');
+            liEllipsis.classList.add('page-item', 'disabled');
+            const spanEllipsis = document.createElement('span');
+            spanEllipsis.classList.add('page-link');
+            spanEllipsis.textContent = '...';
+            liEllipsis.appendChild(spanEllipsis);
+            ul.appendChild(liEllipsis);
+        }
+
+        const liUltima = document.createElement('li');
+        liUltima.classList.add('page-item');
+        const aUltima = document.createElement('a');
+        aUltima.classList.add('page-link');
+        aUltima.href = '#';
+        aUltima.textContent = totalPages;
+        aUltima.addEventListener('click', (e) => {
+            e.preventDefault();
+            changePageCallback(totalPages, totalPages, actionMethod);
+        });
+        liUltima.appendChild(aUltima);
+        ul.appendChild(liUltima);
+    }
+
+    // Botón "Siguiente"
+    const liSiguiente = document.createElement('li');
+    liSiguiente.classList.add('page-item');
+    if (currentPage === totalPages) {
+        liSiguiente.classList.add('disabled');
+    }
+    const aSiguiente = document.createElement('a');
+    aSiguiente.classList.add('page-link');
+    aSiguiente.href = '#';
+    aSiguiente.textContent = 'Siguiente';
+    aSiguiente.addEventListener('click', (e) => {
+        e.preventDefault();
+        changePageCallback(currentPage + 1, totalPages, actionMethod);
+    });
+    liSiguiente.appendChild(aSiguiente);
+    ul.appendChild(liSiguiente);
     
-        alerta.textContent = '⚠️ ' + mensaje;
-    
-        document.body.appendChild(alerta);
-    
-        setTimeout(() => {
-            alerta.remove();
-        }, 5000); // se borra luego de 5 segundos
-    } 
-    
+    paginationContainer.appendChild(ul);
+}
+
+function mostrarErrorUsuario(mensaje) {
+    const alerta = document.createElement('div');
+    alerta.className = 'alert alert-danger shadow-lg text-center';
+    alerta.style.position = 'fixed';
+    alerta.style.bottom = '20px';
+    alerta.style.left = '50%';
+    alerta.style.transform = 'translateX(-50%)';
+    alerta.style.zIndex = '9999';
+    alerta.style.minWidth = '300px';
+    alerta.style.maxWidth = '80%';
+    alerta.style.padding = '15px';
+
+    alerta.textContent = '⚠️ ' + mensaje;
+
+    document.body.appendChild(alerta);
+
+    setTimeout(() => {
+        alerta.remove();
+    }, 10000); // se borra luego de 5 segundos
+} 
+
 function loguearError(error, source) {
     //console.error('Error:', error);
     window.viewModelAPI?.reportError?.({
@@ -123,7 +177,7 @@ window.addEventListener('error', (event) => {
         source: 'renderer - uncaught error'
     });
 
-    mostrarErrorBonito('Ocurrió un problema inesperado. Contacte con su administrador.');
+    mostrarErrorUsuario('Ocurrió un problema inesperado. Contacte con su administrador.');
 });
 
 window.addEventListener('unhandledrejection', (event) => {
@@ -137,6 +191,6 @@ window.addEventListener('unhandledrejection', (event) => {
         source: 'renderer - unhandled promise'
     });
 
-    mostrarErrorBonito('Ocurrió un problema inesperado. Contacte con su administrador.');
+    mostrarErrorUsuario('Ocurrió un problema inesperado. Contacte con su administrador.');
 });
       
