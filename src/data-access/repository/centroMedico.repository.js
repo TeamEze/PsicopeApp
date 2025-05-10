@@ -81,7 +81,10 @@ class CentroMedicoRepository {
 
   async getActiveCentroMedico(){
     const centrosMedicos = await CentroMedico.findAll({
-      attributes: ['idCentroMedico','nombre'],
+      attributes: [
+                    ['idCentroMedico','id'],
+                    ['nombre', 'descripcion']
+                  ] ,
       order: [['nombre', 'ASC']],
       where: {
         idEstado: 1
