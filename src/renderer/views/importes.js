@@ -1,4 +1,4 @@
-function cargarHistorialImportes() {
+/* function cargarHistorialImportes() {
   const parametros = window.parametrosImportes || {};
   const idCentroMedico = parametros.idCentroMedico;
 
@@ -9,34 +9,54 @@ function cargarHistorialImportes() {
   }
   cargarCentroMedicos();
 
-  /* const tblImportes = document.getElementById('tblImportes');
-  if (!tblImportes) {
-    console.warn('tblImportes no encontrado, reintentando...');
-    /* setTimeout(ejecutarImportes, 50); */
-   /*  return; */ 
   }
-cargarHistorialImportes();
+cargarHistorialImportes(); */
 
-async function cargarCentroMedicos(){
+const parametros = window.parametrosImportes || {};
+let listaColumnasGrillaHistorialImportes = [
+  {columnName:"Centro Médico", alineacion: alignmentLeft},
+  {columnName:"Tipo de Descuento", alineacion: alignmentLeft}, 
+  {columnName: "Valor", alineacion: alignmentRight},
+  {columnName: "$Sesión Tratamiento", alineacion: alignmentRight} , 
+  {columnName: "$Sesion Evaluación", alineacion: alignmentRight},
+  {columnName: "Vigencia Desde", alineacion: alignmentLeft},
+  {columnName: "vigencia Hasta", alineacion: alignmentLeft},
+  {columnName: "Estado", alineacion: alignmentCenter},
+  {columnName: "Editar", alineacion: alignmentCenter}
+];
+
+let tblHistorialImportes = null;
+let cboCentroMedico = null;
+
+
+function inicializarObjetosDOM() {
+  tblHistorialImportes = document.getElementById('tblHistorialImportes');
+  cboCentroMedico = document.getElementById('cboCentroMedico');
+}
+
+function inicializarEventos() {
+  //Inicializar eventos de los botones
+}
+
+async function cargarCentrosMedicos(){
   try {
-    cboCentroMedico.innerHTML = '';
-    // Agregar opción por defecto
-    const optionDefault = document.createElement('option');
-    optionDefault.value = '';
-    optionDefault.textContent = 'Seleccione Centro Médico';
-    cboCentroMedico.appendChild(optionDefault);
-    throw new Error();
     const resultado = await window.viewModelAPI.getActiveCentroMedico(); 
     if (!resultado.ok) throw new Error();
     
+    const descripcionDefault = "Seleccione un Centro Médico";
     const centrosMedicos = resultado.data;
-    centrosMedicos.forEach(centroMedico => {
-        const option = document.createElement('option');
-        option.value = centroMedico.dataValues.idCentroMedico;
-        option.textContent = centroMedico.dataValues.nombre;
-        cboCentroMedico.appendChild(option);
-    });
-} catch (error) {
-    mostrarErrorUsuario("Ocurrió un error al cargar los Centro Médicos. Por favor, inténtelo de nuevo más tarde.");
+    cargarListaDesplegable(cboCentroMedico, centrosMedicos, descripcionDefault);  
+  } catch (error) {
+    let origen = 'importes.js - cargarCentrosMedicos';
+    manejarErrores(error, 'errorImportesCargarCentrosMedicos', origen);
+  }
 }
+
+function cargarInicial(){
+  inicializarObjetosDOM();
+  inicializarEventos();
+  addTableHeaders(tblHistorialImportes, listaColumnasGrillaHistorialImportes);
+  cargarCentrosMedicos();
 }
+
+cargarInicial();

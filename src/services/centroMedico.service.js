@@ -149,7 +149,8 @@ class CentroMedicoService {
     await this.centroMedicoRepository.updateEstadoCentroMedico(idCentroMedico, nuevoEstado);
   }
 async getActiveCentroMedico(){
-    return await this.centroMedicoRepository.getActiveCentroMedico();
+    const centrosMedicos = await this.centroMedicoRepository.getActiveCentroMedico();
+    return centrosMedicos.map(centroMedico => centroMedico.get({ plain: true })); 
   }
 }
 

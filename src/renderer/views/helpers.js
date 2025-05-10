@@ -1,3 +1,16 @@
+// Este archivo contiene funciones auxiliares para la vista de la aplicación
+class ViewModelAPIError extends Error {
+    constructor(message = "Ocurrió un error en la API", details = null) {
+      super(message);
+      this.name = 'ViewModelAPIError';
+      this.details = details; // Información adicional sobre el error
+    }
+  }
+
+const alignmentLeft = "text-start";
+const alignmentCenter = "text-center";
+const alignmentRight = "text-end";
+
 function createTableData(data, rowPadre, alignmentClass){
     const td = document.createElement('td');
     td.textContent = data;
@@ -19,6 +32,21 @@ function addTableHeaders(idTabla, listaColumnas) {
     listaColumnas.forEach(columna => createTableHeader(columna, rowHeaders));
     tHead.appendChild(rowHeaders);
     idTabla.appendChild(tHead);
+}
+
+function cargarListaDesplegable(idListaDesplegable, datosLista, descripciónOpcionDefault) {
+    idListaDesplegable.innerHTML = '';
+    const optionDefault = document.createElement('option');
+    optionDefault.value = '';
+    optionDefault.textContent = descripciónOpcionDefault;
+    idListaDesplegable.appendChild(optionDefault);
+
+    datosLista.forEach(data => {
+        const option = document.createElement('option');
+        option.value = data.id;
+        option.textContent = data.descripcion;
+        idListaDesplegable.appendChild(option);
+    })
 }
 
 function renderPagination({ currentPage, totalPages, actionMethod, changePageCallback }) {
@@ -194,3 +222,24 @@ window.addEventListener('unhandledrejection', (event) => {
     mostrarErrorUsuario('Ocurrió un problema inesperado. Contacte con su administrador.');
 });
       
+const mensajeriaErrores = {
+    errorImportesCargarCentrosMedicos: {
+      mensajeError: 'Ocurrió un error al cargar los centros médicos. Por favor, contacte al administrador.',
+      mensajeErrorGenerico: 'Ocurrió un error al cargar los centros médicos. Por favor, contacte al administrador.'
+    },
+    // Podés agregar más errores aquí sin preocuparte por la performance
+  };
+  
+
+function manejarErrores(error, idMensajeError, origen) {
+    const errorDefinido = mensajeriaErrores[idMensajeError];
+
+    if (error instanceof ViewModelAPIError) {
+        mostrarErrorUsuario(errorDefinido.mensajeError);
+    }
+    else {
+        console.error(errorDefinido.mensajeErrorGenerico, error);
+        mostrarErrorUsuario(errorDefinido.mensajeErrorGenerico);
+        loguearError(error, origen);
+    }
+}

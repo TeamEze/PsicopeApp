@@ -1,8 +1,6 @@
 import ViewModelAPIError from './errors.js';
 
-const alignmentLeft = "text-start";
-const alignmentCenter = "text-center";
-const alignmentRight = "text-end";
+
 const pageSize = 10; // Tamaño de página
 
 let centroMedicoActual = null;
@@ -69,6 +67,7 @@ function cargaInicial() {
     inicializarEventos();
     addTableHeaders(tblCentrosMedicos, listaColumnasGrillaCentrosMedicos);
     cargarLocalidades();
+    cargarHistorialImportes();
 }
 
 function inicializarObjetosDOM() {
@@ -103,6 +102,30 @@ function inicializarEventos(){
         switchInputActual.checked = true;
     };
 }
+
+function cargarHistorialImportes() {
+    //document.addEventListener('DOMContentLoaded', () => {
+    const tabImportes = document.querySelector('a[href="#importes"]');
+    const importesContainer = document.getElementById('importes');
+  
+    tabImportes.addEventListener('click', async () => {
+        if (importesContainer.innerHTML.trim() !== '') return;
+      
+        try {
+          const html = await window.viewModelAPI.readFile('importes.html');
+          importesContainer.innerHTML = html;
+      
+          // Cargar el script importes.js
+          const script = document.createElement('script');
+          script.src = 'importes.js';
+          document.body.appendChild(script);
+        } catch (error) {
+          console.error('Error al cargar el tab Importes:', error);
+          alert('No se pudo cargar el contenido de Importes. Por favor, inténtelo de nuevo.');
+        }
+      });
+}
+
 
 async function cargarLocalidades() {
     try {
