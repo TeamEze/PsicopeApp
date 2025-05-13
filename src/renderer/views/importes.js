@@ -47,8 +47,7 @@ async function cargarCentrosMedicos(){
     const centrosMedicos = resultado.data;
     cargarListaDesplegable(cboCentroMedico, centrosMedicos, descripcionDefault);  
   } catch (error) {
-    let origen = 'importes.js - cargarCentrosMedicos';
-    manejarErrores(error, 'errorImportesCargarCentrosMedicos', origen);
+    manejarErrores(error, 'IMPORTES_CARGAR_CENTROS_MEDICOS');
   }
 }
 
