@@ -1,12 +1,3 @@
-// Este archivo contiene funciones auxiliares para la vista de la aplicación
-class ViewModelAPIError extends Error {
-    constructor(message = "Ocurrió un error en la API", details = null) {
-      super(message);
-      this.name = 'ViewModelAPIError';
-      this.details = details; // Información adicional sobre el error
-    }
-  }
-
 const alignmentLeft = "text-start";
 const alignmentCenter = "text-center";
 const alignmentRight = "text-end";
@@ -222,24 +213,33 @@ window.addEventListener('unhandledrejection', (event) => {
     mostrarErrorUsuario('Ocurrió un problema inesperado. Contacte con su administrador.');
 });
       
-const mensajeriaErrores = {
-    errorImportesCargarCentrosMedicos: {
-      mensajeError: 'Ocurrió un error al cargar los centros médicos. Por favor, contacte al administrador.',
-      mensajeErrorGenerico: 'Ocurrió un error al cargar los centros médicos. Por favor, contacte al administrador.'
-    },
-    // Podés agregar más errores aquí sin preocuparte por la performance
-  };
+
   
 
-function manejarErrores(error, idMensajeError, origen) {
+function manejarErrores(error, idMensajeError) {
     const errorDefinido = mensajeriaErrores[idMensajeError];
 
     if (error instanceof ViewModelAPIError) {
+        console.error(errorDefinido.methodAPI, error);
         mostrarErrorUsuario(errorDefinido.mensajeError);
     }
     else {
         console.error(errorDefinido.mensajeErrorGenerico, error);
         mostrarErrorUsuario(errorDefinido.mensajeErrorGenerico);
-        loguearError(error, origen);
+        loguearError(error, errorDefinido.origen);
+    }
+}
+
+function manejarErrorModal(error, idMensajeError) {
+    const errorDefinido = mensajeriaErrores[idMensajeError];
+
+    if (error instanceof ViewModelAPIError) {
+        console.error(errorDefinido.methodAPI, error);
+        window.viewModelAPI.mostrarErrorGenerico(errorDefinido.mensajeError);
+    }
+    else {
+        console.error(errorDefinido.mensajeErrorGenerico, error);
+        window.viewModelAPI.mostrarErrorGenerico(errorDefinido.mensajeErrorGenerico);
+        loguearError(error, errorDefinido.origen);
     }
 }

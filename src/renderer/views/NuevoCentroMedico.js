@@ -1,4 +1,3 @@
-import ViewModelAPIError from './errors.js';
 
 let isEditing = false;
 let editingCentroMedicoId = null;
@@ -147,51 +146,22 @@ window.viewModelAPI.onEditarCentroMedico(async (event, idCentroMedico) => {
     document.getElementById('txtEmail').value = centroMedico.email;
     document.getElementById('nbDuracion').value = centroMedico.duracionSesion;
   } catch (error) {
-    if (error instanceof ViewModelAPIError) {
-      console.error('Error en ViewModelAPI.getCentroMedicoById:');
-      window.viewModelAPI.mostrarErrorGenerico("Error al obtener datos del centro médico. Por favor, contacte al administrador.");
-    }
-    else {
-      console.error('Error genérico al obtener datos del centro médico', error);
-      window.viewModelAPI.mostrarErrorGenerico('Error inesperado al obtener datos del centro médico. Por favor, contacte al administrador.');
-      loguearError(error, 'NuevoCentroMedico.js - onEditarCentroMedico');
-    }
+    manejarErrorModal(error, 'NUEVOCENTROMEDICO_MODAL_ON_EDITAR_CENTRO_MEDICO')
   }
 });
 
 async function cargarLocalidades() {
   try {
     const cboLocalidad = document.getElementById('cboLocalidad');
-    cboLocalidad.innerHTML = '';
-
-    // Agregar opción por defecto
-    const optionDefault = document.createElement('option');
-    optionDefault.value = '';
-    optionDefault.textContent = 'Seleccione Localidad';
-    cboLocalidad.appendChild(optionDefault);
-
     const resultado = await window.viewModelAPI.getAllLocalidades(); 
     if (!resultado.ok) throw new ViewModelAPIError();
 
-    const localidades = resultado.data; 
-    localidades.forEach(localidad => {
-        const option = document.createElement('option');
-        option.value = localidad.idLocalidad;
-        option.textContent = localidad.descripcion;
-        cboLocalidad.appendChild(option);
-    });
+    const descripcionDefault = "Seleccione Localidad";
+    const localidades = resultado.data;
+    cargarListaDesplegable(cboLocalidad, localidades, descripcionDefault);          
   } catch (error) {
-    if (error instanceof ViewModelAPIError) {
-      console.error('Error en ViewModelAPI.getAllLocalidades:');
-      window.viewModelAPI.mostrarErrorGenerico("Ocurrió un error al cargar las localidades. Por favor, contacte al administrador.");
-    }
-    else {
-      console.error('Error genérico al cargar localidades:', error);
-      window.viewModelAPI.mostrarErrorGenerico('Error inesperado al cargar las localidades. Por favor, contacte al administrador.');
-      loguearError(error, 'NuevoCentroMedico.js - cargarLocalidades');
-    }
+      manejarErrores(error, 'NUEVOCENTROMEDICO_MODAL_CARGAR_LOCALIDADES');
   }
-  
 }
 
 async function manejarEnvioFormularioCentroMedico(event) {
@@ -213,14 +183,7 @@ async function manejarEnvioFormularioCentroMedico(event) {
     limpiarFormulario();
     window.viewModelAPI.hideNuevoCentroMedicoModal();
   } catch (error) {
-    if (error instanceof ViewModelAPIError) {
-      console.error('Error en ViewModelAPI.updateCentroMedico:');
-      window.viewModelAPI.mostrarErrorGenerico('Error al procesar el formulario. Por favor, contacte al administrador.');
-    } else {
-      console.error('Error genérico en el formulario:', error);
-      window.viewModelAPI.mostrarErrorGenerico('Error inesperado al procesar el formulario. Por favor, contacte al administrador.');
-      loguearError(error, 'NuevoCentroMedico.js - submit form');
-    }
+    manejarErrorModal(error, 'NUEVOCENTROMEDICO_MODAL_SUBMIT_FORMULARIO');
   }
 }
 

@@ -32,6 +32,7 @@ let cboCentroMedico = null;
 function inicializarObjetosDOM() {
   tblHistorialImportes = document.getElementById('tblHistorialImportes');
   cboCentroMedico = document.getElementById('cboCentroMedico');
+  cboTipoDescuento = document.getElementById('cboTipoDescuento');
 }
 
 function inicializarEventos() {
@@ -47,8 +48,20 @@ async function cargarCentrosMedicos(){
     const centrosMedicos = resultado.data;
     cargarListaDesplegable(cboCentroMedico, centrosMedicos, descripcionDefault);  
   } catch (error) {
-    let origen = 'importes.js - cargarCentrosMedicos';
-    manejarErrores(error, 'errorImportesCargarCentrosMedicos', origen);
+    manejarErrores(error, 'IMPORTES_CARGAR_CENTROS_MEDICOS');
+  }
+}
+
+async function cargarTiposDescuento(){  
+  try {
+    const resultado = await window.historialImportesAPI.getAllTiposDescuento(); 
+    if (!resultado.ok) throw new Error();
+    
+    const descripcionDefault = "Seleccione Tipo de Descuento";
+    const tiposDescuento = resultado.data;
+    cargarListaDesplegable(cboTipoDescuento, tiposDescuento, descripcionDefault);  
+  } catch (error) {
+    manejarErrores(error, 'IMPORTES_CARGAR_TIPOS_DESCUENTO');
   }
 }
 
@@ -57,6 +70,7 @@ function cargarInicial(){
   inicializarEventos();
   addTableHeaders(tblHistorialImportes, listaColumnasGrillaHistorialImportes);
   cargarCentrosMedicos();
+  cargarTiposDescuento();
 }
 
 cargarInicial();
