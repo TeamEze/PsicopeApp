@@ -27,3 +27,8 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
   mostrarErrorGenerico: (mensaje) => ipcRenderer.send('mostrar-error-generico', mensaje),
   onMostrarErrorGenerico: (callback) => ipcRenderer.on('mostrar-error-generico', callback), // Escuchar evento para mostrar error genérico
 });
+
+contextBridge.exposeInMainWorld('historialImportesAPI', {
+  getAllTiposDescuento: () => ipcRenderer.invoke('getAllTiposDescuento'),
+  //onMostrarErrorGenerico: (callback) => ipcRenderer.on('mostrar-error-generico', callback), // Escuchar evento para mostrar error genérico
+});

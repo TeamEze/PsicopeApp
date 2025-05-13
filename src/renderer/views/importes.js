@@ -32,6 +32,7 @@ let cboCentroMedico = null;
 function inicializarObjetosDOM() {
   tblHistorialImportes = document.getElementById('tblHistorialImportes');
   cboCentroMedico = document.getElementById('cboCentroMedico');
+  cboTipoDescuento = document.getElementById('cboTipoDescuento');
 }
 
 function inicializarEventos() {
@@ -51,11 +52,25 @@ async function cargarCentrosMedicos(){
   }
 }
 
+async function cargarTiposDescuento(){  
+  try {
+    const resultado = await window.historialImportesAPI.getAllTiposDescuento(); 
+    if (!resultado.ok) throw new Error();
+    
+    const descripcionDefault = "Seleccione Tipo de Descuento";
+    const tiposDescuento = resultado.data;
+    cargarListaDesplegable(cboTipoDescuento, tiposDescuento, descripcionDefault);  
+  } catch (error) {
+    manejarErrores(error, 'IMPORTES_CARGAR_TIPOS_DESCUENTO');
+  }
+}
+
 function cargarInicial(){
   inicializarObjetosDOM();
   inicializarEventos();
   addTableHeaders(tblHistorialImportes, listaColumnasGrillaHistorialImportes);
   cargarCentrosMedicos();
+  cargarTiposDescuento();
 }
 
 cargarInicial();

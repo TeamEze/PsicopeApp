@@ -67,5 +67,11 @@ const mensajeriaErrores = {
       origen: 'importes.js - cargarCentrosMedicos',
       mensajeError: 'Ocurrió un error al cargar los centros médicos. Por favor, contacte al administrador.',
       mensajeErrorGenerico: 'Error inesperado al cargar los centros médicos. Por favor, contacte al administrador.'
+  },
+  IMPORTES_CARGAR_TIPOS_DESCUENTO: {
+      methodAPI: 'getAllTiposDescuento',
+      origen: 'importes.js - cargarTiposDescuento',
+      mensajeError: 'Ocurrió un error al cargar los tipos de descuento. Por favor, contacte al administrador.',
+      mensajeErrorGenerico: 'Error inesperado al cargar los tipos de descuento. Por favor, contacte al administrador.'
   }
 };
