@@ -28,6 +28,9 @@ let listaColumnasGrillaHistorialImportes = [
 let tblHistorialImportes = null;
 let cboCentroMedico = null;
 
+// =============================
+// 🚀 Métodos de carga inicial
+// ==============================
 
 function inicializarObjetosDOM() {
   tblHistorialImportes = document.getElementById('tblHistorialImportes');
@@ -65,12 +68,69 @@ async function cargarTiposDescuento(){
   }
 }
 
+// =========================
+// 🛠️ Funciones utilitarias
+// =========================
+function addCentroMedicoToTable(centroMedico, tbody, isNew=false) {
+  const tr = document.createElement('tr');
+  tr.setAttribute('data-id', centroMedico.idCentroMedico); // Agregar un identificador único
+
+  if (isNew) {
+      animarNuevaFila(tr); // Aplicar la animación a la fila
+  }
+  
+  createTableData(centroMedico.nombre, tr, alignmentLeft);
+  createTableData(centroMedico.direccion, tr, alignmentLeft);
+  createTableData(centroMedico.localidad, tr, alignmentLeft);
+  createTableData(centroMedico.telefono, tr, alignmentRight);
+  createTableData(centroMedico.personaContacto, tr, alignmentLeft);
+  createTableData(centroMedico.email, tr, alignmentLeft);
+  createTableData(centroMedico.duracionSesion, tr, alignmentRight);
+
+  crearColumnaEstado(tr, centroMedico);
+  crearColumnaEditar(tr, centroMedico);
+  crearColumnaPacientes(tr, centroMedico);
+  crearColumnaHistorial(tr, centroMedico);
+
+  tbody.appendChild(tr);
+}  
+
+function updateTableContent(centrosMedicosData) {
+  if (tblCentrosMedicos.querySelector('tbody')) {
+      tblCentrosMedicos.removeChild(tblCentrosMedicos.querySelector('tbody'));
+  }
+  const tbody = document.createElement('tbody');
+  centrosMedicosData.forEach(centroMedico => {
+      addCentroMedicoToTable(centroMedico, tbody);
+  });
+  tblCentrosMedicos.appendChild(tbody);
+}
+
+
+// =========================
+// 🧠 Funciones principales
+// =========================
+
+async function cargarHistorialImportes(page = 1){
+  try {
+    let paginationData = {page: page, pageSize: pageSize};
+    const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData); 
+    if (!resultado.ok) throw new Error();
+    
+    const historialImportes = resultado.data;
+    cargarGrilla(tblHistorialImportes, historialImportes, listaColumnasGrillaHistorialImportes);
+  } catch (error) {
+    manejarErrores(error, 'IMPORTES_CARGAR_GRILLA_HISTORIAL_IMPORTES');
+  }
+}
+
 function cargarInicial(){
   inicializarObjetosDOM();
   inicializarEventos();
   addTableHeaders(tblHistorialImportes, listaColumnasGrillaHistorialImportes);
   cargarCentrosMedicos();
   cargarTiposDescuento();
+  cargarHistorialImportes();
 }
 
 cargarInicial();

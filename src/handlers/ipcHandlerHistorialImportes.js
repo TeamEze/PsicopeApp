@@ -4,6 +4,10 @@ function setupIpcHandlersHistorialImportes(historialImportesViewModel, errorLogS
     ipcMain.handle('getAllTiposDescuento', async () => {
         return await historialImportesViewModel.getAllTiposDescuento();
     });
+
+    ipcMain.handle('getPaginatedHistorialImportes', async (event, page, pageSize) => {
+        return await historialImportesViewModel.getPaginatedHistorialImportes(page, pageSize);
+    });
 }
 
 module.exports = { setupIpcHandlersHistorialImportes };
