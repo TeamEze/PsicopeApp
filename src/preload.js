@@ -30,5 +30,6 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
 
 contextBridge.exposeInMainWorld('historialImportesAPI', {
   getAllTiposDescuento: () => ipcRenderer.invoke('getAllTiposDescuento'),
+  getPaginatedHistorialImportes: (paginationData) => ipcRenderer.invoke('getPaginatedHistorialImportes', paginationData.page, paginationData.pageSize),
   //onMostrarErrorGenerico: (callback) => ipcRenderer.on('mostrar-error-generico', callback), // Escuchar evento para mostrar error genérico
 });
