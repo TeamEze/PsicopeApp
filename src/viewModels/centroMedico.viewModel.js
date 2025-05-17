@@ -1,5 +1,3 @@
-const { json } = require("sequelize");
-
 class CentroMedicoViewModel {
 
   constructor(centroMedicoService, localidadService, errorLogService) {
@@ -16,7 +14,7 @@ class CentroMedicoViewModel {
     catch (error) { 
       await this.errorLogService.handleError(
         error.message,
-        json.stringify({idCentroMedico}),
+        JSON.stringify({idCentroMedico}),
         error.stack,
         'CentroMedicoViewModel.getCentroMedicoById'
       );
@@ -32,7 +30,7 @@ class CentroMedicoViewModel {
     catch (error) {
       await this.errorLogService.handleError(
         error.message,
-        json.stringify({page, pageSize}),
+        JSON.stringify({page, pageSize}),
         error.stack,
         'CentroMedicoViewModel.getPaginatedActiveCentrosMedicos'
       );
@@ -48,7 +46,7 @@ class CentroMedicoViewModel {
     catch (error) {
       await this.errorLogService.handleError(
         error.message,
-        json.stringify({filters, page, pageSize}),
+        JSON.stringify({filters, page, pageSize}),
         error.stack,
         'CentroMedicoViewModel.getPaginatedFilteredCentrosMedicos'
       );

@@ -1,9 +1,8 @@
-const { json } = require("sequelize");
-
 class HistorialImportesViewModel {
-  constructor(tipoDescuentoService, errorLogService) {
+  constructor(tipoDescuentoService, estadoService, errorLogService) {
     //this.historialImportesService = historialImportesService;
     this.tipoDescuentoService = tipoDescuentoService;
+    this.estadoService = estadoService;
     this.errorLogService = errorLogService;
   }
 
@@ -15,9 +14,25 @@ class HistorialImportesViewModel {
         catch (error) {
             await this.errorLogService.handleError(
                 error.message,
-                json.stringify({}),
+                JSON.stringify({}),
                 error.stack,
                 'HistorialImportesViewModel.getAllTiposDescuento'
+            );
+            return {ok: false};
+        }
+    }
+
+    async getAllEstados (){
+        try {
+            const estados = await this.estadoService.getAllEstados();
+            return {ok: true, data: estados};
+        } 
+        catch (error) {
+            await this.errorLogService.handleError(
+                error.message,
+                JSON.stringify({}),
+                error.stack,
+                'HistorialImportesViewModel.getAllEstados'
             );
             return {ok: false};
         }
@@ -31,7 +46,7 @@ class HistorialImportesViewModel {
         catch (error) {
             await this.errorLogService.handleError(
                 error.message,
-                json.stringify({page, pageSize}),
+                JSON.stringify({page, pageSize}),
                 error.stack,
                 'HistorialImportesViewModel.getPaginatedHistorialImportes'
             );

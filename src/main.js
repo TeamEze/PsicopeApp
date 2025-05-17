@@ -23,12 +23,11 @@ const centroMedicoViewModel = new CentroMedicoViewModel(centroMedicoService, loc
 const tipoDescuentoRepository = require('./data-access/repository/tipoDescuento.repository.js');
 const TipoDescuentoService = require('./services/tipoDescuento.service.js');
 const tipoDescuentoService = new TipoDescuentoService(tipoDescuentoRepository);
-
+const estadoRepository = require ('./data-access/repository/estado.repository.js');
+const EstadoService = require('./services/estado.service.js');
+const estadoService = new EstadoService(estadoRepository);
 const HistorialImportesViewModel = require('./viewModels/historialImportes.viewModel.js');
-const historialImportesViewModel = new HistorialImportesViewModel(tipoDescuentoService, errorLogService);
-
-
-
+const historialImportesViewModel = new HistorialImportesViewModel(tipoDescuentoService,estadoService, errorLogService);
 
 const {setupIpcHandlers} = require('./handlers/ipcHandlerCentroMedico.js');
 const {setupIpcHandlersHistorialImportes} = require('./handlers/ipcHandlerHistorialImportes.js');

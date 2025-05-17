@@ -27,6 +27,7 @@ let listaColumnasGrillaHistorialImportes = [
 
 let tblHistorialImportes = null;
 let cboCentroMedico = null;
+let cboEstado = null;
 
 // =============================
 // 🚀 Métodos de carga inicial
@@ -36,6 +37,7 @@ function inicializarObjetosDOM() {
   tblHistorialImportes = document.getElementById('tblHistorialImportes');
   cboCentroMedico = document.getElementById('cboCentroMedico');
   cboTipoDescuento = document.getElementById('cboTipoDescuento');
+  cboEstado = document.getElementById('cboEstado');
 }
 
 function inicializarEventos() {
@@ -45,7 +47,7 @@ function inicializarEventos() {
 async function cargarCentrosMedicos(){
   try {
     const resultado = await window.viewModelAPI.getActiveCentroMedico(); 
-    if (!resultado.ok) throw new Error();
+    if (!resultado.ok) throw new ViewModelAPIError();
     
     const descripcionDefault = "Seleccione un Centro Médico";
     const centrosMedicos = resultado.data;
@@ -58,7 +60,7 @@ async function cargarCentrosMedicos(){
 async function cargarTiposDescuento(){  
   try {
     const resultado = await window.historialImportesAPI.getAllTiposDescuento(); 
-    if (!resultado.ok) throw new Error();
+    if (!resultado.ok) throw new ViewModelAPIError();
     
     const descripcionDefault = "Seleccione Tipo de Descuento";
     const tiposDescuento = resultado.data;
@@ -66,6 +68,19 @@ async function cargarTiposDescuento(){
   } catch (error) {
     manejarErrores(error, 'IMPORTES_CARGAR_TIPOS_DESCUENTO');
   }
+}
+
+async function cargarEstados() {
+  try {
+    const resultado = await window.historialImportesAPI.getAllEstados(); 
+    if (!resultado.ok) throw new ViewModelAPIError();
+    
+    const descripcionDefault = "Seleccione Estado";
+    const estados = resultado.data;
+    cargarListaDesplegable(cboEstado, estados, descripcionDefault);  
+  } catch (error) {
+    manejarErrores(error, 'IMPORTES_CARGAR_ESTADOS');
+  }  
 }
 
 // =========================
@@ -115,7 +130,7 @@ async function cargarHistorialImportes(page = 1){
   try {
     let paginationData = {page: page, pageSize: pageSize};
     const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData); 
-    if (!resultado.ok) throw new Error();
+    if (!resultado.ok) throw new ViewModelAPIError();
     
     const historialImportes = resultado.data;
     cargarGrilla(tblHistorialImportes, historialImportes, listaColumnasGrillaHistorialImportes);
@@ -130,7 +145,8 @@ function cargarInicial(){
   addTableHeaders(tblHistorialImportes, listaColumnasGrillaHistorialImportes);
   cargarCentrosMedicos();
   cargarTiposDescuento();
-  cargarHistorialImportes();
+  cargarEstados();
+  /* cargarHistorialImportes(); */
 }
 
 cargarInicial();
