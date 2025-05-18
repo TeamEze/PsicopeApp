@@ -18,16 +18,20 @@ const CentroMedicoViewModel = require('./viewModels/centroMedico.viewModel.js');
 const centroMedicoViewModel = new CentroMedicoViewModel(centroMedicoService, localidadService, errorLogService);
 
 //Setup dependencies of HistorialImportesViewModel
-//const HistorialImportesRepository = require('./data-access/repository/historialImportes.repository.js');
-//const HistorialImportesService = require('./services/historialImportes.service.js');
+
 const tipoDescuentoRepository = require('./data-access/repository/tipoDescuento.repository.js');
 const TipoDescuentoService = require('./services/tipoDescuento.service.js');
 const tipoDescuentoService = new TipoDescuentoService(tipoDescuentoRepository);
 const estadoRepository = require ('./data-access/repository/estado.repository.js');
 const EstadoService = require('./services/estado.service.js');
 const estadoService = new EstadoService(estadoRepository);
+const historialImporteRepository = require('./data-access/repository/historialImporte.repository.js');
+const HistorialImporteService = require('./services/historialImporte.service.js');
+const HistorialImporteMapper = require('./mappers/historialImporteMapper.js');
+const historialImporteService = new HistorialImporteService(historialImporteRepository, HistorialImporteMapper);
+
 const HistorialImportesViewModel = require('./viewModels/historialImportes.viewModel.js');
-const historialImportesViewModel = new HistorialImportesViewModel(tipoDescuentoService,estadoService, errorLogService);
+const historialImportesViewModel = new HistorialImportesViewModel(historialImporteService, tipoDescuentoService, estadoService, errorLogService);
 
 const {setupIpcHandlers} = require('./handlers/ipcHandlerCentroMedico.js');
 const {setupIpcHandlersHistorialImportes} = require('./handlers/ipcHandlerHistorialImportes.js');

@@ -40,8 +40,14 @@ function cargarListaDesplegable(idListaDesplegable, datosLista, descripciónOpci
     })
 }
 
-function renderPagination({ currentPage, totalPages, actionMethod, changePageCallback }) {
-    const paginationContainer = document.getElementById('pagination');
+function cleanPagination(idPaginationElement) {
+    const paginationContainer = idPaginationElement;
+    paginationContainer.innerHTML = ''; // Limpiar paginación
+}
+
+function renderPagination({ idPaginationElement, currentPage, totalPages, actionMethod, changePageCallback }) {
+    //const paginationContainer = document.getElementById('pagination');
+    const paginationContainer = idPaginationElement;
     paginationContainer.innerHTML = ''; // Limpiar paginación
     
     const ul = document.createElement('ul');
@@ -174,7 +180,7 @@ function mostrarErrorUsuario(mensaje) {
 
     setTimeout(() => {
         alerta.remove();
-    }, 10000); // se borra luego de 5 segundos
+    }, 5000); // se borra luego de 5 segundos
 } 
 
 function loguearError(error, source) {

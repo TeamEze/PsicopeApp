@@ -1,13 +1,19 @@
 const HistorialImporte = require('../models/historialImporte.model.js');
-const CentroMedico = require('./centroMedico.model.js');
-const TipoDescuento = require('./tipoDescuento.model.js');
-const Estado = require('./estado.model.js');
+const CentroMedico = require('../models/centroMedico.model.js');
+const TipoDescuento = require('../models/tipoDescuento.model.js');
+const Estado = require('../models/estado.model.js');
+const { where } = require('sequelize');
 
 class HistorialImporteRepository {
     //Creo que necesitamos un indice sobre VigenciaDesde
-    async getPaginatedHistorialImporteIds(offset, pageSize){    
+    async getPaginatedHistorialImporteIds(offset, pageSize, filters){  
+        const whereClause = {
+            ...(filters || {})
+          };
+        
         const idResult = await HistorialImporte.findAll({
             attributes: ['idHistorialImporte'],
+            where: whereClause,
             order: [['vigenciaDesde', 'DESC']],
             limit: pageSize,
             offset: offset,
@@ -28,13 +34,19 @@ class HistorialImporteRepository {
                 { model: TipoDescuento, as: 'tipoDescuento', required: true },
                 { model: Estado, as: 'estado', required: true }
             ],
-            order: [['vigenciaDesde', 'ASC']]
+            order: [['vigenciaDesde', 'DESC']]
         });
         return historialImportes;
     }
 
-    async getTotalHistorialImporte(){
-        return await HistorialImporte.count();
+    async getTotalHistorialImporte(filters){
+        const whereClause = {
+            ...(filters || {})
+        };
+        const totalCount = await HistorialImporte.count({
+            where: whereClause
+        });
+        return totalCount;
     }
 }
 

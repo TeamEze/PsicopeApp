@@ -16,11 +16,11 @@ const HistorialImporte = sequelize.define('HistorialImporte', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
-    sesionTratamiento: {
+    importeSesionTratamiento: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
-    sesionEvaluacion: {
+    importeSesionEvaluacion: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
@@ -45,3 +45,4 @@ HistorialImporte.belongsTo(CentroMedico, {foreignKey: 'idCentroMedico', as: 'cen
 HistorialImporte.belongsTo(TipoDescuento, {foreignKey: 'idTipoDescuento', as: 'tipoDescuento'});
 HistorialImporte.belongsTo(Estado, {foreignKey: 'idEstado', as: 'estado'});
 
+module.exports = HistorialImporte;

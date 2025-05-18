@@ -28,6 +28,11 @@ let listaColumnasGrillaHistorialImportes = [
 let tblHistorialImportes = null;
 let cboCentroMedico = null;
 let cboEstado = null;
+let navPaginationHistorialImportes = null;
+let dtFechaVigenciaDesde = null;
+let dtFechavigenciaHasta = null;
+let btnLimpiarFiltrosHistorialImporte = null;
+let btnFiltrarHistorialImporte = null;
 
 // =============================
 // 🚀 Métodos de carga inicial
@@ -38,13 +43,33 @@ function inicializarObjetosDOM() {
   cboCentroMedico = document.getElementById('cboCentroMedico');
   cboTipoDescuento = document.getElementById('cboTipoDescuento');
   cboEstado = document.getElementById('cboEstado');
+  dtFechaVigenciaDesde = document.getElementById('fechaVigenciaDesde');
+  dtFechavigenciaHasta = document.getElementById('fechaVigenciaHasta');
+  navPaginationHistorialImportes = document.getElementById('paginationHistorialImportes');
+  btnLimpiarFiltrosHistorialImporte = document.getElementById('btnLimpiarFiltrosHistorialImporte');
+  btnFiltrarHistorialImporte = document.getElementById('btnFiltrarHistorialImporte');
 }
 
 function inicializarEventos() {
+
   //Inicializar eventos de los botones
+  btnLimpiarFiltrosHistorialImporte.addEventListener('click', () => limpiarFiltrosHistorialImporte());
+  btnFiltrarHistorialImporte.addEventListener('click', () => filtrarHistorialImportes());
+  document.getElementById('importes').addEventListener('refrescarImportes', (e) => {
+    const { idCentroMedico } = e.detail;
+    console.log('🔄 Recibido ID centro médico:', idCentroMedico);
+  
+    // Actualizar parámetros si querés
+    window.parametrosImportes = { idCentroMedico };
+  
+    limpiarFiltrosHistorialImporte();
+    leerParametros();
+    cargarHistorialImportes(); // O cualquier función relevante
+  });
+  
 }
 
-async function cargarCentrosMedicos(){
+async function cargarCentrosMedicosDesdeImportes(){
   try {
     const resultado = await window.viewModelAPI.getActiveCentroMedico(); 
     if (!resultado.ok) throw new ViewModelAPIError();
@@ -83,44 +108,166 @@ async function cargarEstados() {
   }  
 }
 
+function leerParametros() {
+  const parametros = window.parametrosImportes || {};
+  if (parametros) {
+    const idCentroMedico = parametros.idCentroMedico;
+    if (idCentroMedico) {
+      cboCentroMedico.value = idCentroMedico;
+    }
+    const idEstado = parametros.idEstado;
+    if (idEstado) {
+      cboEstado.value = idEstado;
+    }
+  }
+}
+
 // =========================
 // 🛠️ Funciones utilitarias
 // =========================
-function addCentroMedicoToTable(centroMedico, tbody, isNew=false) {
+
+function formatearFechaDDMMYYYY(fecha) {
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const anio = fecha.getFullYear();
+  return `${dia}/${mes}/${anio}`;
+}
+
+function crearColumnaEditarHistorialImporte(tr, historialImporte) {
+  const tdEditar = document.createElement('td');
+  tdEditar.classList.add('text-center'); 
+
+  const editIcon = document.createElement('i');
+  editIcon.id = 'editIcon';
+  editIcon.className = 'fas fa-edit'; 
+  //editIcon.classList.toggle('disabled-icon', centroMedico.estado !== 'Activo');
+  editIcon.style.cursor = 'pointer'; 
+  editIcon.title = 'Editar'; 
+  /*editIcon.onclick = () => {
+      window.viewModelAPI.openEditCentroMedicoModal(centroMedico.idCentroMedico); // Enviar el ID del centro médico al modal de edición
+  };*/
+  tdEditar.appendChild(editIcon);
+  tr.appendChild(tdEditar);
+}
+
+function addHistorialImporteToTable(historialImporte, tbody, isNew=false) {
   const tr = document.createElement('tr');
-  tr.setAttribute('data-id', centroMedico.idCentroMedico); // Agregar un identificador único
+  tr.setAttribute('data-id', historialImporte.idHistorialImporte); // Agregar un identificador único
 
   if (isNew) {
       animarNuevaFila(tr); // Aplicar la animación a la fila
   }
-  
-  createTableData(centroMedico.nombre, tr, alignmentLeft);
-  createTableData(centroMedico.direccion, tr, alignmentLeft);
-  createTableData(centroMedico.localidad, tr, alignmentLeft);
-  createTableData(centroMedico.telefono, tr, alignmentRight);
-  createTableData(centroMedico.personaContacto, tr, alignmentLeft);
-  createTableData(centroMedico.email, tr, alignmentLeft);
-  createTableData(centroMedico.duracionSesion, tr, alignmentRight);
 
-  crearColumnaEstado(tr, centroMedico);
-  crearColumnaEditar(tr, centroMedico);
-  crearColumnaPacientes(tr, centroMedico);
-  crearColumnaHistorial(tr, centroMedico);
+  // Uso:
+  const fechaVigenciaDesde = new Date(historialImporte.vigenciaDesde);
+  const fechaVigenciaHasta = new Date(historialImporte.vigenciaHasta);
+  //console.log(formatearFechaDDMMYYYY(fecha)); // "21/04/2025"
+
+  createTableData(historialImporte.centroMedico, tr, alignmentLeft);
+  createTableData(historialImporte.tipoDescuento, tr, alignmentLeft);
+  createTableData(historialImporte.valor, tr, alignmentRight);
+  createTableData(historialImporte.importeSesionEvaluacion, tr, alignmentRight);
+  createTableData(historialImporte.importeSesionTratamiento, tr, alignmentRight);
+  createTableData(formatearFechaDDMMYYYY(fechaVigenciaDesde), tr, alignmentLeft);
+  createTableData(formatearFechaDDMMYYYY(fechaVigenciaHasta), tr, alignmentLeft);
+  createTableData(historialImporte.estado, tr, alignmentCenter);
+
+  crearColumnaEditarHistorialImporte(tr, historialImporte);
+
+  if (historialImporte.estado === 'Activo') {
+      tr.classList.add('table-success');
+  }
 
   tbody.appendChild(tr);
 }  
 
-function updateTableContent(centrosMedicosData) {
-  if (tblCentrosMedicos.querySelector('tbody')) {
-      tblCentrosMedicos.removeChild(tblCentrosMedicos.querySelector('tbody'));
+function updateImportesTableContent(historialImportesData) {
+  if (tblHistorialImportes.querySelector('tbody')) {
+    tblHistorialImportes.removeChild(tblHistorialImportes.querySelector('tbody'));
   }
   const tbody = document.createElement('tbody');
-  centrosMedicosData.forEach(centroMedico => {
-      addCentroMedicoToTable(centroMedico, tbody);
+  historialImportesData.forEach(historialImporte => {
+      addHistorialImporteToTable(historialImporte, tbody);
   });
-  tblCentrosMedicos.appendChild(tbody);
+  tblHistorialImportes.appendChild(tbody);
 }
 
+function removeImportesTableContent() {
+  if (tblHistorialImportes.querySelector('tbody')) {
+    tblHistorialImportes.removeChild(tblHistorialImportes.querySelector('tbody'));
+  }
+}
+
+function changePageHistorialImporte(page, totalPages, actionMethod) {
+  if (page >= 1 && page <= totalPages) {
+      // Determinar qué método ejecutar según el nombre
+      if (actionMethod === Actions.FILTER) {
+          filtrarHistorialImportes(page);
+      } else if (actionMethod === Actions.GETALL) {
+          cargarHistorialImportes(page);
+      }
+  }
+}
+
+function RefreshPaginationImportes(currentPage, totalPages, action) {
+  const paginationConfig = {
+      idPaginationElement: navPaginationHistorialImportes,
+      currentPage: currentPage,
+      totalPages: totalPages,
+      actionMethod: action,
+      changePageCallback: changePageHistorialImporte
+  }
+
+  renderPagination(paginationConfig);
+}
+
+function obtenerFiltrosImportes(){
+  let filters = {};
+
+  const idCentroMedico = cboCentroMedico.value;
+  if (idCentroMedico) {
+      filters.idCentroMedico = idCentroMedico;
+  }
+  
+  const idEstado = cboEstado.value;
+  if (idEstado) {
+      filters.idEstado = idEstado;
+  }
+
+  const idTipoDescuento = cboTipoDescuento.value; 
+  if (idTipoDescuento) {
+      filters.idTipoDescuento = idTipoDescuento;
+  }
+
+  const fechaVigenciaDesde = dtFechaVigenciaDesde.value;
+  if (fechaVigenciaDesde) {
+      filters.fechaVigenciaDesde = new Date(fechaVigenciaDesde);
+  }
+
+  const fechaVigenciaHasta = dtFechavigenciaHasta.value;
+  if (fechaVigenciaHasta) {
+      filters.fechaVigenciaHasta = new Date(fechaVigenciaHasta);
+  }
+
+  return filters;
+}
+
+function limpiarFiltrosHistorialImporte() {
+  cboCentroMedico.value = "";
+  cboEstado.value = "";
+  cboTipoDescuento.value = "";
+  dtFechaVigenciaDesde.value = "";
+  dtFechavigenciaHasta.value = "";
+  removeImportesTableContent();
+  cleanPagination(navPaginationHistorialImportes);
+}
+
+function hayDatosParafiltrar() {  
+  if  (cboCentroMedico.value || cboEstado.value || cboTipoDescuento.value || dtFechaVigenciaDesde.value || dtFechavigenciaHasta.value) {
+      return true;
+  }
+  return false;
+}
 
 // =========================
 // 🧠 Funciones principales
@@ -129,24 +276,55 @@ function updateTableContent(centrosMedicosData) {
 async function cargarHistorialImportes(page = 1){
   try {
     let paginationData = {page: page, pageSize: pageSize};
-    const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData); 
+    const filters = obtenerFiltrosImportes();
+    const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData, filters); 
     if (!resultado.ok) throw new ViewModelAPIError();
     
-    const historialImportes = resultado.data;
-    cargarGrilla(tblHistorialImportes, historialImportes, listaColumnasGrillaHistorialImportes);
+    const result = resultado.data;
+    const historialImportesData = result.data;
+
+    updateImportesTableContent(historialImportesData);
+    RefreshPaginationImportes(result.currentPage, result.totalPages, Actions.GETALL);
   } catch (error) {
-    manejarErrores(error, 'IMPORTES_CARGAR_GRILLA_HISTORIAL_IMPORTES');
+    manejarErrores(error, 'IMPORTES_CARGAR__HISTORIAL_IMPORTES');
   }
 }
 
-function cargarInicial(){
+
+
+async function filtrarHistorialImportes(page = 1) {
+  try {
+      if (!hayDatosParafiltrar()) {
+          mostrarErrorUsuario("Debe ingresar al menos un filtro para realizar la búsqueda");
+          return;
+      }
+
+      let paginationData = {page: page, pageSize: pageSize};
+      const filters = obtenerFiltrosImportes();
+      const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData, filters); 
+      if (!resultado.ok) throw new ViewModelAPIError();
+      
+      const result = resultado.data;
+      const historialImportesData = result.data;
+
+      updateImportesTableContent(historialImportesData);
+      RefreshPaginationImportes(result.currentPage, result.totalPages, Actions.FILTER);
+  } catch (error) {
+      manejarErrores(error, 'IMPORTES_FILTRAR__HISTORIAL_IMPORTES');
+  }
+}
+
+async function cargarInicial(){
   inicializarObjetosDOM();
   inicializarEventos();
   addTableHeaders(tblHistorialImportes, listaColumnasGrillaHistorialImportes);
-  cargarCentrosMedicos();
-  cargarTiposDescuento();
-  cargarEstados();
-  /* cargarHistorialImportes(); */
+  await cargarCentrosMedicosDesdeImportes();
+  await cargarTiposDescuento();
+  await cargarEstados();
+  leerParametros();
 }
 
-cargarInicial();
+(async () => {
+  await cargarInicial();
+  await cargarHistorialImportes();
+})();

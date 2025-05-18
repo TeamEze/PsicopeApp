@@ -17,6 +17,7 @@ let chkVerInactivos = null;
 let btnConfirmarInactivacion = null;
 let btnCancelarInactivacion = null;
 let tblCentrosMedicos = null;
+let navPagination = null;
 
 let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: alignmentLeft},
                                         {columnName:"Dirección", alineacion: alignmentLeft}, 
@@ -53,6 +54,7 @@ function inicializarObjetosDOM() {
     btnConfirmarInactivacion = document.getElementById('btnConfirmarInactivacion');
     btnCancelarInactivacion = document.getElementById('btnCancelarInactivacion');
     tblCentrosMedicos = document.getElementById('tblCentrosMedicos');
+    navPagination = document.getElementById('paginationCentrosMedicos');
 }
 
 function inicializarEventos(){
@@ -97,16 +99,18 @@ function cargarHistorialImportes() {
         if (importesContainer.innerHTML.trim() !== '') return;
       
         try {
-          const html = await window.viewModelAPI.readFile('importes.html');
-          importesContainer.innerHTML = html;
-      
-          // Cargar el script importes.js
-          const script = document.createElement('script');
-          script.src = 'importes.js';
-          document.body.appendChild(script);
+            window.parametrosImportes = { idEstado: 1};
+            const html = await window.viewModelAPI.readFile('importes.html');
+            importesContainer.innerHTML = html;
+            importesContainer.setAttribute('data-loaded', 'true');
+        
+            // Cargar el script importes.js
+            const script = document.createElement('script');
+            script.src = 'importes.js';
+            document.body.appendChild(script);
         } catch (error) {
-          console.error('Error al cargar el tab Importes:', error);
-          alert('No se pudo cargar el contenido de Importes. Por favor, inténtelo de nuevo.');
+            console.error('Error al cargar el tab Importes:', error);
+            alert('No se pudo cargar el contenido de Importes. Por favor, inténtelo de nuevo.');
         }
       });
 }
@@ -155,6 +159,7 @@ function incluirInactivosChecked() {
 
 function RefreshPagination(currentPage, totalPages, action) {
     const paginationConfig = {
+        idPaginationElement: navPagination,
         currentPage: currentPage,
         totalPages: totalPages,
         actionMethod: action,
@@ -296,26 +301,7 @@ function crearColumnaPacientes(tr, centroMedico) {
     tdPacientes.classList.add('text-center');
     const lnkPacientes = document.createElement('a');
     lnkPacientes.id = 'lnkPacientes';
-    //lnkPacientes.href = "#";
-    lnkPacientes.onclick = async () => {
-        // 1. Guardar el ID globalmente para que importes.js lo lea
-        window.parametrosImportes = { idCentroMedico: centroMedico.idCentroMedico };
-        //if (importesContainer.innerHTML.trim() !== '') return;
-        // 2. Leer e insertar importes.html en el contenedor
-        const html = await window.viewModelAPI.readFile('importes.html');
-        document.getElementById('importes').innerHTML = html;
-      
-        // 3. Cargar el script asociado
-        const script = document.createElement('script');
-        script.src = 'importes.js';
-        script.onload = () => console.log('importes.js cargado');
-        script.onerror = () => console.error('Error al cargar importes.js');
-        document.body.appendChild(script);
-      
-        // 4. Cambiar a la pestaña "Importes"
-        document.querySelector('a[href="#importes"]').click();
-      };
-      
+    lnkPacientes.href = "#";
     //linkPacientes.className = 'btn btn-outline-primary btn-sm';
     lnkPacientes.style.cssText = 'text-decoration: none;'; // Cambiar el cursor al pasar sobre el ícono
     lnkPacientes.title = 'Ver pacientes'; // Tooltip al pasar el mouse
@@ -332,7 +318,48 @@ function crearColumnaHistorial(tr, centroMedico) {
     tdHistorial.classList.add('text-center');
     const lnkHistorial = document.createElement('a');
     lnkHistorial.id = 'lnkHistorial';
-    lnkHistorial.href = "#";
+    //lnkHistorial.href = "#";
+    lnkHistorial.onclick = async () => {
+    const importesContainer = document.getElementById('importes');
+    const idCentroMedico = centroMedico.idCentroMedico;
+    
+    // Ya está cargado, solo actualizo los parámetros y emito un evento
+    if (importesContainer.getAttribute('data-loaded') === 'true') {
+        window.parametrosImportes = { idCentroMedico };
+    
+        // 🔔 Emitir evento personalizado para que el tab reaccione
+        const event = new CustomEvent('refrescarImportes', { detail: { idCentroMedico } });
+        importesContainer.dispatchEvent(event);
+    
+        document.querySelector('a[href="#importes"]').click();
+        return;
+    }
+    
+    try {
+        // Guardar parámetro
+        window.parametrosImportes = { idCentroMedico: idCentroMedico };
+    
+        // Leer e insertar el HTML
+        const html = await window.viewModelAPI.readFile('importes.html');
+        importesContainer.innerHTML = html;
+        importesContainer.setAttribute('data-loaded', 'true');
+    
+        // Cargar el JS si no está
+        if (!document.querySelector('script[src="importes.js"]')) {
+        const script = document.createElement('script');
+        script.src = 'importes.js';
+        script.onload = () => console.log('importes.js cargado');
+        script.onerror = () => console.error('Error al cargar importes.js');
+        document.body.appendChild(script);
+        }
+    
+        // Cambiar al tab
+        document.querySelector('a[href="#importes"]').click();
+    } catch (error) {
+        console.error('Error al cargar importes:', error);
+    }
+    };
+      
     lnkHistorial.style.cssText = 'text-decoration: none;'; // Cambiar el cursor al pasar sobre el ícono
     lnkHistorial.title = 'Ver historial importes'; // Tooltip al pasar el mouse
     lnkHistorial.textContent = "🕒";
@@ -427,7 +454,7 @@ async function cargarCentrosMedicos(page = 1) {
         const result = resultado.data;
         const centrosMedicosData = result.data;
         
-        updateTableContent(centrosMedicosData);
+        this.updateTableContent(centrosMedicosData);
         RefreshPagination(result.currentPage, result.totalPages, Actions.GETALL);
 
     } catch (error) {
