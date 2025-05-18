@@ -7,8 +7,8 @@ function setupIpcHandlersHistorialImportes(historialImportesViewModel, errorLogS
     ipcMain.handle ('getAllEstados',async () => {
         return await historialImportesViewModel.getAllEstados();
     });
-    ipcMain.handle('getPaginatedHistorialImportes', async (event, page, pageSize) => {
-        return await historialImportesViewModel.getPaginatedHistorialImportes(page, pageSize);
+    ipcMain.handle('getPaginatedHistorialImportes', async (event, page, pageSize, filters) => {
+        return await historialImportesViewModel.getPaginatedHistorialImportes(page, pageSize, filters);
     });
 }
 

@@ -79,5 +79,17 @@ const mensajeriaErrores = {
       origen: 'importes.js - cargarEstados',
       mensajeError: 'Ocurrió un error al cargar los estados. Por favor, contacte al administrador.',
       mensajeErrorGenerico: 'Error inesperado al cargar los estados. Por favor, contacte al administrador.'
-  }
+  },
+  IMPORTES_CARGAR__HISTORIAL_IMPORTES: {
+        methodAPI: 'getPaginatedHistorialImportes',
+        origen: 'importes.js - cargarHistorialImportes',
+        mensajeError: 'Ocurrió un error al cargar el historial de importes. Por favor, contacte al administrador.',
+        mensajeErrorGenerico: 'Error inesperado al cargar el historial de importes. Por favor, contacte al administrador.'
+  },
+  IMPORTES_FILTRAR__HISTORIAL_IMPORTES: {
+        methodAPI: 'getPaginatedHistorialImportes',
+        origen: 'importes.js - filtrarHistorialImportes',
+        mensajeError: 'Ocurrió un error al filtrar el historial de importes. Por favor, contacte al administrador.',
+        mensajeErrorGenerico: 'Error inesperado al filtrar el historial de importes. Por favor, contacte al administrador.'
+  },
 };

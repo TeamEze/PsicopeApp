@@ -1,6 +1,6 @@
 class HistorialImportesViewModel {
-  constructor(tipoDescuentoService, estadoService, errorLogService) {
-    //this.historialImportesService = historialImportesService;
+  constructor(historialImporteService, tipoDescuentoService, estadoService, errorLogService) {
+    this.historialImporteService = historialImporteService;
     this.tipoDescuentoService = tipoDescuentoService;
     this.estadoService = estadoService;
     this.errorLogService = errorLogService;
@@ -38,9 +38,9 @@ class HistorialImportesViewModel {
         }
     }
 
-    async getPaginatedHistorialImportes(page, pageSize) {
+    async getPaginatedHistorialImportes(page, pageSize, filters) {
         try {
-            const historialImportes = await this.historialImportesService.getPaginatedHistorialImportes(page, pageSize);
+            const historialImportes = await this.historialImporteService.getPaginatedHistorialImportes(page, pageSize, filters);
             return {ok: true, data: historialImportes};
         } 
         catch (error) {
