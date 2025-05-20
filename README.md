@@ -32,6 +32,6 @@ Dentro del directorio del proyecto, ejecutar por consola el comando **npm run st
 Primero, setear los breakpoints.
 Ir a **Run and Debug (Ctrl+Shift+D)**, seleccionar **Debug Jest Test** y darle a play. La aplicación correrá los test y se frenará en los breakpoints configurados.
 
-## 6. Debugear Aplicación
+## 6. Debuggear Aplicación
 Primero, setear los breakpoints.
 Asegurarse de tener **Debug Main Process** seleccionado en **Run and Debug**, luego ir al Menú **Run->Start Debugging**. La aplicación se iniciará y frenará en los breakpoints configurados.

@@ -18,9 +18,9 @@ let listaColumnasGrillaHistorialImportes = [
   {columnName:"Tipo de Descuento", alineacion: alignmentLeft}, 
   {columnName: "Valor", alineacion: alignmentRight},
   {columnName: "$Sesión Tratamiento", alineacion: alignmentRight} , 
-  {columnName: "$Sesion Evaluación", alineacion: alignmentRight},
+  {columnName: "$Sesión Evaluación", alineacion: alignmentRight},
   {columnName: "Vigencia Desde", alineacion: alignmentLeft},
-  {columnName: "vigencia Hasta", alineacion: alignmentLeft},
+  {columnName: "Vigencia Hasta", alineacion: alignmentLeft},
   {columnName: "Estado", alineacion: alignmentCenter},
   {columnName: "Editar", alineacion: alignmentCenter}
 ];
