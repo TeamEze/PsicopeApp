@@ -90,7 +90,7 @@ class CentroMedicoRepository {
         idEstado: 1
       }
     });
-    return centrosMedicos;
+    return centrosMedicos.map(cm => cm.get({ plain: true }));
   }
   /**
    * Retrieves a paginated list of CentroMedico IDs based on the provided filters.

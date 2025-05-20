@@ -10,6 +10,21 @@
       "cwd": "${workspaceFolder}",
       "runtimeArgs": ["--inspect=9229"],
       "outputCapture": "std"
-    }
+    },
+    {
+      "name": "Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "args": [
+        "--inspect=9230",
+        "${workspaceFolder}/node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--no-cache"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}"
+    }    
   ]
 }

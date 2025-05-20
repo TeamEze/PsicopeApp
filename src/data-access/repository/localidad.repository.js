@@ -10,7 +10,7 @@ class LocalidadRepository{
             order: [['descripcion', 'ASC']]
         })
 
-        return localidades;
+        return localidades.map(loc => loc.get({ plain: true }));
     }
 }
 

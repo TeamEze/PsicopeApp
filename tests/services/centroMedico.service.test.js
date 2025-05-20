@@ -23,63 +23,16 @@ describe('CentroMedicoService', () => {
 
   });
 
-  /* it('should return a list of CentroMedicoDTOs', async () => {
-    // Datos simulados devueltos por el repositorio
-    const mockData = [
-      {
-        idCentroMedico: 1,
-        nombre: 'Centro 1',
-        direccion: 'Calle 123',
-        localidad: { descripcion: 'Localidad 1' },
-        telefono: '123456789',
-        personaContacto: 'Persona 1',
-        email: 'email@centro1.com',
-        duracionSesion: 60,
-        estado: { descripcion: 'Activo' }
-      }
-    ];
-
-    // Datos esperados después del mapeo
-    const mockDTO = [
-      {
-        idCentroMedico: 1,
-        nombre: 'Centro 1',
-        localidad: 'Localidad 1',
-        estado: 'Activo'
-      }
-    ];
-
-    // Configurar el mock del repositorio
-    centroMedicoRepository.getAllCentrosMedicos.mockResolvedValue(mockData);
-
-    // Configurar el mock del mapper
-    CentroMedicoMapper.mapCentroMedicoToDTO.mockImplementation(centroMedico => ({
-      idCentroMedico: centroMedico.idCentroMedico,
-      nombre: centroMedico.nombre,
-      localidad: centroMedico.localidad.descripcion,
-      estado: centroMedico.estado.descripcion
-    }));
-
-    // Llamar al servicio
-    const result = await centroMedicoService.getAllCentrosMedicos();
-
-    // Verificar que el resultado coincide con los datos esperados
-    expect(result).toEqual(mockDTO);
-
-    // Verificar que el mapper fue llamado una vez por cada elemento en los datos simulados
-    expect(CentroMedicoMapper.mapCentroMedicoToDTO).toHaveBeenCalledTimes(mockData.length);
-  }); */
-
   it('debe retornar una ListaDeCentroMedicosActivos', async () => {
     // Datos simulados devueltos por el repositorio
     const mockData = [
       {
-        idCentroMedico: 1,
-        nombre: 'Centro 1'
+        id: 1,
+        descripcion: 'Centro 1'
       },
       {
-        idCentroMedico: 2,
-        nombre: 'Centro 2'
+        id: 2,
+        descripcion: 'Centro 2'
       }
     ];
 

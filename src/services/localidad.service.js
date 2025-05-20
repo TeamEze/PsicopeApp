@@ -5,7 +5,7 @@ class LocalidadService{
 
     async getAllLocalidades(){
         const localidades = await this.localidadRepository.getAllLocalidades();
-        return localidades.map(localidad => localidad.get({ plain: true })); // <- importante
+        return localidades; // <- importante
     }
 }
 

@@ -10,7 +10,7 @@ class TipoDescuentoRepository{
             order: [['descripcion', 'ASC']]
         })
 
-        return tiposDescuento;
+        return tiposDescuento.map(td => td.get({ plain: true }));
     }
 }
 
