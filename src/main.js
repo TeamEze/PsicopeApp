@@ -35,18 +35,20 @@ const historialImportesViewModel = new HistorialImportesViewModel(historialImpor
 
 const {setupIpcHandlers} = require('./handlers/ipcHandlerCentroMedico.js');
 const {setupIpcHandlersHistorialImportes} = require('./handlers/ipcHandlerHistorialImportes.js');
-const { createMainWindow, createNuevoCentroMedicoWindow } = require('./windowManager.js');
+const { createMainWindow, createNuevoCentroMedicoWindow, createNuevoHistorialimporteWindow } = require('./windowManager.js');
 const { set } = require('@automapper/core');
 
 let mainWindow;
 let nuevoCentroMedicoWindow;
+let nuevoHistorialImporteWindow
 
 app.whenReady().then(async () => {
   
   mainWindow = createMainWindow(); 
   nuevoCentroMedicoWindow = createNuevoCentroMedicoWindow(mainWindow);
+  nuevoHistorialImporteWindow = createNuevoHistorialimporteWindow(mainWindow);
   setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel, errorLogService);
-  setupIpcHandlersHistorialImportes(historialImportesViewModel, errorLogService);
+  setupIpcHandlersHistorialImportes(nuevoHistorialImporteWindow, historialImportesViewModel, errorLogService);
   mainWindow.webContents.openDevTools();
 
 });

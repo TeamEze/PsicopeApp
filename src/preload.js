@@ -29,8 +29,10 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
 });
 
 contextBridge.exposeInMainWorld('historialImportesAPI', {
+  //Métodos para el manejo de ventan modal Nuevo Historial de Importes
+  openNuevoHistorialImporteModal: () => ipcRenderer.send('open-newHistorialImporteModal'),
+  //Métodos para el manejo de la grilla de Historial de Importes (API Backend)
   getAllTiposDescuento: () => ipcRenderer.invoke('getAllTiposDescuento'),
   getAllEstados: () => ipcRenderer.invoke('getAllEstados'),
   getPaginatedHistorialImportes: (paginationData, filters) => ipcRenderer.invoke('getPaginatedHistorialImportes', paginationData.page, paginationData.pageSize, filters),
-  //onMostrarErrorGenerico: (callback) => ipcRenderer.on('mostrar-error-generico', callback), // Escuchar evento para mostrar error genérico
 });

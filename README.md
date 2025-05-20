@@ -27,3 +27,11 @@ Verificar que las migraciones se hayan impactado correctamente en la BD
 
 ## 5. Correr la aplicación
 Dentro del directorio del proyecto, ejecutar por consola el comando **npm run start**. El mismos buscará el archivo main.js e iniciará la aplicación
+
+## 6. Debuggear TEST
+Primero, setear los breakpoints.
+Ir a **Run and Debug (Ctrl+Shift+D)**, seleccionar **Debug Jest Test** y darle a play. La aplicación correrá los test y se frenará en los breakpoints configurados.
+
+## 6. Debuggear Aplicación
+Primero, setear los breakpoints.
+Asegurarse de tener **Debug Main Process** seleccionado en **Run and Debug**, luego ir al Menú **Run->Start Debugging**. La aplicación se iniciará y frenará en los breakpoints configurados.

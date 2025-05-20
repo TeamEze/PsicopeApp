@@ -5,7 +5,7 @@ class TipoDescuentoService{
 
     async getAllTiposDescuento(){
         const tiposDescuento = await this.tipoDescuentoRepository.getAllTiposDescuento();
-        return tiposDescuento.map(tipoDescuento => tipoDescuento.get({ plain: true }));
+        return tiposDescuento;
     }
 }
 

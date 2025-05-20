@@ -10,7 +10,7 @@ class EstadoRepository{
             order: [['descripcion', 'ASC']]
         })
 
-        return estados;
+        return estados.map(estado => estado.get({ plain: true }));
     }
 }
 

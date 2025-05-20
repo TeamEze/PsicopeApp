@@ -5,7 +5,7 @@ class EstadoService{
 
     async getAllEstados(){
         const estados = await this.estadoRepository.getAllEstados();
-        return estados.map(estado => estado.get({ plain: true })); // <- importante
+        return estados;
     }
 }
 

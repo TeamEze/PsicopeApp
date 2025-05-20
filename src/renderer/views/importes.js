@@ -18,9 +18,9 @@ let listaColumnasGrillaHistorialImportes = [
   {columnName:"Tipo de Descuento", alineacion: alignmentLeft}, 
   {columnName: "Valor", alineacion: alignmentRight},
   {columnName: "$Sesión Tratamiento", alineacion: alignmentRight} , 
-  {columnName: "$Sesion Evaluación", alineacion: alignmentRight},
+  {columnName: "$Sesión Evaluación", alineacion: alignmentRight},
   {columnName: "Vigencia Desde", alineacion: alignmentLeft},
-  {columnName: "vigencia Hasta", alineacion: alignmentLeft},
+  {columnName: "Vigencia Hasta", alineacion: alignmentLeft},
   {columnName: "Estado", alineacion: alignmentCenter},
   {columnName: "Editar", alineacion: alignmentCenter}
 ];
@@ -33,6 +33,7 @@ let dtFechaVigenciaDesde = null;
 let dtFechavigenciaHasta = null;
 let btnLimpiarFiltrosHistorialImporte = null;
 let btnFiltrarHistorialImporte = null;
+let btnNuevoHistorialImporte = null;
 
 // =============================
 // 🚀 Métodos de carga inicial
@@ -48,6 +49,7 @@ function inicializarObjetosDOM() {
   navPaginationHistorialImportes = document.getElementById('paginationHistorialImportes');
   btnLimpiarFiltrosHistorialImporte = document.getElementById('btnLimpiarFiltrosHistorialImporte');
   btnFiltrarHistorialImporte = document.getElementById('btnFiltrarHistorialImporte');
+  btnNuevoHistorialImporte = document.getElementById('btnNuevoHistorialImporte');
 }
 
 function inicializarEventos() {
@@ -55,6 +57,9 @@ function inicializarEventos() {
   //Inicializar eventos de los botones
   btnLimpiarFiltrosHistorialImporte.addEventListener('click', () => limpiarFiltrosHistorialImporte());
   btnFiltrarHistorialImporte.addEventListener('click', () => filtrarHistorialImportes());
+  btnNuevoHistorialImporte.addEventListener('click', () => {
+    window.historialImportesAPI.openNuevoHistorialImporteModal();
+  });
   document.getElementById('importes').addEventListener('refrescarImportes', (e) => {
     const { idCentroMedico } = e.detail;
     console.log('🔄 Recibido ID centro médico:', idCentroMedico);

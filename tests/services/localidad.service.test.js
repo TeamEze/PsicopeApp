@@ -1,4 +1,4 @@
-/* const LocalidadService = require('../../src/services/localidad.service.js');
+const LocalidadService = require('../../src/services/localidad.service.js');
 const localidadRepository = require('../../src/data-access/repository/localidad.repository.js');
 
 jest.mock('../../src/data-access/repository/localidad.repository.js');
@@ -19,11 +19,11 @@ describe('CentroMedicoService', () => {
         // Datos simulados devueltos por el repositorio
         const mockData = [
           {
-            idLocalidad: 1,
+            id: 1,
             descripcion: 'Castelar'
           },
           {
-            idLocalidad: 2,
+            id: 2,
             descripcion: 'Morón'
           }
         ];
@@ -38,4 +38,4 @@ describe('CentroMedicoService', () => {
         expect(result).toEqual(mockData);
     
       });
-}); */
+});

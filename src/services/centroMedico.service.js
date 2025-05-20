@@ -150,7 +150,7 @@ class CentroMedicoService {
   }
 async getActiveCentroMedico(){
     const centrosMedicos = await this.centroMedicoRepository.getActiveCentroMedico();
-    return centrosMedicos.map(centroMedico => centroMedico.get({ plain: true })); 
+    return centrosMedicos;
   }
 }
 
