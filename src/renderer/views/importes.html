@@ -1,37 +1,38 @@
-<div class="container shadow-sm p-3 mb-4 bg-light rounded border">
+<div class="container shadow-sm p-1 px-3 pb-3 mb-2 bg-light rounded border">
   <div class="row align-items-center">
       <div class="col-md-4">
-          <label for="cboCentroMedico">Centro Médico:</label>
-          <select id="cboCentroMedico" class="form-select">
+          <label for="cboCentroMedico" class="form-label small fw-bold">Centro Médico:</label>
+          <select id="cboCentroMedico" class="form-select form-select-sm">
           </select>
       </div>
       <div class="col-md-4">
-          <label for="cboEstado">Estado:</label>
-          <select id="cboEstado" class="form-select">
+          <label for="cboEstado" class="form-label small fw-bold">Estado:</label>
+          <select id="cboEstado" class="form-select form-select-sm">
           </select>
       </div>
       <div class="col-md-4">
-        <label for="cboTipoDescuento">Tipo Descuento:</label>
-        <select id="cboTipoDescuento" class="form-select">
+        <label for="cboTipoDescuento" class="form-label small fw-bold">Tipo Descuento:</label>
+        <select id="cboTipoDescuento" class="form-select form-select-sm">
         </select>
     </div>
   </div>
-  <div class="row align-items-center">    
+  <div class="row align-items-end">    
       <div class="col-md-4">
-        <label for="fechaVigenciaDesde" class="form-label">Vigencia Desde: </label>
-        <input type="date" class="form-control" id="fechaVigenciaDesde" name="fecha">
+        <label for="fechaVigenciaDesde" class="form-label small fw-bold">Vigencia Desde: </label>
+        <input type="date" class="form-control form-control-sm" id="fechaVigenciaDesde">
       </div>
       <div class="col-md-4">
-        <label for="fechaVigenciaHasta" class="form-label">Vigencia Hasta: </label>
-        <input type="date" class="form-control" id="fechaVigenciaHasta" name="fecha">
+        <label for="fechaVigenciaHasta" class="form-label small fw-bold">Vigencia Hasta: </label>
+        <input type="date" class="form-control form-control-sm" id="fechaVigenciaHasta">
       </div>
-      <div class="col-md-3 d-flex justify-content-end mt-4">
-        <button id="btnLimpiarFiltrosHistorialImporte" class="btn btn-secondary mx-1">Limpiar</button>
-        <button id="btnNuevoHistorialImporte" class="btn btn-primary mx-1">Nuevo</button>
-        <button id="btnFiltrarHistorialImporte" class="btn btn-primary mx-1" >Buscar</button>
+      <div class="col-md-4 d-flex justify-content-end align-items-end gap-2">
+        <button id="btnLimpiarFiltrosHistorialImporte" class="btn btn-secondary btn-sm">Limpiar</button>
+        <button id="btnNuevoHistorialImporte" class="btn btn-primary btn-sm">Nuevo</button>
+        <button id="btnFiltrarHistorialImporte" class="btn btn-primary btn-sm">Buscar</button>
       </div>
   </div>
-</div>  
+</div>
+
 <table id="tblHistorialImportes" class="table table-hover">
 </table>
  <!-- Contenedor de paginación -->

@@ -8,51 +8,51 @@
     <link rel="stylesheet" href="modals.css">
 </head>
 <body>
-    <div class="container">
-        <label for="cboCentroMedico">Centro Médico: <span class="text-danger">*</span></label>
-        <select id="cboCentroMedico" class="form-select" required>
-        </select>
-        <div id="errorCentromedico" class="invalid-feedback">El centro médico es obligatorio</div>
+    <div class="container modal-layout">
+        <form id="frmNuevoHistorialImporte" class="needs-validation" novalidate>
+            <label for="cboCentroMedico">Centro Médico: <span class="text-danger">*</span></label>
+            <select id="cboCentroMedico" class="form-select" required>
+            </select>
+            <div id="errorCentromedico" class="invalid-feedback">El centro médico es obligatorio</div>
 
-        <label for="cboTipoDescuento">Tipo Descuento: <span class="text-danger">*</span></label>
-        <select id="cboTipoDescuento" class="form-select" required>
-        </select>
-        <div id="errorTipoDescuento" class="invalid-feedback">EL tipo de descuento es obligatorio</div>
+            <label for="cboTipoDescuento">Tipo Descuento: <span class="text-danger">*</span></label>
+            <select id="cboTipoDescuento" class="form-select" required>
+            </select>
+            <div id="errorTipoDescuento" class="invalid-feedback">EL tipo de descuento es obligatorio</div>
 
-        <label for="nbValor">Valor:  <span class="text-danger">*</span></label>
-        <input id="nbValor" type="number" class="form-control" required>
-        <div id="errorValor" class="invalid-feedback">La duración de sesión es obligatoria</div>
+            <label for="nbValor">Valor:  <span class="text-danger">*</span></label>
+            <input id="nbValor" type="number" class="form-control" required>
+            <div id="errorValor" class="invalid-feedback">La duración de sesión es obligatoria</div>
 
-        <label for="nbImporteSesionEvaluacion">$Sesión Evaluación:  <span class="text-danger">*</span></label>
-        <input id="nbImporteSesionEvaluacion" type="number" class="form-control" required>
-        <div id="errorIImporteSesionEvaluacion" class="invalid-feedback">Importe requerido</div>
+            <label for="nbImporteSesionEvaluacion">$Sesión Evaluación:  <span class="text-danger">*</span></label>
+            <input id="nbImporteSesionEvaluacion" type="number" class="form-control" required>
+            <div id="errorIImporteSesionEvaluacion" class="invalid-feedback">Importe requerido</div>
 
-        <label for="nbImporteSesionTratamiento">$Sesión Tratamiento:  <span class="text-danger">*</span></label>
-        <input id="nbImporteSesionTratamiento" type="number" class="form-control" required>
-        <div id="errorIImporteSesionTratamiento" class="invalid-feedback">Importe requerido</div>
+            <label for="nbImporteSesionTratamiento">$Sesión Tratamiento:  <span class="text-danger">*</span></label>
+            <input id="nbImporteSesionTratamiento" type="number" class="form-control" required>
+            <div id="errorIImporteSesionTratamiento" class="invalid-feedback">Importe requerido</div>
 
-        <label for="dtVigenciaDesde">Vigencia Desde: <span class="text-danger">*</span></label>
-        <input id="dtVigenciaDesde" type="date" class="form-control" required>
-        <div id="errorVigenciaDesde" class="invalid-feedback">La fecha de vigencia desde es obligatoria</div>
+            <label for="dtVigenciaDesde">Vigencia Desde: <span class="text-danger">*</span></label>
+            <input id="dtVigenciaDesde" type="date" class="form-control" required>
+            <div id="errorVigenciaDesde" class="invalid-feedback">La fecha de vigencia desde es obligatoria</div>
 
-        <label for="dtvigenciaDesde">Vigencia Hasta: </label>
-        <input id="dtvigenciaDesde" type="date" class="form-control">
-        <div id="errorVigenciaHasta" class="invalid-feedback">La fecha de vigencia hasta debe ser mayor a la fecha vigencia desde</div>
+            <label for="dtvigenciaDesde">Vigencia Hasta: </label>
+            <input id="dtvigenciaDesde" type="date" class="form-control">
+            <div id="errorVigenciaHasta" class="invalid-feedback">La fecha de vigencia hasta debe ser mayor a la fecha vigencia desde</div>
 
-        <label for="cboEstado">Estado: <span class="text-danger">*</span></label>
-        <select id="cboEstado" class="form-select" required>
-        </select>
-        <div id="errorEstado" class="invalid-feedback">EL Estado es obligatorio</div>
+            <label for="cboEstado">Estado: <span class="text-danger">*</span></label>
+            <select id="cboEstado" class="form-select" required>
+            </select>
+            <div id="errorEstado" class="invalid-feedback">EL Estado es obligatorio</div>
 
-        <div class="d-flex justify-content-between mt-3 gap-2">
-            <button id="btnCancelarNuevoHistorialImporte" type="button" class="btn btn-secondary w-50">
-                Cancelar
-            </button>
-            <button id="btnGuardarHistorialImporte" type="submit" class="btn btn-primary w-50">
-                Guardar
-            </button>
-        </div>
-
+            <div class="d-flex justify-content-between mt-3 gap-2">
+                <button id="btnCancelarNuevoHistorialImporte" type="button" class="btn btn-secondary w-50">
+                    Cancelar
+                </button>
+                <button id="btnGuardarHistorialImporte" type="submit" class="btn btn-primary w-50">
+                    Guardar
+                </button>
+            </div>
         </form>
     <script src="../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="errors.js"></script>

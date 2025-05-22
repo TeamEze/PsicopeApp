@@ -1,17 +1,3 @@
-/* function cargarHistorialImportes() {
-  const parametros = window.parametrosImportes || {};
-  const idCentroMedico = parametros.idCentroMedico;
-
-  if (!idCentroMedico) {
-    console.warn('No se recibió idCentroMedico');
-  } else {
-    console.log('Cargando importes para centro médico ID:', idCentroMedico);
-  }
-  cargarCentroMedicos();
-
-  }
-cargarHistorialImportes(); */
-
 const parametros = window.parametrosImportes || {};
 let listaColumnasGrillaHistorialImportes = [
   {columnName:"Centro Médico", alineacion: alignmentLeft},
@@ -28,12 +14,15 @@ let listaColumnasGrillaHistorialImportes = [
 let tblHistorialImportes = null;
 let cboCentroMedico = null;
 let cboEstado = null;
+let cboTipoDescuento = null;
 let navPaginationHistorialImportes = null;
 let dtFechaVigenciaDesde = null;
 let dtFechavigenciaHasta = null;
 let btnLimpiarFiltrosHistorialImporte = null;
 let btnFiltrarHistorialImporte = null;
 let btnNuevoHistorialImporte = null;
+
+let filtros = null;
 
 // =============================
 // 🚀 Métodos de carga inicial
@@ -50,6 +39,7 @@ function inicializarObjetosDOM() {
   btnLimpiarFiltrosHistorialImporte = document.getElementById('btnLimpiarFiltrosHistorialImporte');
   btnFiltrarHistorialImporte = document.getElementById('btnFiltrarHistorialImporte');
   btnNuevoHistorialImporte = document.getElementById('btnNuevoHistorialImporte');
+  filtros = [cboCentroMedico, cboTipoDescuento, cboEstado, dtFechaVigenciaDesde, dtFechavigenciaHasta];
 }
 
 function inicializarEventos() {
@@ -70,6 +60,10 @@ function inicializarEventos() {
     limpiarFiltrosHistorialImporte();
     leerParametros();
     cargarHistorialImportes(); // O cualquier función relevante
+  });  
+
+  filtros.forEach(filtro => {
+    filtro.addEventListener('change', () => resaltarFiltroSiActivo(filtro));
   });
   
 }
@@ -124,6 +118,12 @@ function leerParametros() {
     if (idEstado) {
       cboEstado.value = idEstado;
     }
+
+    filtros.forEach(filtro => {
+      if (filtro.value) {
+        filtro.classList.add('filtro-activo');
+      }
+    });
   }
 }
 
@@ -155,6 +155,28 @@ function crearColumnaEditarHistorialImporte(tr, historialImporte) {
   tr.appendChild(tdEditar);
 }
 
+function ImporteCrearColumnaEstado(tr, estado) {
+  const tdEstado = document.createElement('td');
+  tdEstado.classList.add('text-center');
+  
+  const span = document.createElement('span');
+  span.classList.add('badge');
+  
+  if (estado === 'Activo') {
+    span.classList.add('bg-success');
+  } else if (estado === 'Inactivo') {
+    span.classList.add('bg-danger');
+  } else {
+    span.classList.add('bg-secondary');
+  }
+
+  span.textContent = estado;
+
+  tdEstado.appendChild(span);
+  tr.appendChild(tdEstado);
+}
+
+
 function addHistorialImporteToTable(historialImporte, tbody, isNew=false) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-id', historialImporte.idHistorialImporte); // Agregar un identificador único
@@ -175,13 +197,14 @@ function addHistorialImporteToTable(historialImporte, tbody, isNew=false) {
   createTableData(historialImporte.importeSesionTratamiento, tr, alignmentRight);
   createTableData(formatearFechaDDMMYYYY(fechaVigenciaDesde), tr, alignmentLeft);
   createTableData(formatearFechaDDMMYYYY(fechaVigenciaHasta), tr, alignmentLeft);
-  createTableData(historialImporte.estado, tr, alignmentCenter);
+  //createTableData(historialImporte.estado, tr, alignmentCenter);
+  ImporteCrearColumnaEstado(tr, historialImporte.estado);
 
   crearColumnaEditarHistorialImporte(tr, historialImporte);
 
-  if (historialImporte.estado === 'Activo') {
+  /* if (historialImporte.estado === 'Activo') {
       tr.classList.add('table-success');
-  }
+  } */
 
   tbody.appendChild(tr);
 }  
@@ -263,6 +286,7 @@ function limpiarFiltrosHistorialImporte() {
   cboTipoDescuento.value = "";
   dtFechaVigenciaDesde.value = "";
   dtFechavigenciaHasta.value = "";
+  removerClasesFiltroActivos();
   removeImportesTableContent();
   cleanPagination(navPaginationHistorialImportes);
 }
@@ -272,6 +296,14 @@ function hayDatosParafiltrar() {
       return true;
   }
   return false;
+}
+
+function removerClasesFiltroActivos() { 
+  filtros.forEach(filtro => {
+      if (filtro.classList.contains('filtro-activo')) {
+          filtro.classList.remove('filtro-activo');
+      }
+  });
 }
 
 // =========================
