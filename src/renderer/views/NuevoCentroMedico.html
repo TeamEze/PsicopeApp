@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="modals.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container modal-layout">
         <form id="frmNuevoCentroMedico" class="needs-validation" novalidate>
           <label for="txtNombre">Nombre <span class="text-danger">*</span></label>
           <input id="txtNombre" type="text" class="form-control" required maxlength="50" >
@@ -33,7 +33,7 @@
 
           <label for="txtPersonaContacto">Persona Contacto <span class="text-danger">*</span></label>
           <input id="txtPersonaContacto" type="text" class="form-control" required maxlength="50">
-          <div id="errorContacto" class="invalid-feedback">La persona de contacto es requerida (Máx. 50 caracteres)</div>
+          <div id="errorContacto" class="invalid-feedback">El contacto es requerido (Máx. 50 caracteres)</div>
 
           <label for="txtEmail">Mail</label> <!-- ❌ sin asterisco -->
           <input id="txtEmail" type="text" class="form-control">

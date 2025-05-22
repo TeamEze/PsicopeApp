@@ -1,19 +1,42 @@
 html, body {
-    height: 100%;
-    margin: 0;
-    padding: 20px;
-  }
-  
-  .form-container {
-    height: 100%;
-    width: 100%;
-    padding: 2rem;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-.form-control, .form-select {
-    margin-bottom: 10px;
+  height: 100%;
+  margin: 0;
 }
+
+.modal-layout {
+  height: 100%;
+  width: 100%;
+  padding: 2rem 2.5rem 2.5rem 2.5rem;;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* .form-control, .form-select {
+  margin-bottom: 10px;
+} */
+
+/* Controles apenas más chicos que el default */
+.form-control, 
+.form-select {
+    font-size: 0.9rem; /* default es ~1rem, bajamos apenas */
+    padding: 0.375rem 0.75rem; /* default es más grande: lo achicamos un poco */
+    height: auto; 
+    margin-bottom: 8px; /* más compacto que el default */
+}
+
+/* Labels ligeramente más chicos */
+label {
+    font-size: 0.85rem; 
+    font-weight: 500; /* negrita media, no tan fuerte como bold */
+    margin-bottom: 4px;
+}
+
+/* Mensajes de error un poco más chicos */
+.invalid-feedback {
+    font-size: 0.8rem; /* default ~0.875rem, bajamos apenas */
+    margin-top: 2px;
+}
+
+

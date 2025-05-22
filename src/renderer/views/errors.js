@@ -64,19 +64,19 @@ const mensajeriaErrores = {
   },
   IMPORTES_CARGAR_CENTROS_MEDICOS: {
       methodAPI: 'getActiveCentroMedico',
-      origen: 'importes.js - cargarCentrosMedicos',
+      origen: 'importes.js/NuevoHistorialImporte.js - cargarCentrosMedicos',
       mensajeError: 'Ocurrió un error al cargar los centros médicos. Por favor, contacte al administrador.',
       mensajeErrorGenerico: 'Error inesperado al cargar los centros médicos. Por favor, contacte al administrador.'
   },
   IMPORTES_CARGAR_TIPOS_DESCUENTO: {
       methodAPI: 'getAllTiposDescuento',
-      origen: 'importes.js - cargarTiposDescuento',
+      origen: 'importes.js/NuevoHistorialImporte.js - cargarTiposDescuento',
       mensajeError: 'Ocurrió un error al cargar los tipos de descuento. Por favor, contacte al administrador.',
       mensajeErrorGenerico: 'Error inesperado al cargar los tipos de descuento. Por favor, contacte al administrador.'
   },
   IMPORTES_CARGAR_ESTADOS: {
       methodAPI: 'getAllEstados',
-      origen: 'importes.js - cargarEstados',
+      origen: 'importes.js/NuevoHistorialImporte.js - cargarEstados',
       mensajeError: 'Ocurrió un error al cargar los estados. Por favor, contacte al administrador.',
       mensajeErrorGenerico: 'Error inesperado al cargar los estados. Por favor, contacte al administrador.'
   },

@@ -2,6 +2,11 @@
 const path = require('path'); */
 const { contextBridge, ipcRenderer } = require('electron');
 
+contextBridge.exposeInMainWorld('electronAPI', {
+  showOverlay: (callback) => ipcRenderer.on('show-overlay', callback),
+  hideOverlay: (callback) => ipcRenderer.on('hide-overlay', callback)
+});
+
 // Exponer métodos seguros a la UI
 contextBridge.exposeInMainWorld('viewModelAPI', {
   getCentroMedicoById: (idCentroMedico) => ipcRenderer.invoke('getCentroMedicoById', idCentroMedico),
@@ -30,7 +35,9 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
 
 contextBridge.exposeInMainWorld('historialImportesAPI', {
   //Métodos para el manejo de ventan modal Nuevo Historial de Importes
-  openNuevoHistorialImporteModal: () => ipcRenderer.send('open-newHistorialImporteModal'),
+  openNuevoHistorialImporteModal: () => ipcRenderer.send('open-NuevoHistorialImporteModal'),
+  hideNuevoHistorialImporteModal: () => ipcRenderer.send('hide-NuevoHistorialImporteModal'),
+  clearForm: (callback) => ipcRenderer.on('clear-formNuevoHistorialImporte', callback),
   //Métodos para el manejo de la grilla de Historial de Importes (API Backend)
   getAllTiposDescuento: () => ipcRenderer.invoke('getAllTiposDescuento'),
   getAllEstados: () => ipcRenderer.invoke('getAllEstados'),

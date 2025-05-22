@@ -20,6 +20,7 @@ function createTableHeader(header, rowHeaders){
 function addTableHeaders(idTabla, listaColumnas) {
     const tHead = document.createElement('thead');
     const rowHeaders = document.createElement('tr');
+    rowHeaders.classList.add('table-header-row');
     listaColumnas.forEach(columna => createTableHeader(columna, rowHeaders));
     tHead.appendChild(rowHeaders);
     idTabla.appendChild(tHead);
@@ -39,6 +40,15 @@ function cargarListaDesplegable(idListaDesplegable, datosLista, descripciónOpci
         idListaDesplegable.appendChild(option);
     })
 }
+
+function resaltarFiltroSiActivo(elemento) {
+    if (elemento.value) {
+      elemento.classList.add('filtro-activo');
+    } else {
+      elemento.classList.remove('filtro-activo');
+    }
+  }
+  
 
 function cleanPagination(idPaginationElement) {
     const paginationContainer = idPaginationElement;

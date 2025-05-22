@@ -35,10 +35,17 @@
 }
 
 th {
-  background-color: #343a40;
+  /*background-color: #343a40;
   color: white;
   font-weight: bold;
-  text-align: center;
+  text-align: center;*/
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.table-header-row th {
+  background-color: #343a40;
+  color: white;
 }
 
 .table .highlight td{
@@ -94,4 +101,10 @@ th {
   opacity: 0.5;             /* apariencia deshabilitada */
   pointer-events: none;     /* no permite clics */
   cursor: not-allowed;      /* cursor deshabilitado */
+}
+
+.filtro-activo {
+  border: 2px solid #0d6efd; /* azul Bootstrap */
+  background-color: #e7f1ff; /* celeste clarito */
+  border-radius: 4px;
 }

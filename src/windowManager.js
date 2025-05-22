@@ -25,7 +25,7 @@ function createMainWindow() {
 function createNuevoCentroMedicoWindow(mainWindow) {
   if (!nuevoCentroMedicoWindow) {
     nuevoCentroMedicoWindow = new BrowserWindow({
-      width: 450,
+      width: 425,
       height: 650,
       parent: mainWindow,
       modal: true,

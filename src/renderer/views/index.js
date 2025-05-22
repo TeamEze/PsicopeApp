@@ -18,6 +18,7 @@ let btnConfirmarInactivacion = null;
 let btnCancelarInactivacion = null;
 let tblCentrosMedicos = null;
 let navPagination = null;
+let fitrosCentrosMedicos = null;
 
 let listaColumnasGrillaCentrosMedicos = [{columnName:"Nombre", alineacion: alignmentLeft},
                                         {columnName:"Dirección", alineacion: alignmentLeft}, 
@@ -55,6 +56,7 @@ function inicializarObjetosDOM() {
     btnCancelarInactivacion = document.getElementById('btnCancelarInactivacion');
     tblCentrosMedicos = document.getElementById('tblCentrosMedicos');
     navPagination = document.getElementById('paginationCentrosMedicos');
+    fitrosCentrosMedicos = [txtNombre, cboLocalidad];
 }
 
 function inicializarEventos(){
@@ -76,6 +78,9 @@ function inicializarEventos(){
         document.activeElement.blur();
         switchInputActual.checked = true;
     };
+    fitrosCentrosMedicos.forEach(filtro => {
+        filtro.addEventListener('change', () => resaltarFiltroSiActivo(filtro));
+    });
 }
 
 async function cargarLocalidades() {
@@ -145,11 +150,20 @@ function obtenerFiltros(){
     return filters;
 }
 
+function removerFiltroActivosCentroMedico() { 
+    fitrosCentrosMedicos.forEach(filtro => {
+        if (filtro.classList.contains('filtro-activo')) {
+            filtro.classList.remove('filtro-activo');
+        }
+    });
+  }
+
 async function limpiarFiltrosCentrosMedicos() {
     txtNombre.value = "";
     cboLocalidad.value = "";
     chkVerInactivos.checked = false;
     btnFiltrarCentroMedico.classList.add('disabled');
+    removerFiltroActivosCentroMedico();
     cargarCentrosMedicos();
 }
 
@@ -243,7 +257,7 @@ function abrirModalInactivarCentroMedico(nombreCentroMedico) {
     modal.show();
 }
 
-function crearColumnaEstado(tr, centroMedico) {
+function centroMedicoCrearColumnaEstado(tr, centroMedico) {
     // Agregar columna de switch (activar/inactivar)
     const tdSwitch = document.createElement('td');
     tdSwitch.classList.add('text-center');
@@ -384,7 +398,7 @@ function addCentroMedicoToTable(centroMedico, tbody, isNew=false) {
     createTableData(centroMedico.email, tr, alignmentLeft);
     createTableData(centroMedico.duracionSesion, tr, alignmentRight);
 
-    crearColumnaEstado(tr, centroMedico);
+    centroMedicoCrearColumnaEstado(tr, centroMedico);
     crearColumnaEditar(tr, centroMedico);
     crearColumnaPacientes(tr, centroMedico);
     crearColumnaHistorial(tr, centroMedico);
@@ -440,6 +454,14 @@ window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
 window.viewModelAPI.onMostrarErrorGenerico((event, mensaje) => {
     mostrarErrorUsuario(mensaje);
 })
+
+window.electronAPI.showOverlay(() => {
+    document.getElementById('modal-overlay').style.display = 'block';
+});
+  
+window.electronAPI.hideOverlay(() => {
+    document.getElementById('modal-overlay').style.display = 'none';
+});
 
 // =========================
 // 🧠 Funciones principales

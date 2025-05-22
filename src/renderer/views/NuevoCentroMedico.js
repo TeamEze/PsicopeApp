@@ -31,7 +31,7 @@ function duracionCumpleCondiciones(duracion){
 function validarDuracion(duracion, msjError) {
   if (!duracionCumpleCondiciones(duracion.value)) {
     duracion.setCustomValidity('Inválido');
-    msjError.textContent = 'La duración debe ser mayor a 0 y menor o igual a 60 (min).';
+    msjError.textContent = 'La duración debe ser > 0 y <= 60 (min).';
     mostrarEstiloInvalido(duracion, msjError);
   } else {
     duracion.setCustomValidity('');

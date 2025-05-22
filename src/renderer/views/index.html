@@ -33,17 +33,17 @@
             <div class="container shadow-sm p-3 mb-4 bg-light rounded border">
                 <div class="row align-items-center">
                     <div class="col-md-3">
-                        <label for="name">Nombre:</label>
+                        <label for="name" class="form-label fw-bold">Nombre:</label>
                         <input type="text" id="txtName" class="form-control" placeholder="Ingrese nombre">
                     </div>
                     <div class="col-md-3">
-                        <label for="cboLocalidad">Localidad:</label>
+                        <label for="cboLocalidad" class="form-label fw-bold">Localidad:</label>
                         <select id="cboLocalidad" class="form-select">
                         </select>
                     </div>
                     <div class="col-md-3">
                         <input class="form-check-input" type="checkbox" value="" id="chkVerInactivos">
-                        <label class="form-check-label" for="chkVerInactivos" id="lblVerInactivos">
+                        <label class="form-check-label fw-bold" for="chkVerInactivos" id="lblVerInactivos">
                           Incluir inactivos
                         </label>
                       </div>
@@ -89,6 +89,15 @@
       </div>
     </div>
   </div>
+  <div id="modal-overlay" style="
+  display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+  "></div>
+
   
   <script src="../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="errors.js"></script>

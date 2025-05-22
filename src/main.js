@@ -48,7 +48,7 @@ app.whenReady().then(async () => {
   nuevoCentroMedicoWindow = createNuevoCentroMedicoWindow(mainWindow);
   nuevoHistorialImporteWindow = createNuevoHistorialimporteWindow(mainWindow);
   setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewModel, errorLogService);
-  setupIpcHandlersHistorialImportes(nuevoHistorialImporteWindow, historialImportesViewModel, errorLogService);
+  setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWindow, historialImportesViewModel, errorLogService);
   mainWindow.webContents.openDevTools();
 
 });

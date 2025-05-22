@@ -6,14 +6,16 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
   // Abrir la ventana modal y limpiar el formulario
   ipcMain.on('open-newCentroMedicoModal', () => {
     if (nuevoCentroMedicoWindow) {
-      nuevoCentroMedicoWindow.webContents.send('clear-form'); // Limpiar el formulario
+      mainWindow.webContents.send('show-overlay');      
       nuevoCentroMedicoWindow.show(); // Mostrar la ventana si ya está creada
+      nuevoCentroMedicoWindow.webContents.send('clear-form'); // Limpiar el formulario
     }
   });
 
   // Recibir datos para editar un centro médico
   ipcMain.on('open-editCentroMedicoModal', (event, centroMedico) => {
     if (nuevoCentroMedicoWindow) {
+      mainWindow.webContents.send('show-overlay');
       nuevoCentroMedicoWindow.webContents.send('editar-centro-medico', centroMedico); // Enviar los datos a la ventana modal
       nuevoCentroMedicoWindow.show(); // Mostrar la ventana modal
     }
@@ -21,8 +23,9 @@ function setupIpcHandlers(mainWindow, nuevoCentroMedicoWindow, centroMedicoViewM
 
   // Ocultar la ventana modal
   ipcMain.on('hide-newCentroMedicoModal', () => {
-    if (nuevoCentroMedicoWindow) {
+    if (nuevoCentroMedicoWindow) {      
       nuevoCentroMedicoWindow.hide(); // Ocultar la ventana
+      mainWindow.webContents.send('hide-overlay');
     }
   });
 
