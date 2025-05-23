@@ -53,6 +53,38 @@ class HistorialImportesViewModel {
             return {ok: false};
         }
     }
+
+    async getTotalActiveHistorialImporteByCentroMedicoId(idCentroMedico) {
+        try {
+            const totalCount = await this.historialImporteService.getTotalActiveHistorialImporteByCentroMedicoId(idCentroMedico);
+            return {ok: true, data: totalCount};
+        } 
+        catch (error) {
+            await this.errorLogService.handleError(
+                error.message,
+                JSON.stringify({idCentroMedico}),
+                error.stack,
+                'HistorialImportesViewModel.getTotalActiveHistorialImporteByCentroMedicoId'
+            );
+            return {ok: false};
+        }
+    }
+
+    async createHistorialImporte(historialImporte) {
+        try {
+            const nuevoHistorialImporte = await this.historialImporteService.createHistorialImporte(historialImporte);
+            return {ok: true, data: nuevoHistorialImporte};
+        } 
+        catch (error) {
+            await this.errorLogService.handleError(
+                error.message,
+                JSON.stringify(historialImporte),
+                error.stack,
+                'HistorialImportesViewModel.createHistorialImporte'
+            );
+            return {ok: false};
+        }
+    }
 }
 
 module.exports = HistorialImportesViewModel;

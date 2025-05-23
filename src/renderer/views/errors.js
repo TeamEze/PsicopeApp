@@ -92,4 +92,17 @@ const mensajeriaErrores = {
         mensajeError: 'Ocurrió un error al filtrar el historial de importes. Por favor, contacte al administrador.',
         mensajeErrorGenerico: 'Error inesperado al filtrar el historial de importes. Por favor, contacte al administrador.'
   },
+  IMPORTES_VALIDAR_HISTORIAL_IMPORTE_ACTIVO: {  
+        methodAPI: 'getTotalActiveHistorialImporteByCentroMedicoId',
+        origen: 'importes.js - validarFiltroCentroMedico',
+        mensajeError: 'Ocurrió un error al validar historial de importe activo. Por favor, contacte al administrador.',
+        mensajeErrorGenerico: 'Error inesperado al validar historial de importe activo. Por favor, contacte al administrador.'
+  },
+  IMPORTES_MODAL_SUBMIT_FORMULARIO: {   
+        methodAPI: 'createHistorialImporte/updateHistorialImporte',
+        origen: 'NuevoHistorialImporte.js - manejarEnvioFormularioHistorialImporte',
+        mensajeError: 'Ocurrió un error al procesar el formulario. Por favor, contacte al administrador.',
+        mensajeErrorGenerico: 'Error inesperado al procesar el formulario. Por favor, contacte al administrador.'
+  },
+
 };

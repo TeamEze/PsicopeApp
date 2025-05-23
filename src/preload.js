@@ -38,8 +38,13 @@ contextBridge.exposeInMainWorld('historialImportesAPI', {
   openNuevoHistorialImporteModal: () => ipcRenderer.send('open-NuevoHistorialImporteModal'),
   hideNuevoHistorialImporteModal: () => ipcRenderer.send('hide-NuevoHistorialImporteModal'),
   clearForm: (callback) => ipcRenderer.on('clear-formNuevoHistorialImporte', callback),
+  //Métodos para manejar creación de Historial de Importes
+  sendCreatedHistorialImporteToMain: (createdHistorialImporte) => ipcRenderer.send('createdHistorialImporte', createdHistorialImporte), // Enviar datos del nuevo historial importe
+  onNewAddedHistorialImporte: (callback) => ipcRenderer.on('new-AddedHistorialImporte', callback), // Escuchar evento para actualizar la grilla
   //Métodos para el manejo de la grilla de Historial de Importes (API Backend)
   getAllTiposDescuento: () => ipcRenderer.invoke('getAllTiposDescuento'),
   getAllEstados: () => ipcRenderer.invoke('getAllEstados'),
   getPaginatedHistorialImportes: (paginationData, filters) => ipcRenderer.invoke('getPaginatedHistorialImportes', paginationData.page, paginationData.pageSize, filters),
+  getTotalActiveHistorialImporteByCentroMedicoId: (idCentroMedico) => ipcRenderer.invoke('getTotalActiveHistorialImporteByCentroMedicoId', idCentroMedico),
+  createHistorialImporte: (nuevoHistorialImporte) => ipcRenderer.invoke('createHistorialImporte', nuevoHistorialImporte),
 });

@@ -172,26 +172,53 @@ function renderPagination({ idPaginationElement, currentPage, totalPages, action
     paginationContainer.appendChild(ul);
 }
 
-function mostrarErrorUsuario(mensaje) {
+/**
+ * Muestra un mensaje flotante al usuario.
+ * @param {string} mensaje            Texto a mostrar.
+ * @param {string} [tipo='error']     Tipo de mensaje: 'error' | 'info' (opcional).
+ */
+function mostrarErrorUsuario(mensaje, tipo = 'error') {
+    // Elegir la clase de color según el tipo
+    let claseColor;
+    switch (tipo) {
+        case 'success':
+            claseColor = 'alert-success';   // verde Bootstrap
+            mensaje = '✅ ' + mensaje;
+            break;
+        case 'info':
+            claseColor = 'alert-info';      // azul Bootstrap
+            mensaje = 'ℹ️ ' + mensaje;
+            break;
+        case 'warning':
+            claseColor = 'alert-warning';   // Amarillo
+            mensaje = '⚠️ ' + mensaje;
+            break;
+        case 'error':
+            default:
+                claseColor = 'alert-danger';    // rojo Bootstrap
+                mensaje = '❌ ' + mensaje;
+                break;
+    }
+  
     const alerta = document.createElement('div');
-    alerta.className = 'alert alert-danger shadow-lg text-center';
-    alerta.style.position = 'fixed';
-    alerta.style.bottom = '20px';
-    alerta.style.left = '50%';
-    alerta.style.transform = 'translateX(-50%)';
-    alerta.style.zIndex = '9999';
-    alerta.style.minWidth = '300px';
-    alerta.style.maxWidth = '80%';
-    alerta.style.padding = '15px';
-
-    alerta.textContent = '⚠️ ' + mensaje;
-
+    alerta.className = `alert ${claseColor} shadow-lg text-center`;
+    Object.assign(alerta.style, {
+      position: 'fixed',
+      bottom: '20px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: '9999',
+      minWidth: '300px',
+      maxWidth: '80%',
+      padding: '15px',
+    });
+  
+    alerta.textContent = mensaje;
     document.body.appendChild(alerta);
-
-    setTimeout(() => {
-        alerta.remove();
-    }, 5000); // se borra luego de 5 segundos
-} 
+  
+    setTimeout(() => alerta.remove(), 5000); // se borra luego de 5 s
+  }
+  
 
 function loguearError(error, source) {
     //console.error('Error:', error);

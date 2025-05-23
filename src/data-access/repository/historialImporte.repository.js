@@ -2,7 +2,6 @@ const HistorialImporte = require('../models/historialImporte.model.js');
 const CentroMedico = require('../models/centroMedico.model.js');
 const TipoDescuento = require('../models/tipoDescuento.model.js');
 const Estado = require('../models/estado.model.js');
-const { where } = require('sequelize');
 
 class HistorialImporteRepository {
     //Creo que necesitamos un indice sobre VigenciaDesde
@@ -48,6 +47,30 @@ class HistorialImporteRepository {
         });
         return totalCount;
     }
+
+    async getTotalActiveHistorialImporteByCentroMedicoId(idCentroMedico) {
+        const totalCount = await HistorialImporte.count({
+            where: {
+                idCentroMedico: idCentroMedico,
+                idEstado: 1
+            }
+        });
+        return totalCount;
+    }
+
+    async getHistorialImporteByIdWithIncludes(id) {
+        return await HistorialImporte.findByPk(id, {
+          include: [
+            { model: CentroMedico, as: 'centroMedico', required: true },
+            { model: TipoDescuento, as: 'tipoDescuento', required: true },
+            { model: Estado, as: 'estado', required: true }
+          ]
+        });
+      }
+
+    async createHistorialImporte(historialImporte) {
+        return await HistorialImporte.create(historialImporte);
+      }
 }
 
 module.exports = new HistorialImporteRepository();

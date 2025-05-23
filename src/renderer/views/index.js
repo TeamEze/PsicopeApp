@@ -537,6 +537,7 @@ async function crearCentroMedico(nuevoCentroMedico) {
                 const result = resultado.data;
                 RefreshPagination(currentPage, result.totalPages, Actions.GETALL);         
             }
+            mostrarErrorUsuario("Centro médico " + centroMedicoCreado.nombre +  " creado correctamente", "success");
         }
     } catch (error) {
         manejarErrores(error, 'INDEX_CREAR_CENTRO_MEDICO');

@@ -16,6 +16,11 @@ function setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWind
             mainWindow.webContents.send('hide-overlay');
         }
     });
+    // Recibir datos del nuevo historial de importe desde la ventana modal
+    ipcMain.on('createdHistorialImporte', (event, createdHistorialImporte) => {
+        // Enviar los datos a la ventana principal
+        mainWindow.webContents.send('new-AddedHistorialImporte', createdHistorialImporte);
+    });
     ipcMain.handle('getAllTiposDescuento', async () => {
         return await historialImportesViewModel.getAllTiposDescuento();
     });
@@ -24,6 +29,12 @@ function setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWind
     });
     ipcMain.handle('getPaginatedHistorialImportes', async (event, page, pageSize, filters) => {
         return await historialImportesViewModel.getPaginatedHistorialImportes(page, pageSize, filters);
+    });
+    ipcMain.handle('getTotalActiveHistorialImporteByCentroMedicoId', async (event, idCentroMedico) => {
+        return await historialImportesViewModel.getTotalActiveHistorialImporteByCentroMedicoId(idCentroMedico);
+    });
+    ipcMain.handle('createHistorialImporte', async (event, nuevoHistorialImporte) => {
+        return await historialImportesViewModel.createHistorialImporte(nuevoHistorialImporte);
     });
 }
 

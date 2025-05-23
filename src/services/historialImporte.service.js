@@ -36,6 +36,18 @@ class HistorialImporteService {
       currentPage: page
     };
   }
+
+  async getTotalActiveHistorialImporteByCentroMedicoId(idCentroMedico) {
+    const totalCount = await this.historialImporteRepository.getTotalActiveHistorialImporteByCentroMedicoId(idCentroMedico);
+    return totalCount;
+  }
+
+
+  async createHistorialImporte(historialImporte) {
+    const nuevoHistorialImporte = await this.historialImporteRepository.createHistorialImporte(historialImporte);
+    const historialImporteConIncludes = await this.historialImporteRepository.getHistorialImporteByIdWithIncludes(nuevoHistorialImporte.idHistorialImporte);
+    return this.historialImporteMapper.mapHistorialImporteToDTO(historialImporteConIncludes);
+  } 
 }
 
 module.exports = HistorialImporteService;

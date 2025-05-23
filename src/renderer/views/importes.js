@@ -47,8 +47,10 @@ function inicializarEventos() {
   //Inicializar eventos de los botones
   btnLimpiarFiltrosHistorialImporte.addEventListener('click', () => limpiarFiltrosHistorialImporte());
   btnFiltrarHistorialImporte.addEventListener('click', () => filtrarHistorialImportes());
-  btnNuevoHistorialImporte.addEventListener('click', () => {
-    window.historialImportesAPI.openNuevoHistorialImporteModal();
+  btnNuevoHistorialImporte.addEventListener('click', async () => {
+    if (await validarFiltroCentroMedico()) {
+      window.historialImportesAPI.openNuevoHistorialImporteModal();
+    }
   });
   document.getElementById('importes').addEventListener('refrescarImportes', (e) => {
     const { idCentroMedico } = e.detail;
@@ -175,7 +177,6 @@ function ImporteCrearColumnaEstado(tr, estado) {
   tdEstado.appendChild(span);
   tr.appendChild(tdEstado);
 }
-
 
 function addHistorialImporteToTable(historialImporte, tbody, isNew=false) {
   const tr = document.createElement('tr');
@@ -306,6 +307,41 @@ function removerClasesFiltroActivos() {
   });
 }
 
+async function validarFiltroCentroMedico() {
+  const idCentroMedico = cboCentroMedico.value;
+
+  if (!idCentroMedico) {
+    mostrarErrorUsuario("El centro médico es requerido para crear un nuevo importe", 'warning');
+    return false;
+  }
+
+  try {
+    const response = await window.historialImportesAPI.getTotalActiveHistorialImporteByCentroMedicoId(idCentroMedico);
+    if (!response.ok) throw new ViewModelAPIError();
+    
+    const total = response.data;
+    if (total > 0) {
+      mostrarErrorUsuario("Ya existe un importe activo para el centro médico seleccionado. Por favor, inactívelo antes de crear uno nuevo", 'warning');
+      return false;
+    }
+  } catch (error) {
+    // Puedes mostrar el error si querés
+    manejarErrores(error, 'IMPORTES_VALIDAR_HISTORIAL_IMPORTE_ACTIVO');
+    return false;
+  }
+
+  return true;
+}
+
+// =========================
+// 🧩 Manejo de Eventos
+// =========================
+window.historialImportesAPI.onNewAddedHistorialImporte((event, createdCentroMedico) => {
+  //Agregarlo a la grilla
+  mostrarErrorUsuario("Historial de importe creado correctamente", 'success');
+});
+
+
 // =========================
 // 🧠 Funciones principales
 // =========================
@@ -332,7 +368,7 @@ async function cargarHistorialImportes(page = 1){
 async function filtrarHistorialImportes(page = 1) {
   try {
       if (!hayDatosParafiltrar()) {
-          mostrarErrorUsuario("Debe ingresar al menos un filtro para realizar la búsqueda");
+          mostrarErrorUsuario("Debe ingresar al menos un filtro para realizar la búsqueda", 'warning');
           return;
       }
 
