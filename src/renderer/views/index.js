@@ -332,7 +332,7 @@ function crearColumnaHistorial(tr, centroMedico) {
     tdHistorial.classList.add('text-center');
     const lnkHistorial = document.createElement('a');
     lnkHistorial.id = 'lnkHistorial';
-    //lnkHistorial.href = "#";
+    lnkHistorial.href = "#";
     lnkHistorial.onclick = async () => {
     const importesContainer = document.getElementById('importes');
     const idCentroMedico = centroMedico.idCentroMedico;
@@ -438,17 +438,19 @@ window.viewModelAPI.onNuevoCentroMedico((event, nuevoCentroMedico) => {
 
 window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
     const row = document.querySelector(`tr[data-id='${centroMedicoEdited.idCentroMedico}']`);
-        if (row) {
-            animarFilaEditada(row);
-            const cells = row.children;
-            cells[0].textContent = centroMedicoEdited.nombre;
-            cells[1].textContent = centroMedicoEdited.direccion;
-            cells[2].textContent = centroMedicoEdited.localidad;
-            cells[3].textContent = centroMedicoEdited.telefono;
-            cells[4].textContent = centroMedicoEdited.personaContacto;
-            cells[5].textContent = centroMedicoEdited.email;
-            cells[6].textContent = centroMedicoEdited.duracionSesion;
-        }
+    if (row) {
+        animarFilaEditada(row);
+        const cells = row.children;
+        cells[0].textContent = centroMedicoEdited.nombre;
+        cells[1].textContent = centroMedicoEdited.direccion;
+        cells[2].textContent = centroMedicoEdited.localidad;
+        cells[3].textContent = centroMedicoEdited.telefono;
+        cells[4].textContent = centroMedicoEdited.personaContacto;
+        cells[5].textContent = centroMedicoEdited.email;
+        cells[6].textContent = centroMedicoEdited.duracionSesion;
+    }
+    mostrarErrorUsuario("Centro médico " + centroMedicoEdited.nombre +  " actualizado correctamente", "info");
+
 })
 
 window.viewModelAPI.onMostrarErrorGenerico((event, mensaje) => {
@@ -537,8 +539,9 @@ async function crearCentroMedico(nuevoCentroMedico) {
                 const result = resultado.data;
                 RefreshPagination(currentPage, result.totalPages, Actions.GETALL);         
             }
-            mostrarErrorUsuario("Centro médico " + centroMedicoCreado.nombre +  " creado correctamente", "success");
         }
+        mostrarErrorUsuario("Centro médico " + centroMedicoCreado.nombre +  " creado correctamente", "info");
+
     } catch (error) {
         manejarErrores(error, 'INDEX_CREAR_CENTRO_MEDICO');
     }   

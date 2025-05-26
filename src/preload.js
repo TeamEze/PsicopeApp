@@ -35,9 +35,10 @@ contextBridge.exposeInMainWorld('viewModelAPI', {
 
 contextBridge.exposeInMainWorld('historialImportesAPI', {
   //Métodos para el manejo de ventan modal Nuevo Historial de Importes
-  openNuevoHistorialImporteModal: () => ipcRenderer.send('open-NuevoHistorialImporteModal'),
+  openNuevoHistorialImporteModal: (descuentoDefault) => ipcRenderer.send('open-NuevoHistorialImporteModal', descuentoDefault),
   hideNuevoHistorialImporteModal: () => ipcRenderer.send('hide-NuevoHistorialImporteModal'),
   clearForm: (callback) => ipcRenderer.on('clear-formNuevoHistorialImporte', callback),
+  loadDefaultTipoDescuento: (callback) => ipcRenderer.on('load-defaultTipoDescuento', callback), // Enviar el tipo de descuento por defecto al modal
   //Métodos para manejar creación de Historial de Importes
   sendCreatedHistorialImporteToMain: (createdHistorialImporte) => ipcRenderer.send('createdHistorialImporte', createdHistorialImporte), // Enviar datos del nuevo historial importe
   onNewAddedHistorialImporte: (callback) => ipcRenderer.on('new-AddedHistorialImporte', callback), // Escuchar evento para actualizar la grilla
@@ -47,4 +48,5 @@ contextBridge.exposeInMainWorld('historialImportesAPI', {
   getPaginatedHistorialImportes: (paginationData, filters) => ipcRenderer.invoke('getPaginatedHistorialImportes', paginationData.page, paginationData.pageSize, filters),
   getTotalActiveHistorialImporteByCentroMedicoId: (idCentroMedico) => ipcRenderer.invoke('getTotalActiveHistorialImporteByCentroMedicoId', idCentroMedico),
   createHistorialImporte: (nuevoHistorialImporte) => ipcRenderer.invoke('createHistorialImporte', nuevoHistorialImporte),
+  getDefaultTipoDescuentoNewHistorialImporte: (idCentroMedico) => ipcRenderer.invoke('getDefaultTipoDescuentoNewHistorialImporte', idCentroMedico)
 });

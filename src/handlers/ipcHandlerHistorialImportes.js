@@ -2,11 +2,12 @@ const { ipcMain } = require('electron');
 
 function setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWindow, historialImportesViewModel, errorLogService) {
     // Abrir la ventana modal y limpiar el formulario
-    ipcMain.on('open-NuevoHistorialImporteModal', () => {
+    ipcMain.on('open-NuevoHistorialImporteModal', (event, descuentoDefault) => {
         if (nuevoHistorialImporteWindow) {
             mainWindow.webContents.send('show-overlay');
             nuevoHistorialImporteWindow.show();
             nuevoHistorialImporteWindow.webContents.send('clear-formNuevoHistorialImporte'); // Limpiar el formulario
+            nuevoHistorialImporteWindow.webContents.send('load-defaultTipoDescuento', descuentoDefault); 
         }
     });
     // Ocultar la ventana modal
@@ -35,6 +36,9 @@ function setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWind
     });
     ipcMain.handle('createHistorialImporte', async (event, nuevoHistorialImporte) => {
         return await historialImportesViewModel.createHistorialImporte(nuevoHistorialImporte);
+    });
+    ipcMain.handle('getDefaultTipoDescuentoNewHistorialImporte', async (event, idCentroMedico) => {
+        return await historialImportesViewModel.getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico);
     });
 }
 

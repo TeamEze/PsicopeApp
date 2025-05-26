@@ -2,6 +2,7 @@ const HistorialImporte = require('../models/historialImporte.model.js');
 const CentroMedico = require('../models/centroMedico.model.js');
 const TipoDescuento = require('../models/tipoDescuento.model.js');
 const Estado = require('../models/estado.model.js');
+const { where } = require('sequelize');
 
 class HistorialImporteRepository {
     //Creo que necesitamos un indice sobre VigenciaDesde
@@ -71,6 +72,16 @@ class HistorialImporteRepository {
     async createHistorialImporte(historialImporte) {
         return await HistorialImporte.create(historialImporte);
       }
+
+    async getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico) {
+        const tipoDescuento = await HistorialImporte.findOne({
+            attributes: ['idCentroMedico', 'idTipoDescuento', 'valor'],
+            where: { idCentroMedico: idCentroMedico },
+            order: [['vigenciaDesde', 'DESC']],
+        });
+
+        return tipoDescuento ? tipoDescuento.get({ plain: true }) : {idCentroMedico: idCentroMedico, idTipoDescuento: null, valor: null};
+    }
 }
 
 module.exports = new HistorialImporteRepository();

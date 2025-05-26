@@ -126,6 +126,36 @@ window.historialImportesAPI.clearForm(() => {
     }
 });
 
+window.historialImportesAPI.loadDefaultTipoDescuento((event, descuentoDefault) => {
+    //throw new Error('Esta función no está implementada');
+    if (!descuentoDefault.idTipoDescuento) {
+        if (cboCentroMedico) {
+            cboCentroMedico.disabled = true;
+            cboCentroMedico.value = descuentoDefault.idCentroMedico;
+        }
+        if (cboTipoDescuento){
+            cboTipoDescuento.disabled = false;
+            cboTipoDescuento.focus();
+        } 
+        if (nbValor) nbValor.disabled = false;        
+        return;
+    }
+    if (cboCentroMedico) {
+        cboCentroMedico.value = descuentoDefault.idCentroMedico;
+        cboCentroMedico.disabled = true;
+    }
+    if (cboTipoDescuento) {
+        cboTipoDescuento.value = descuentoDefault.idTipoDescuento;
+        cboTipoDescuento.disabled = true;
+    }
+    if (nbValor) {
+        nbValor.value = descuentoDefault.valor;
+        nbValor.disabled = true;
+    }
+    cboEstado.value = 1; // Estado Activo por defecto
+    nbImporteSesionEvaluacion.focus();
+});
+
 // =========================
 // 🧠 Funciones principales
 // =========================
@@ -142,6 +172,7 @@ async function manejarEnvioFormularioHistorialImporte(event) {
         isEditingHistorialImporte = false;
         editingHistorialImporteId = null;
       } else {
+        throw new ViewModelAPIError();
         const resultado = await window.historialImportesAPI.createHistorialImporte(hiistorialImporte);
         if (!resultado.ok) throw new ViewModelAPIError();
 

@@ -48,6 +48,11 @@ class HistorialImporteService {
     const historialImporteConIncludes = await this.historialImporteRepository.getHistorialImporteByIdWithIncludes(nuevoHistorialImporte.idHistorialImporte);
     return this.historialImporteMapper.mapHistorialImporteToDTO(historialImporteConIncludes);
   } 
+
+  async getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico) {
+    const defaultTipoDescuento = await this.historialImporteRepository.getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico);
+    return defaultTipoDescuento;
+  }
 }
 
 module.exports = HistorialImporteService;

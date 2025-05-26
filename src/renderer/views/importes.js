@@ -47,11 +47,7 @@ function inicializarEventos() {
   //Inicializar eventos de los botones
   btnLimpiarFiltrosHistorialImporte.addEventListener('click', () => limpiarFiltrosHistorialImporte());
   btnFiltrarHistorialImporte.addEventListener('click', () => filtrarHistorialImportes());
-  btnNuevoHistorialImporte.addEventListener('click', async () => {
-    if (await validarFiltroCentroMedico()) {
-      window.historialImportesAPI.openNuevoHistorialImporteModal();
-    }
-  });
+  btnNuevoHistorialImporte.addEventListener('click', async () => openNuevoHistorialImporteModal());
   document.getElementById('importes').addEventListener('refrescarImportes', (e) => {
     const { idCentroMedico } = e.detail;
     console.log('🔄 Recibido ID centro médico:', idCentroMedico);
@@ -338,7 +334,7 @@ async function validarFiltroCentroMedico() {
 // =========================
 window.historialImportesAPI.onNewAddedHistorialImporte((event, createdCentroMedico) => {
   //Agregarlo a la grilla
-  mostrarErrorUsuario("Historial de importe creado correctamente", 'success');
+  mostrarErrorUsuario("Historial de importe creado correctamente", 'info');
 });
 
 
@@ -363,8 +359,6 @@ async function cargarHistorialImportes(page = 1){
   }
 }
 
-
-
 async function filtrarHistorialImportes(page = 1) {
   try {
       if (!hayDatosParafiltrar()) {
@@ -384,6 +378,19 @@ async function filtrarHistorialImportes(page = 1) {
       RefreshPaginationImportes(result.currentPage, result.totalPages, Actions.FILTER);
   } catch (error) {
       manejarErrores(error, 'IMPORTES_FILTRAR__HISTORIAL_IMPORTES');
+  }
+}
+
+async function openNuevoHistorialImporteModal() {
+  try {
+    if (await validarFiltroCentroMedico()) {
+      idCentroMedico = cboCentroMedico.value;
+      descuentoDefault = await window.historialImportesAPI.getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico);
+      if (!descuentoDefault.ok) throw new ViewModelAPIError();
+      window.historialImportesAPI.openNuevoHistorialImporteModal(descuentoDefault.data);
+    }
+  } catch (error) {
+    manejarErrores(error, 'IMPORTES_OPEN_NUEVO_HISTORIAL_IMPORTE_MODAL');
   }
 }
 

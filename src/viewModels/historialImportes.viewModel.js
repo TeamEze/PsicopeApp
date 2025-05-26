@@ -85,6 +85,22 @@ class HistorialImportesViewModel {
             return {ok: false};
         }
     }
+
+    async getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico) {
+        try {
+            const tipoDescuentoDefault = await this.historialImporteService.getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico);
+            return {ok: true, data: tipoDescuentoDefault};
+        } 
+        catch (error) {
+            await this.errorLogService.handleError(
+                error.message,
+                JSON.stringify({idCentroMedico}),
+                error.stack,
+                'HistorialImportesViewModel.getDefaultTipoDescuentoNewHistorialImporte'
+            );
+            return {ok: false};
+        }
+    }
 }
 
 module.exports = HistorialImportesViewModel;

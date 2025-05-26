@@ -148,10 +148,11 @@ class CentroMedicoService {
   async updateEstadoCentroMedico(idCentroMedico, nuevoEstado) {
     await this.centroMedicoRepository.updateEstadoCentroMedico(idCentroMedico, nuevoEstado);
   }
-async getActiveCentroMedico(){
-    const centrosMedicos = await this.centroMedicoRepository.getActiveCentroMedico();
-    return centrosMedicos;
-  }
+  
+  async getActiveCentroMedico(){
+      const centrosMedicos = await this.centroMedicoRepository.getActiveCentroMedico();
+      return centrosMedicos;
+    }
 }
 
 module.exports = CentroMedicoService;

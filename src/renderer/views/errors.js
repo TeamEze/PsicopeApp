@@ -104,5 +104,11 @@ const mensajeriaErrores = {
         mensajeError: 'Ocurrió un error al procesar el formulario. Por favor, contacte al administrador.',
         mensajeErrorGenerico: 'Error inesperado al procesar el formulario. Por favor, contacte al administrador.'
   },
+  IMPORTES_OPEN_NUEVO_HISTORIAL_IMPORTE_MODAL: {
+      methodAPI: 'getDefaultTipoDescuentoNewHistorialImporte',
+      origen: 'importes.js - openNuevoHistorialImporteModal',
+      mensajeError: 'Ocurrió un error al obtener descuento default. Por favor, contacte al administrador.',
+      mensajeErrorGenerico: 'Error inesperado al obtener descuento default. Por favor, contacte al administrador.'
+  },
 
 };
