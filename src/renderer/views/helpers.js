@@ -41,19 +41,100 @@ function cargarListaDesplegable(idListaDesplegable, datosLista, descripciónOpci
     })
 }
 
+function animarNuevaFila(tr) {   
+    tr.classList.add("table-success", "highlight");
+
+    // Esperar que termine la animación para remover las clases
+    tr.addEventListener("animationend", function handleAnimationEnd(e) {
+        // Solo actuar cuando termine la animación 'fadeOut'
+        if (e.animationName === "fadeOut") {
+        tr.classList.remove("highlight", "table-success");
+        tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
+        }
+    });
+}
+
+function animarFilaEditada(tr) {   
+    tr.classList.add("table-primary", "highlight");
+
+ /*  // Esperar que termine la animación para remover las clases
+  tr.addEventListener("animationend", function handleAnimationEnd(e) {
+    // Solo actuar cuando termine la animación 'fadeOut'
+    if (e.animationName === "fadeOut") {
+      tr.classList.remove("highlight", "table-primary");
+      tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
+    }
+  }); */
+
+  setTimeout(() => {
+    tr.classList.remove("highlight", "table-primary");
+  }, 2500); // 0.5s fadeIn + 2s delay + 0s fadeOut (sin efecto real)
+}
+
+async function cargarDatosEnDesplegable({
+    apiMethod,
+    comboElement,
+    descripcionDefault,
+    errorContext
+  }) {
+    try {
+      const resultado = await apiMethod();
+      if (!resultado.ok) throw new ViewModelAPIError();
+  
+      const datos = resultado.data;
+      cargarListaDesplegable(comboElement, datos, descripcionDefault);
+    } catch (error) {
+      manejarErrores(error, errorContext);
+    }
+}
+  
+
 function resaltarFiltroSiActivo(elemento) {
-    if (elemento.value) {
+    if (elemento.value && elemento.value.trim() !== '') {
       elemento.classList.add('filtro-activo');
     } else {
       elemento.classList.remove('filtro-activo');
     }
   }
   
+  
+
+function formatearFechaDDMMYYYY(fecha) {
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+}
+
+function formatearFechaDesdeBD(fechaBD) {
+    if (!(fechaBD instanceof Date) || isNaN(fechaBD)) return "";
+  
+    const dia = fechaBD.getUTCDate().toString().padStart(2, '0');
+    const mes = (fechaBD.getUTCMonth() + 1).toString().padStart(2, '0');
+    const anio = fechaBD.getUTCFullYear();
+  
+    return `${dia}/${mes}/${anio}`;
+  }
+  
+  
 
 function cleanPagination(idPaginationElement) {
     const paginationContainer = idPaginationElement;
     paginationContainer.innerHTML = ''; // Limpiar paginación
 }
+
+function refreshPagination(paginationElement, currentPage, totalPages, actionMethod, changePageCallback) {
+    const paginationConfig = {
+        idPaginationElement: paginationElement,
+        currentPage: currentPage,
+        totalPages: totalPages,
+        actionMethod: actionMethod,
+        changePageCallback: changePageCallback
+    };
+
+    renderPagination(paginationConfig);
+}
+  
 
 function renderPagination({ idPaginationElement, currentPage, totalPages, actionMethod, changePageCallback }) {
     //const paginationContainer = document.getElementById('pagination');
@@ -216,7 +297,7 @@ function mostrarErrorUsuario(mensaje, tipo = 'error') {
     alerta.textContent = mensaje;
     document.body.appendChild(alerta);
   
-    setTimeout(() => alerta.remove(), 5000); // se borra luego de 5 s
+    setTimeout(() => alerta.remove(), 4500); // se borra luego de 5 s
   }
   
 

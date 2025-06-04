@@ -53,6 +53,17 @@ class HistorialImporteService {
     const defaultTipoDescuento = await this.historialImporteRepository.getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico);
     return defaultTipoDescuento;
   }
+
+  async getHistorialImporteById(idHistorialImporte) {
+    const historialImporte = await this.historialImporteRepository.getHistorialImporteById(idHistorialImporte);
+    return historialImporte;
+  }
+
+  async updateHistorialImporte(historialImporte) {
+    const updatedHistorialImporte = await this.historialImporteRepository.updateHistorialImporte(historialImporte);
+    const historialImporteConIncludes = await this.historialImporteRepository.getHistorialImporteByIdWithIncludes(updatedHistorialImporte.idHistorialImporte);
+    return this.historialImporteMapper.mapHistorialImporteToDTO(historialImporteConIncludes);
+  }
 }
 
 module.exports = HistorialImporteService;

@@ -17,7 +17,9 @@ let cboEstado = null;
 let cboTipoDescuento = null;
 let navPaginationHistorialImportes = null;
 let dtFechaVigenciaDesde = null;
+let fpFechaVigenciaDesde = null;
 let dtFechavigenciaHasta = null;
+let fpFechaVigenciaHasta = null;
 let btnLimpiarFiltrosHistorialImporte = null;
 let btnFiltrarHistorialImporte = null;
 let btnNuevoHistorialImporte = null;
@@ -29,12 +31,31 @@ let filtros = null;
 // ==============================
 
 function inicializarObjetosDOM() {
+  flatpickr.localize(flatpickr.l10ns.es);
   tblHistorialImportes = document.getElementById('tblHistorialImportes');
   cboCentroMedico = document.getElementById('cboCentroMedico');
   cboTipoDescuento = document.getElementById('cboTipoDescuento');
   cboEstado = document.getElementById('cboEstado');
   dtFechaVigenciaDesde = document.getElementById('fechaVigenciaDesde');
+  fpFechaVigenciaDesde = flatpickr("#fechaVigenciaDesde", {
+    enableTime: false,
+    dateFormat: "d-m-Y",
+    altInput: true,
+    altFormat: "d \\de F, Y",
+    onChange: function(selectedDates, dateStr, instance) {
+      resaltarFiltroSiActivo(instance.altInput);
+    }
+  });
   dtFechavigenciaHasta = document.getElementById('fechaVigenciaHasta');
+  fpFechaVigenciaHasta = flatpickr("#fechaVigenciaHasta", {
+    enableTime: false,
+    dateFormat: "d-m-Y",
+    altInput: true,
+    altFormat: "d \\de F, Y",
+    onChange: function(selectedDates, dateStr, instance) {
+      resaltarFiltroSiActivo(instance.altInput);
+    }
+  });
   navPaginationHistorialImportes = document.getElementById('paginationHistorialImportes');
   btnLimpiarFiltrosHistorialImporte = document.getElementById('btnLimpiarFiltrosHistorialImporte');
   btnFiltrarHistorialImporte = document.getElementById('btnFiltrarHistorialImporte');
@@ -45,6 +66,12 @@ function inicializarObjetosDOM() {
 function inicializarEventos() {
 
   //Inicializar eventos de los botones
+  document.getElementById('btnAbrirCalendarioFechaDesde').addEventListener('click', function() {
+    fpFechaVigenciaDesde.open();
+  });
+  document.getElementById('btnAbrirCalendarioFechaHasta').addEventListener('click', function() {
+    fpFechaVigenciaHasta.open();
+  });
   btnLimpiarFiltrosHistorialImporte.addEventListener('click', () => limpiarFiltrosHistorialImporte());
   btnFiltrarHistorialImporte.addEventListener('click', () => filtrarHistorialImportes());
   btnNuevoHistorialImporte.addEventListener('click', async () => openNuevoHistorialImporteModal());
@@ -66,43 +93,31 @@ function inicializarEventos() {
   
 }
 
-async function cargarCentrosMedicosDesdeImportes(){
-  try {
-    const resultado = await window.viewModelAPI.getActiveCentroMedico(); 
-    if (!resultado.ok) throw new ViewModelAPIError();
-    
-    const descripcionDefault = "Seleccione un Centro Médico";
-    const centrosMedicos = resultado.data;
-    cargarListaDesplegable(cboCentroMedico, centrosMedicos, descripcionDefault);  
-  } catch (error) {
-    manejarErrores(error, 'IMPORTES_CARGAR_CENTROS_MEDICOS');
-  }
+async function cargarCentrosMedicosDesdeImportes() {
+  await cargarDatosEnDesplegable({
+    apiMethod: () => window.viewModelAPI.getActiveCentroMedico(),
+    comboElement: cboCentroMedico,
+    descripcionDefault: "Seleccione un Centro Médico",
+    errorContext: 'IMPORTES_CARGAR_CENTROS_MEDICOS'
+  });
 }
 
 async function cargarTiposDescuento(){  
-  try {
-    const resultado = await window.historialImportesAPI.getAllTiposDescuento(); 
-    if (!resultado.ok) throw new ViewModelAPIError();
-    
-    const descripcionDefault = "Seleccione Tipo de Descuento";
-    const tiposDescuento = resultado.data;
-    cargarListaDesplegable(cboTipoDescuento, tiposDescuento, descripcionDefault);  
-  } catch (error) {
-    manejarErrores(error, 'IMPORTES_CARGAR_TIPOS_DESCUENTO');
-  }
+  await cargarDatosEnDesplegable({
+    apiMethod: () => window.historialImportesAPI.getAllTiposDescuento(),
+    comboElement: cboTipoDescuento,
+    descripcionDefault: "Seleccione Tipo de Descuento",
+    errorContext: 'IMPORTES_CARGAR_TIPOS_DESCUENTO'
+  });
 }
 
 async function cargarEstados() {
-  try {
-    const resultado = await window.historialImportesAPI.getAllEstados(); 
-    if (!resultado.ok) throw new ViewModelAPIError();
-    
-    const descripcionDefault = "Seleccione Estado";
-    const estados = resultado.data;
-    cargarListaDesplegable(cboEstado, estados, descripcionDefault);  
-  } catch (error) {
-    manejarErrores(error, 'IMPORTES_CARGAR_ESTADOS');
-  }  
+  await cargarDatosEnDesplegable({
+    apiMethod: () => window.historialImportesAPI.getAllEstados(),
+    comboElement: cboEstado,
+    descripcionDefault: "Seleccione Estado",
+    errorContext: 'IMPORTES_CARGAR_ESTADOS'
+  });
 }
 
 function leerParametros() {
@@ -129,12 +144,7 @@ function leerParametros() {
 // 🛠️ Funciones utilitarias
 // =========================
 
-function formatearFechaDDMMYYYY(fecha) {
-  const dia = String(fecha.getDate()).padStart(2, '0');
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-  const anio = fecha.getFullYear();
-  return `${dia}/${mes}/${anio}`;
-}
+
 
 function crearColumnaEditarHistorialImporte(tr, historialImporte) {
   const tdEditar = document.createElement('td');
@@ -146,20 +156,46 @@ function crearColumnaEditarHistorialImporte(tr, historialImporte) {
   //editIcon.classList.toggle('disabled-icon', centroMedico.estado !== 'Activo');
   editIcon.style.cursor = 'pointer'; 
   editIcon.title = 'Editar'; 
-  /*editIcon.onclick = () => {
-      window.viewModelAPI.openEditCentroMedicoModal(centroMedico.idCentroMedico); // Enviar el ID del centro médico al modal de edición
-  };*/
+  editIcon.onclick = () => {
+      window.historialImportesAPI.editNuevoHistorialImporteModal(historialImporte.idHistorialImporte); // Enviar el ID del centro médico al modal de edición
+  };
   tdEditar.appendChild(editIcon);
   tr.appendChild(tdEditar);
 }
 
 function ImporteCrearColumnaEstado(tr, estado) {
   const tdEstado = document.createElement('td');
-  tdEstado.classList.add('text-center');
+  tdEstado.classList.add('text-center', 'td-estado');
   
   const span = document.createElement('span');
   span.classList.add('badge');
   
+  actualizarSpanEstado(span, estado); // Asignar clase y texto según el estado
+
+  tdEstado.appendChild(span);
+  tr.appendChild(tdEstado);
+}
+
+function ImporteActualizarColumnaEstadoSiCambio(tr, nuevoEstado) {
+  const tdEstado = tr.querySelector('.td-estado');
+  if (!tdEstado) return;
+
+  const span = tdEstado.querySelector('span');
+  if (!span) return;
+
+  const estadoActual = span.textContent?.trim();
+
+  // Solo actualizar si el estado es diferente
+  if (estadoActual === nuevoEstado) return;
+
+  // Limpiar clases anteriores
+  span.classList.remove('bg-success', 'bg-danger', 'bg-secondary');
+  actualizarSpanEstado(span, nuevoEstado);
+  
+}
+
+function actualizarSpanEstado(span, estado) {
+  // Asignar clase según el nuevo estado
   if (estado === 'Activo') {
     span.classList.add('bg-success');
   } else if (estado === 'Inactivo') {
@@ -168,11 +204,10 @@ function ImporteCrearColumnaEstado(tr, estado) {
     span.classList.add('bg-secondary');
   }
 
+  // Actualizar el texto
   span.textContent = estado;
-
-  tdEstado.appendChild(span);
-  tr.appendChild(tdEstado);
 }
+
 
 function addHistorialImporteToTable(historialImporte, tbody, isNew=false) {
   const tr = document.createElement('tr');
@@ -182,26 +217,19 @@ function addHistorialImporteToTable(historialImporte, tbody, isNew=false) {
       animarNuevaFila(tr); // Aplicar la animación a la fila
   }
 
-  // Uso:
-  const fechaVigenciaDesde = new Date(historialImporte.vigenciaDesde);
-  const fechaVigenciaHasta = new Date(historialImporte.vigenciaHasta);
-  //console.log(formatearFechaDDMMYYYY(fecha)); // "21/04/2025"
-
   createTableData(historialImporte.centroMedico, tr, alignmentLeft);
   createTableData(historialImporte.tipoDescuento, tr, alignmentLeft);
   createTableData(historialImporte.valor, tr, alignmentRight);
   createTableData(historialImporte.importeSesionEvaluacion, tr, alignmentRight);
   createTableData(historialImporte.importeSesionTratamiento, tr, alignmentRight);
-  createTableData(formatearFechaDDMMYYYY(fechaVigenciaDesde), tr, alignmentLeft);
-  createTableData(formatearFechaDDMMYYYY(fechaVigenciaHasta), tr, alignmentLeft);
-  //createTableData(historialImporte.estado, tr, alignmentCenter);
+  createTableData(formatearFechaDesdeBD(new Date(historialImporte.vigenciaDesde)), tr, alignmentLeft);
+  if (historialImporte.vigenciaHasta === null) {
+    createTableData('-', tr, alignmentLeft);
+  } else {    
+    createTableData(formatearFechaDesdeBD(new Date(historialImporte.vigenciaHasta)), tr, alignmentLeft);
+  }
   ImporteCrearColumnaEstado(tr, historialImporte.estado);
-
   crearColumnaEditarHistorialImporte(tr, historialImporte);
-
-  /* if (historialImporte.estado === 'Activo') {
-      tr.classList.add('table-success');
-  } */
 
   tbody.appendChild(tr);
 }  
@@ -234,18 +262,6 @@ function changePageHistorialImporte(page, totalPages, actionMethod) {
   }
 }
 
-function RefreshPaginationImportes(currentPage, totalPages, action) {
-  const paginationConfig = {
-      idPaginationElement: navPaginationHistorialImportes,
-      currentPage: currentPage,
-      totalPages: totalPages,
-      actionMethod: action,
-      changePageCallback: changePageHistorialImporte
-  }
-
-  renderPagination(paginationConfig);
-}
-
 function obtenerFiltrosImportes(){
   let filters = {};
 
@@ -263,15 +279,15 @@ function obtenerFiltrosImportes(){
   if (idTipoDescuento) {
       filters.idTipoDescuento = idTipoDescuento;
   }
-
-  const fechaVigenciaDesde = dtFechaVigenciaDesde.value;
-  if (fechaVigenciaDesde) {
-      filters.fechaVigenciaDesde = new Date(fechaVigenciaDesde);
+ 
+  const fpvd = fpFechaVigenciaDesde;
+  if (fpvd.selectedDates && fpvd.selectedDates.length > 0) {
+      filters.fechaVigenciaDesde = fpvd.formatDate(fpvd.selectedDates[0], "Y-m-d");
   }
 
-  const fechaVigenciaHasta = dtFechavigenciaHasta.value;
-  if (fechaVigenciaHasta) {
-      filters.fechaVigenciaHasta = new Date(fechaVigenciaHasta);
+  const fpvh = fpFechaVigenciaHasta;
+  if (fpvh.selectedDates && fpvh.selectedDates.length > 0) { 
+      filters.fechaVigenciaHasta = fpvh.formatDate(fpvh.selectedDates[0], "Y-m-d");
   }
 
   return filters;
@@ -281,8 +297,8 @@ function limpiarFiltrosHistorialImporte() {
   cboCentroMedico.value = "";
   cboEstado.value = "";
   cboTipoDescuento.value = "";
-  dtFechaVigenciaDesde.value = "";
-  dtFechavigenciaHasta.value = "";
+  fpFechaVigenciaDesde.clear();
+  fpFechaVigenciaHasta.clear();
   removerClasesFiltroActivos();
   removeImportesTableContent();
   cleanPagination(navPaginationHistorialImportes);
@@ -329,14 +345,69 @@ async function validarFiltroCentroMedico() {
   return true;
 }
 
+async function getPaginatedHistorialImportes(page){
+  let paginationData = {page: page, pageSize: pageSize};
+  const filters = obtenerFiltrosImportes();
+  const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData, filters); 
+  if (!resultado.ok) throw new ViewModelAPIError();
+  
+  const result = resultado.data;
+  const historialImportesData = result.data;
+
+  updateImportesTableContent(historialImportesData);
+  refreshPagination(navPaginationHistorialImportes, result.currentPage, result.totalPages, Actions.FILTER, changePageHistorialImporte);
+}
+
 // =========================
 // 🧩 Manejo de Eventos
 // =========================
-window.historialImportesAPI.onNewAddedHistorialImporte((event, createdCentroMedico) => {
-  //Agregarlo a la grilla
-  mostrarErrorUsuario("Historial de importe creado correctamente", 'info');
+window.historialImportesAPI.onNewAddedHistorialImporte(async (event, historialImporteCreado) => {
+  try {
+    const tbody = tblHistorialImportes.querySelector('tbody') || document.createElement('tbody');
+      
+    // Verificar si el nuevo registro pertenece a la página actual
+    const currentPage = parseInt(document.querySelector('#paginationHistorialImportes .pagination .active a')?.textContent || 1, 10);
+    const registrosEnPaginaActual = tbody.children.length;
+    const isOnCurrentPage = registrosEnPaginaActual < pageSize;
+
+    if (isOnCurrentPage) {
+        addHistorialImporteToTable(historialImporteCreado, tbody, true);
+        if (!tblHistorialImportes.contains(tbody)) {
+          tblHistorialImportes.appendChild(tbody);
+        }
+    } else {
+        // Si no pertenece a la página actual, recargar la paginación
+        const paginationData = { page: currentPage, pageSize: pageSize };
+        
+        const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData, obtenerFiltrosImportes());
+        if (!resultado.ok) throw new ViewModelAPIError();
+        const result = resultado.data;
+        refreshPagination(navPaginationHistorialImportes, result.currentPage, result.totalPages, Actions.FILTER, changePageHistorialImporte);
+    }
+    mostrarErrorUsuario("Historial de importe creado correctamente", 'info');
+  } catch (error) {
+    manejarErrores(error, 'IMPORTES_ON_NEW_ADDED_HISTORIAL_IMPORTE');
+  }
+  
 });
 
+window.historialImportesAPI.onEditedHistorialImporte((event, historialImporteEdited) => {
+  const row = document.querySelector(`#tblHistorialImportes tr[data-id='${historialImporteEdited.idHistorialImporte}']`);
+  if (row) {
+      animarFilaEditada(row);
+      const cells = row.children;
+      cells[0].textContent = historialImporteEdited.centroMedico; // Centro Médico
+      cells[1].textContent = historialImporteEdited.tipoDescuento; // Tipo de Descuento
+      cells[2].textContent = historialImporteEdited.valor; // Valor
+      cells[3].textContent = historialImporteEdited.importeSesionTratamiento; // $Sesión Tratamiento
+      cells[4].textContent = historialImporteEdited.importeSesionEvaluacion; // $Sesión Evaluación
+      cells[5].textContent = formatearFechaDesdeBD(new Date(historialImporteEdited.vigenciaDesde)); // Vigencia Desde
+      cells[6].textContent = historialImporteEdited.vigenciaHasta ? formatearFechaDesdeBD(new Date(historialImporteEdited.vigenciaHasta)) : '-'; // Vigencia Hasta
+      ImporteActualizarColumnaEstadoSiCambio(row, historialImporteEdited.estado); // Actualizar el estado si ha cambiado
+  }
+  mostrarErrorUsuario("Historial Importe actualizado correctamente", "info");
+
+})
 
 // =========================
 // 🧠 Funciones principales
@@ -344,16 +415,7 @@ window.historialImportesAPI.onNewAddedHistorialImporte((event, createdCentroMedi
 
 async function cargarHistorialImportes(page = 1){
   try {
-    let paginationData = {page: page, pageSize: pageSize};
-    const filters = obtenerFiltrosImportes();
-    const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData, filters); 
-    if (!resultado.ok) throw new ViewModelAPIError();
-    
-    const result = resultado.data;
-    const historialImportesData = result.data;
-
-    updateImportesTableContent(historialImportesData);
-    RefreshPaginationImportes(result.currentPage, result.totalPages, Actions.GETALL);
+    await getPaginatedHistorialImportes(page);
   } catch (error) {
     manejarErrores(error, 'IMPORTES_CARGAR__HISTORIAL_IMPORTES');
   }
@@ -365,17 +427,7 @@ async function filtrarHistorialImportes(page = 1) {
           mostrarErrorUsuario("Debe ingresar al menos un filtro para realizar la búsqueda", 'warning');
           return;
       }
-
-      let paginationData = {page: page, pageSize: pageSize};
-      const filters = obtenerFiltrosImportes();
-      const resultado = await window.historialImportesAPI.getPaginatedHistorialImportes(paginationData, filters); 
-      if (!resultado.ok) throw new ViewModelAPIError();
-      
-      const result = resultado.data;
-      const historialImportesData = result.data;
-
-      updateImportesTableContent(historialImportesData);
-      RefreshPaginationImportes(result.currentPage, result.totalPages, Actions.FILTER);
+      await getPaginatedHistorialImportes(page);      
   } catch (error) {
       manejarErrores(error, 'IMPORTES_FILTRAR__HISTORIAL_IMPORTES');
   }

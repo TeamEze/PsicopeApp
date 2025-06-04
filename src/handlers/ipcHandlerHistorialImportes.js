@@ -10,6 +10,14 @@ function setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWind
             nuevoHistorialImporteWindow.webContents.send('load-defaultTipoDescuento', descuentoDefault); 
         }
     });
+     // Recibir datos para editar un centro médico
+    ipcMain.on('edit-NuevoHistorialImporteModal', (event, idHistorialImporte) => {
+        if (nuevoHistorialImporteWindow) {
+            mainWindow.webContents.send('show-overlay');
+            nuevoHistorialImporteWindow.show(); // Mostrar la ventana modal
+            nuevoHistorialImporteWindow.webContents.send('edit-HistorialImporte', idHistorialImporte); // Enviar los datos a la ventana modal            
+        }
+    });
     // Ocultar la ventana modal
     ipcMain.on('hide-NuevoHistorialImporteModal', () => {
         if (nuevoHistorialImporteWindow) {
@@ -22,6 +30,12 @@ function setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWind
         // Enviar los datos a la ventana principal
         mainWindow.webContents.send('new-AddedHistorialImporte', createdHistorialImporte);
     });
+
+    ipcMain.on('editedHistorialImporte', (event, editedHistorialImporte) => {
+        // Enviar los datos a la ventana principal
+        mainWindow.webContents.send('edited-HistorialImporte', editedHistorialImporte);
+    });
+
     ipcMain.handle('getAllTiposDescuento', async () => {
         return await historialImportesViewModel.getAllTiposDescuento();
     });
@@ -37,9 +51,15 @@ function setupIpcHandlersHistorialImportes(mainWindow, nuevoHistorialImporteWind
     ipcMain.handle('createHistorialImporte', async (event, nuevoHistorialImporte) => {
         return await historialImportesViewModel.createHistorialImporte(nuevoHistorialImporte);
     });
+    ipcMain.handle('updateHistorialImporte', async (event, historialImporte) => {
+        return await historialImportesViewModel.updateHistorialImporte(historialImporte);
+    });
     ipcMain.handle('getDefaultTipoDescuentoNewHistorialImporte', async (event, idCentroMedico) => {
         return await historialImportesViewModel.getDefaultTipoDescuentoNewHistorialImporte(idCentroMedico);
     });
+    ipcMain.handle('getHistorialImporteById', async (event, idHistorialImporte) => {
+        return await historialImportesViewModel.getHistorialImporteById(idHistorialImporte);
+    });    
 }
 
 module.exports = { setupIpcHandlersHistorialImportes };

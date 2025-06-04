@@ -204,32 +204,6 @@ function existenfiltrosActivos() {
     return false;
 }
 
-function animarNuevaFila(tr) {   
-    tr.classList.add("table-success", "highlight");
-
-    // Esperar que termine la animación para remover las clases
-    tr.addEventListener("animationend", function handleAnimationEnd(e) {
-        // Solo actuar cuando termine la animación 'fadeOut'
-        if (e.animationName === "fadeOut") {
-        tr.classList.remove("highlight", "table-success");
-        tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
-        }
-    });
-}
-
-function animarFilaEditada(tr) {   
-    tr.classList.add("table-primary", "highlight");
-
-  // Esperar que termine la animación para remover las clases
-  tr.addEventListener("animationend", function handleAnimationEnd(e) {
-    // Solo actuar cuando termine la animación 'fadeOut'
-    if (e.animationName === "fadeOut") {
-      tr.classList.remove("highlight", "table-primary");
-      tr.removeEventListener("animationend", handleAnimationEnd); // limpiar listener
-    }
-  });
-}
-
 function toggleIconLink(iconLink, title, disabled)
 {
     if (!disabled) {
@@ -437,7 +411,7 @@ window.viewModelAPI.onNuevoCentroMedico((event, nuevoCentroMedico) => {
 });
 
 window.viewModelAPI.onCentroMedicoEdited((event, centroMedicoEdited) => {
-    const row = document.querySelector(`tr[data-id='${centroMedicoEdited.idCentroMedico}']`);
+    const row = document.querySelector(`#tblCentrosMedicos tr[data-id='${centroMedicoEdited.idCentroMedico}']`);
     if (row) {
         animarFilaEditada(row);
         const cells = row.children;

@@ -37,16 +37,22 @@ contextBridge.exposeInMainWorld('historialImportesAPI', {
   //Métodos para el manejo de ventan modal Nuevo Historial de Importes
   openNuevoHistorialImporteModal: (descuentoDefault) => ipcRenderer.send('open-NuevoHistorialImporteModal', descuentoDefault),
   hideNuevoHistorialImporteModal: () => ipcRenderer.send('hide-NuevoHistorialImporteModal'),
+  editNuevoHistorialImporteModal: (idHistorialImporte) => ipcRenderer.send('edit-NuevoHistorialImporteModal', idHistorialImporte), // Enviar datos para editar un historial de importe
   clearForm: (callback) => ipcRenderer.on('clear-formNuevoHistorialImporte', callback),
   loadDefaultTipoDescuento: (callback) => ipcRenderer.on('load-defaultTipoDescuento', callback), // Enviar el tipo de descuento por defecto al modal
+  onEditarHistorialImporte: (callback) => ipcRenderer.on('edit-HistorialImporte', callback), // Escuchar evento para editar un centro médico
+  getHistorialImporteById: (idHistorialImporte) => ipcRenderer.invoke('getHistorialImporteById', idHistorialImporte), // Obtener historial de importe por ID
   //Métodos para manejar creación de Historial de Importes
   sendCreatedHistorialImporteToMain: (createdHistorialImporte) => ipcRenderer.send('createdHistorialImporte', createdHistorialImporte), // Enviar datos del nuevo historial importe
   onNewAddedHistorialImporte: (callback) => ipcRenderer.on('new-AddedHistorialImporte', callback), // Escuchar evento para actualizar la grilla
+  sendEditedHistorialImporteToMain: (editedHistorialImporte) => ipcRenderer.send('editedHistorialImporte', editedHistorialImporte), // Enviar datos del historial importe editado
+  onEditedHistorialImporte: (callback) => ipcRenderer.on('edited-HistorialImporte', callback), // Escuchar evento para actualizar la grilla con el historial importe editado
   //Métodos para el manejo de la grilla de Historial de Importes (API Backend)
   getAllTiposDescuento: () => ipcRenderer.invoke('getAllTiposDescuento'),
   getAllEstados: () => ipcRenderer.invoke('getAllEstados'),
   getPaginatedHistorialImportes: (paginationData, filters) => ipcRenderer.invoke('getPaginatedHistorialImportes', paginationData.page, paginationData.pageSize, filters),
   getTotalActiveHistorialImporteByCentroMedicoId: (idCentroMedico) => ipcRenderer.invoke('getTotalActiveHistorialImporteByCentroMedicoId', idCentroMedico),
   createHistorialImporte: (nuevoHistorialImporte) => ipcRenderer.invoke('createHistorialImporte', nuevoHistorialImporte),
+  updateHistorialImporte: (historialImporte) => ipcRenderer.invoke('updateHistorialImporte', historialImporte),
   getDefaultTipoDescuentoNewHistorialImporte: (idCentroMedico) => ipcRenderer.invoke('getDefaultTipoDescuentoNewHistorialImporte', idCentroMedico)
 });

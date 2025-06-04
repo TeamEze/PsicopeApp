@@ -44,7 +44,7 @@ module.exports = {
             },
             vigenciaHasta: {
                 type: Sequelize.DATE,
-                allowNull: false
+                allowNull: true
             },
             fechaCreacion: {
                 type: Sequelize.DATE,

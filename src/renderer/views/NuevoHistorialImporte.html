@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuevo Historial Importe</title>
     <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/flatpickr/css/flatpickr.min.css">
+    <link rel="stylesheet" href="../../assets/flatpickr/css/material_blue.css">
     <link rel="stylesheet" href="modals.css">
 </head>
 <body>
-    <div class="container modal-layout">
+    <div class="container modal-layout" style="position: relative; overflow: visible;">
         <form id="frmNuevoHistorialImporte" class="needs-validation" novalidate>
 
             <div class="row">
@@ -62,19 +65,29 @@
             <div class="row">
                 <div class="col-md-6">
                     <label for="dtVigenciaDesde">Vigencia Desde: <span class="text-danger">*</span></label>
-                    <input id="dtVigenciaDesde" type="date" class="form-control" required>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="dtVigenciaDesde" placeholder="Seleccione una fecha" required>
+                        <span class="input-group-text p-0"  id="btnAbrirCalendarioFechaDesdeNuevoImporte">
+                            <i class="fas fa-calendar-alt fs-5"></i>
+                          </span>                          
+                    </div>                      
                     <div id="errorVigenciaDesde" class="invalid-feedback">La fecha de vigencia desde es obligatoria</div>
                 </div>
                 <div class="col-md-6">
                     <label for="dtVigenciaHasta">Vigencia Hasta:</label>
-                    <input id="dtVigenciaHasta" type="date" class="form-control">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="dtVigenciaHasta" placeholder="Seleccione una fecha" required>
+                        <span class="input-group-text p-0" id="btnAbrirCalendarioFechaHastaNuevoImporte">
+                          <i class="fas fa-calendar-alt fs-5"></i>
+                        </span>
+                    </div> 
                     <div id="errorVigenciaHasta" class="invalid-feedback">La fecha de vigencia hasta debe ser mayor a la fecha vigencia desde</div>
                 </div>
         
                 
             </div>
         
-            <div class="d-flex justify-content-between mt-3 gap-2">
+            <div class="d-flex justify-content-between mt-3 gap-2 form-buttons">
                 <button id="btnCancelarNuevoHistorialImporte" type="button" class="btn btn-secondary w-50">
                     Cancelar
                 </button>
@@ -86,6 +99,8 @@
         </form>
         
     <script src="../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/flatpickr/js/flatpickr.min.js"></script>
+    <script src="../../assets/flatpickr/js/es.js"></script>
     <script src="errors.js"></script>
     <script src="helpers.js"></script>
     <script src="NuevoHistorialImporte.js"></script>

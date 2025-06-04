@@ -101,6 +101,38 @@ class HistorialImportesViewModel {
             return {ok: false};
         }
     }
+
+    async getHistorialImporteById(idHistorialImporte) { 
+        try {
+          const historialImporte = await this.historialImporteService.getHistorialImporteById(idHistorialImporte);
+          return {ok: true, data: historialImporte};
+        }
+        catch (error) { 
+          await this.errorLogService.handleError(
+            error.message,
+            JSON.stringify({idHistorialImporte}),
+            error.stack,
+            'HistorialImportesViewModel.getHistorialImporteById'
+          );
+          return {ok: false};
+        }
+      }
+
+    async updateHistorialImporte(historialImporte) {
+        try {
+            const updatedHistorialImporte = await this.historialImporteService.updateHistorialImporte(historialImporte);
+            return {ok: true, data: updatedHistorialImporte};
+        } 
+        catch (error) {
+            await this.errorLogService.handleError(
+                error.message,
+                JSON.stringify(historialImporte),
+                error.stack,
+                'HistorialImportesViewModel.updateHistorialImporte'
+            );
+            return {ok: false};
+        }
+    }
 }
 
 module.exports = HistorialImportesViewModel;

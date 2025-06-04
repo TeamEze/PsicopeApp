@@ -82,6 +82,18 @@ class HistorialImporteRepository {
 
         return tipoDescuento ? tipoDescuento.get({ plain: true }) : {idCentroMedico: idCentroMedico, idTipoDescuento: null, valor: null};
     }
+    async getHistorialImporteById(idHistorialImporte) {
+        const historialImporte = await HistorialImporte.findByPk(idHistorialImporte)
+        return historialImporte.get({ plain: true });
+    }
+
+    async updateHistorialImporte(historialImporte) {
+        await HistorialImporte.update(historialImporte, {
+            where: { idHistorialImporte: historialImporte.idHistorialImporte }
+        });
+        return historialImporte;
+    }
+
 }
 
 module.exports = new HistorialImporteRepository();

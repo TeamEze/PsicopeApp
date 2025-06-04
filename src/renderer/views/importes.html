@@ -19,11 +19,21 @@
   <div class="row align-items-end">    
       <div class="col-md-4">
         <label for="fechaVigenciaDesde" class="form-label small fw-bold">Vigencia Desde: </label>
-        <input type="date" class="form-control form-control-sm" id="fechaVigenciaDesde">
+        <div class="input-group">
+          <input type="text" class="form-control form-control-sm" id="fechaVigenciaDesde" placeholder="Seleccione una fecha">
+          <span class="input-group-text" id="btnAbrirCalendarioFechaDesde">
+            <i class="fas fa-calendar-alt"></i>
+          </span>
+        </div>
       </div>
       <div class="col-md-4">
         <label for="fechaVigenciaHasta" class="form-label small fw-bold">Vigencia Hasta: </label>
-        <input type="date" class="form-control form-control-sm" id="fechaVigenciaHasta">
+        <div class="input-group">
+          <input type="date" class="form-control form-control-sm" id="fechaVigenciaHasta" placeholder="Seleccione una fecha">
+          <span class="input-group-text" id="btnAbrirCalendarioFechaHasta">
+            <i class="fas fa-calendar-alt"></i>
+          </span>
+        </div>
       </div>
       <div class="col-md-4 d-flex justify-content-end align-items-end gap-2">
         <button id="btnLimpiarFiltrosHistorialImporte" class="btn btn-secondary btn-sm">Limpiar</button>

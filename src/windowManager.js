@@ -54,7 +54,7 @@ function createNuevoCentroMedicoWindow(mainWindow) {
 function createNuevoHistorialimporteWindow(mainWindow) {
   if (!nuevoHistorialImporteWindow) {
     nuevoHistorialImporteWindow = new BrowserWindow({
-      width: 780,
+      width: 790,
       height: 430,
       parent: mainWindow,
       modal: true,

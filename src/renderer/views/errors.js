@@ -110,5 +110,17 @@ const mensajeriaErrores = {
       mensajeError: 'Ocurrió un error al obtener descuento default. Por favor, contacte al administrador.',
       mensajeErrorGenerico: 'Error inesperado al obtener descuento default. Por favor, contacte al administrador.'
   },
+  IMPORTES_ON_NEW_ADDED_HISTORIAL_IMPORTE: {
+      methodAPI: 'getPaginatedHistorialImportes',
+      origen: 'importes.js - onNewAddedHistorialImporte',
+      mensajeError: 'Ocurrió un error al agregar el historial de importe creado. Por favor, contacte al administrador.',
+      mensajeErrorGenerico: 'Error inesperado al agregar el historial de importe creado. Por favor, contacte al administrador.'
+  },
+  NUEVOHISTORIALIMPORTE_MODAL_ON_EDITAR_HISTORIAL_IMPORTE: {
+      methodAPI: 'getHistorialImporteById',
+      origen: 'NuevoHistorialImporte.js - onEditarHistorialImporte',
+      mensajeError: 'Error al obtener datos del historial de importe. Por favor, contacte al administrador.',
+      mensajeErrorGenerico: 'Error inesperado al obtener datos del historial de importe. Por favor, contacte al administrador.'
+  }
 
 };
